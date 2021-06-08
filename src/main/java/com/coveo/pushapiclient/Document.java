@@ -82,7 +82,7 @@ public class Document {
      * <p>
      * See https://docs.coveo.com/en/115 for more information.
      */
-    public Map<String, String> metadata;
+    public Map<String, Object> metadata;
     /**
      * The list of permission sets for this item.
      * <p>
