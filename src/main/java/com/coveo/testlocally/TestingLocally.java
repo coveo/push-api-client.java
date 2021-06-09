@@ -16,7 +16,7 @@ public class TestingLocally {
         DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
         Source source = new Source(dotenv.get("API_KEY"), dotenv.get("ORG_ID"));
         try {
-            HttpResponse res = source.create(dotenv.get("SOURCE_ID"), SourceVisibility.SECURED);
+            HttpResponse res = source.create("testlocaljava", SourceVisibility.SECURED);
             System.out.println(String.format("Status: %s %s", res.statusCode(), res.body().toString()));
         } catch (IOException e) {
             e.printStackTrace();
