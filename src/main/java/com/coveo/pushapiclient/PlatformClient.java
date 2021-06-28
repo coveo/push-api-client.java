@@ -42,24 +42,75 @@ public class PlatformClient {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void createOrUpdateSecurityIdentity(String securityProviderId, Object securityIdentityModel) {
-        // TODO
+    public HttpResponse<String> createOrUpdateSecurityIdentity(String securityProviderId, SecurityIdentityModel securityIdentityModel) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + "/permissions");
+
+        String json = new Gson().toJson(securityIdentityModel);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .uri(uri)
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void createOrUpdateSecurityIdentityAlias(String securityProviderId, Object securityIdentityAlias) {
-        // TODO
+    public HttpResponse<String> createOrUpdateSecurityIdentityAlias(String securityProviderId, SecurityIdentityAliasModel securityIdentityAlias) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + "/mappings");
+
+        String json = new Gson().toJson(securityIdentityAlias);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .uri(uri)
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void deleteSecurityIdentity(String securityProviderId, Object securityIdentityToDelete) {
-        // TODO
+    public HttpResponse<String> deleteSecurityIdentity(String securityProviderId, SecurityIdentityDelete securityIdentityToDelete) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + "/permissions");
+
+        String json = new Gson().toJson(securityIdentityToDelete);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .method("DELETE", HttpRequest.BodyPublishers.ofString(json))
+                .uri(uri)
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void deleteOldSecurityIdentities(String securityProviderId, Object batchDelete) {
-        // TODO
+    public HttpResponse<String> deleteOldSecurityIdentities(String securityProviderId, SecurityIdentityDeleteOptions batchDelete) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/olderthan?orderingId=%s&queueDelay=%s", batchDelete.orderingId, batchDelete.queueDelay));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .DELETE()
+                .uri(uri)
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void manageSecurityIdentities(String securityProviderId, Object batchConfig) {
-        // TODO
+    public HttpResponse<String> manageSecurityIdentities(String securityProviderId, SecurityIdentityBatchConfig batchConfig) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/batch?fileId=%s&orderingId=%s", batchConfig.fileId, batchConfig.orderingId));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .uri(uri)
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public void pushDocument(String sourceId, Document doc) {
@@ -88,6 +139,14 @@ public class PlatformClient {
 
     private String getBasePlatformURL() {
         return String.format("https://platform.cloud.coveo.com/rest/organizations/%s", this.organizationId);
+    }
+
+    private String getBasePushURL() {
+        return String.format("https://api.cloud.coveo.com/push/v1/organizations/%s", this.organizationId);
+    }
+
+    private String getBaseProviderURL(String providerId) {
+        return String.format("%s/providers/%s", this.getBasePushURL(), providerId);
     }
 
     private String[] getHeaders(String[]... headers) {
