@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class PlatformClient {
-    private String apiKey;
-    private String organizationId;
-    private HttpClient httpClient;
+    private final String apiKey;
+    private final String organizationId;
+    private final HttpClient httpClient;
 
     public PlatformClient(String apiKey, String organizationId) {
         this.apiKey = apiKey;
