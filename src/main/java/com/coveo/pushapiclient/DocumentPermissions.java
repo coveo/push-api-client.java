@@ -3,7 +3,6 @@ package com.coveo.pushapiclient;
 public class DocumentPermissions {
     /**
      * Whether to allow anonymous users in this permission set.
-     * <p>
      * Default value is false.
      */
     public boolean allowAnonymous;
