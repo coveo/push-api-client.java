@@ -90,7 +90,7 @@ public class Document {
      * <p>
      * See https://docs.coveo.com/en/107 for more information.
      */
-    public DocumentPermissions permissions;
+    public DocumentPermissions[] permissions;
     /**
      * The file extension of the data you're pushing.
      * <p>
@@ -101,5 +101,9 @@ public class Document {
      * Example: `.html`
      */
     public String fileExtension;
+
+    public Document() {
+        this.permissions = new DocumentPermissions[]{new DocumentPermissions()};
+    }
 }
 

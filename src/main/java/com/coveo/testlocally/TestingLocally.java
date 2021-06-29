@@ -1,13 +1,13 @@
 package com.coveo.testlocally;
 
-import com.coveo.pushapiclient.DocumentBuilder;
-import com.coveo.pushapiclient.Source;
-import com.coveo.pushapiclient.SourceVisibility;
+import com.coveo.pushapiclient.*;
+import com.google.gson.Gson;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Date;
+import java.util.HashMap;
 
 public class TestingLocally {
     public static void main(String[] args) {
@@ -18,22 +18,26 @@ public class TestingLocally {
         try {
             HttpResponse res = source.create("testlocaljava", SourceVisibility.SECURED);
             System.out.println(String.format("Status: %s %s", res.statusCode(), res.body().toString()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
-        localTestSecurityIdentities(source);
-
+        testManageIdentities(source);
+        testPushDocument(dotenv.get("SOURCE_ID"), source);
     }
 
-    public static void localTestDocument(String sourceId, Source source) throws IOException, InterruptedException {
+    public static void testPushDocument(String sourceId, Source source) {
         DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
-        source.addOrUpdateDocument(sourceId, doc);
+        System.out.println(doc.marshal());
+        try {
+            source.addOrUpdateDocument(sourceId, doc);
+        } catch (IOException | InterruptedException e) {
+            System.out.println(e);
+        }
+
     }
 
-    public static void localTestSecurityIdentities(Source source) {
+    public static void testManageIdentities(Source source) {
         IdentityModel identityModel = new IdentityModel("the_name", SecurityIdentityType.USER, new HashMap() {
         });
 
@@ -42,7 +46,6 @@ public class TestingLocally {
         };
 
         AliasMapping[] aliasMapping = {new AliasMapping("the_provider_name", "the_name", SecurityIdentityType.USER, new HashMap<>())};
-
         try {
             SecurityIdentityModel securityIdentityModel = new SecurityIdentityModel(identityModels, identityModel, identityModels);
             String jsonSecurityIdentityModel = new Gson().toJson(securityIdentityModel);
@@ -71,6 +74,7 @@ public class TestingLocally {
             SecurityIdentityBatchConfig batchConfig = new SecurityIdentityBatchConfig("the_file_id", 123l);
             HttpResponse<String> resBatchConfig = source.manageSecurityIdentities("the_provider_id_batch_config", batchConfig);
             System.out.println(resBatchConfig.body());
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
