@@ -16,6 +16,10 @@ public class DocumentBuilder {
         this.document.title = title;
     }
 
+    public Document getDocument() {
+        return this.document;
+    }
+
     public DocumentBuilder withData(String data) {
         this.document.data = data;
         return this;

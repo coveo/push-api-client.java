@@ -13,7 +13,7 @@ public class TestingLocally {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();
 
-        DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
+
         Source source = new Source(dotenv.get("API_KEY"), dotenv.get("ORG_ID"));
         try {
             HttpResponse res = source.create("testlocaljava", SourceVisibility.SECURED);
@@ -22,7 +22,22 @@ public class TestingLocally {
             e.printStackTrace();
         }
 
+        testManageIdentities(source);
+        testPushDocument(dotenv.get("SOURCE_ID"), source);
+    }
 
+    public static void testPushDocument(String sourceId, Source source) {
+        DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
+        System.out.println(doc.marshal());
+        try {
+            source.addOrUpdateDocument(sourceId, doc);
+        } catch (IOException | InterruptedException e) {
+            System.out.println(e);
+        }
+
+    }
+
+    public static void testManageIdentities(Source source) {
         IdentityModel identityModel = new IdentityModel("the_name", SecurityIdentityType.USER, new HashMap() {
         });
 
@@ -31,7 +46,6 @@ public class TestingLocally {
         };
 
         AliasMapping[] aliasMapping = {new AliasMapping("the_provider_name", "the_name", SecurityIdentityType.USER, new HashMap<>())};
-
         try {
             SecurityIdentityModel securityIdentityModel = new SecurityIdentityModel(identityModels, identityModel, identityModels);
             String jsonSecurityIdentityModel = new Gson().toJson(securityIdentityModel);
