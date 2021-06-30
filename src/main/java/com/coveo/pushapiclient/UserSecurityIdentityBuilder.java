@@ -10,9 +10,20 @@ public class UserSecurityIdentityBuilder implements SecurityIdentityBuilder {
 
     }
 
+    public UserSecurityIdentityBuilder(String identity) {
+        this.identities = new String[]{identity};
+        this.securityProvider = "Email Security Provider";
+
+    }
+
     public UserSecurityIdentityBuilder(String[] identities, String securityProvider) {
         this.identities = identities;
         this.securityProvider = securityProvider;
+    }
+
+    public UserSecurityIdentityBuilder(String[] identities) {
+        this.identities = identities;
+        this.securityProvider = "Email Security Provider";
     }
 
     public SecurityIdentity[] build() {

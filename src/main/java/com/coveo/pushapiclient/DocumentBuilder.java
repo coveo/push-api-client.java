@@ -123,12 +123,17 @@ public class DocumentBuilder {
     }
 
     public DocumentBuilder withAllowedPermissions(SecurityIdentityBuilder allowedPermissions) {
-        this.document.permissions.allowedPermissions = allowedPermissions.build();
+        this.document.permissions[0].allowedPermissions = allowedPermissions.build();
         return this;
     }
 
     public DocumentBuilder withDeniedPermissions(SecurityIdentityBuilder deniedPermissions) {
-        this.document.permissions.deniedPermissions = deniedPermissions.build();
+        this.document.permissions[0].deniedPermissions = deniedPermissions.build();
+        return this;
+    }
+
+    public DocumentBuilder withAllowAnonymousUsers(Boolean allowAnonymous) {
+        this.document.permissions[0].allowAnonymous = allowAnonymous;
         return this;
     }
 

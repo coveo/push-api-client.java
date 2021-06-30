@@ -27,14 +27,22 @@ public class TestingLocally {
     }
 
     public static void testPushDocument(String sourceId, Source source) {
-        DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
-        System.out.println(doc.marshal());
+        DocumentBuilder simpleDoc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
+        DocumentBuilder docWithSecurity = new DocumentBuilder("https://perdu.com/2", "the title 2")
+                .withData("this is searchable also")
+                .withAllowAnonymousUsers(false)
+                .withAllowedPermissions(new UserSecurityIdentityBuilder("olamothe@coveo.com"))
+                .withDeniedPermissions(new UserSecurityIdentityBuilder(new String[]{"lbompart@coveo.com", "ylakhdar@coveo.com"}));
+
+        System.out.println(simpleDoc.marshal());
+        System.out.println(docWithSecurity.marshal());
+
         try {
-            source.addOrUpdateDocument(sourceId, doc);
+            source.addOrUpdateDocument(sourceId, simpleDoc);
+            source.addOrUpdateDocument(sourceId, docWithSecurity);
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
-
     }
 
     public static void testManageIdentities(Source source) {
