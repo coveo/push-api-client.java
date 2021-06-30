@@ -3,10 +3,10 @@ package com.coveo.pushapiclient;
 public class SecurityIdentity {
     /**
      * The name of the security identity.
-     *
+     * <p>
      * Examples:
-     *  - `asmith@example.com`
-     *  - `SampleTeam2`
+     * - `asmith@example.com`
+     * - `SampleTeam2`
      */
     public String identity;
     /**
@@ -20,8 +20,14 @@ public class SecurityIdentity {
     public SecurityIdentityType identityType;
     /**
      * The security identity provider through which the security identity is updated.
-     *
+     * <p>
      * Defaults to the first security identity provider associated with the target Push source.
      */
     public String securityProvider;
+
+    public SecurityIdentity(String identity, SecurityIdentityType securityIdentityType, String securityProvider) {
+        this.identity = identity;
+        this.identityType = securityIdentityType;
+        this.securityProvider = securityProvider;
+    }
 }

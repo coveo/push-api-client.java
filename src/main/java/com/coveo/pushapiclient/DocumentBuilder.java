@@ -118,13 +118,13 @@ public class DocumentBuilder {
         return this;
     }
 
-    public DocumentBuilder withAllowedPermissions() {
-        // TODO
+    public DocumentBuilder withAllowedPermissions(SecurityIdentityBuilder allowedPermissions) {
+        this.document.permissions.allowedPermissions = allowedPermissions.build();
         return this;
     }
 
-    public DocumentBuilder withDeniedPermissions() {
-        // TODO
+    public DocumentBuilder withDeniedPermissions(SecurityIdentityBuilder deniedPermissions) {
+        this.document.permissions.deniedPermissions = deniedPermissions.build();
         return this;
     }
 
