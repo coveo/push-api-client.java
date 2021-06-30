@@ -28,13 +28,21 @@ public class TestingLocally {
 
     public static void testPushDocument(String sourceId, Source source) {
         DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
+        DocumentBuilder docWithMetadata = new DocumentBuilder("https://perdu.com/3", "the title 3").withMetadata(new HashMap<>() {{
+            put("foo", "bar");
+            put("my_field_1", "1");
+            put("my_field_2", false);
+            put("my_field_3", 1234);
+            put("my_field_4", new String[]{"a", "b", "c"});
+        }});
         System.out.println(doc.marshal());
+        System.out.println(docWithMetadata.marshal());
         try {
             source.addOrUpdateDocument(sourceId, doc);
+            source.addOrUpdateDocument(sourceId, docWithMetadata);
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
-
     }
 
     public static void testManageIdentities(Source source) {

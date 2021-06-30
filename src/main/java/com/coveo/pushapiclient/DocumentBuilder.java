@@ -1,14 +1,28 @@
 package com.coveo.pushapiclient;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
 public class DocumentBuilder {
-    private Document document;
+
+    private static final ArrayList<String> reservedKeynames = new ArrayList<>() {{
+        add("compressedBinaryData");
+        add("compressedBinaryDataFileId");
+        add("parentId");
+        add("fileExtension");
+        add("data");
+        add("permissions");
+        add("documentId");
+        add("orderingId");
+    }};
+
+    private final Document document;
 
     public DocumentBuilder(String uri, String title) {
         this.document = new Document();
@@ -133,7 +147,13 @@ public class DocumentBuilder {
     }
 
     public String marshal() {
-        return new Gson().toJson(this.document);
+        JsonObject jsonDocument = new Gson().toJsonTree(this.document).getAsJsonObject();
+        this.document.metadata.forEach((key, value) -> {
+            jsonDocument.add(key, new Gson().toJsonTree(value));
+        });
+        jsonDocument.remove("metadata");
+        return jsonDocument.toString();
+
     }
 
     private String dateFormat(DateTime dt) {
@@ -154,6 +174,8 @@ public class DocumentBuilder {
     }
 
     private void validateReservedMetadataKeyNames(String key) {
-        // TODO
+        if (reservedKeynames.contains(key)) {
+            throw new RuntimeException(String.format("Cannot use %s as a metadata key: It is a reserved keynames. See https://docs.coveo.com/en/78/index-content/push-api-reference#json-document-reserved-key-names", key));
+        }
     }
 }
