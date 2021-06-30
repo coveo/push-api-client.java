@@ -33,4 +33,8 @@ public class Source {
     public HttpResponse<String> manageSecurityIdentities(String securityProviderId, SecurityIdentityBatchConfig batchConfig) throws IOException, InterruptedException {
         return this.platformClient.manageSecurityIdentities(securityProviderId, batchConfig);
     }
+
+    public HttpResponse<String> addOrUpdateDocument(String sourceId, DocumentBuilder docBuilder) throws IOException, InterruptedException {
+        return this.platformClient.pushDocument(sourceId, docBuilder.marshal(), docBuilder.getDocument().uri);
+    }
 }
