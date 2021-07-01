@@ -126,8 +126,17 @@ public class PlatformClient {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void deleteDocument(String sourceId, String documentId, Boolean deleteChildren) {
-        // TODO
+    public HttpResponse<String> deleteDocument(String sourceId, String documentId, Boolean deleteChildren) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/documents?documentId=%s&deleteChildren=%s", sourceId, documentId, deleteChildren));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .DELETE()
+                .uri(uri)
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public void createFileContainer() {

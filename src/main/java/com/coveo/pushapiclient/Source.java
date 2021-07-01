@@ -37,4 +37,8 @@ public class Source {
     public HttpResponse<String> addOrUpdateDocument(String sourceId, DocumentBuilder docBuilder) throws IOException, InterruptedException {
         return this.platformClient.pushDocument(sourceId, docBuilder.marshal(), docBuilder.getDocument().uri);
     }
+
+    public HttpResponse<String> deleteDocument(String sourceId, String documentId, Boolean deleteChildren) throws IOException, InterruptedException {
+        return this.platformClient.deleteDocument(sourceId, documentId, deleteChildren);
+    }
 }

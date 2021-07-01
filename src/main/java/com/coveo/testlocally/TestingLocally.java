@@ -38,8 +38,13 @@ public class TestingLocally {
         System.out.println(doc.marshal());
         System.out.println(docWithMetadata.marshal());
         try {
-            source.addOrUpdateDocument(sourceId, doc);
-            source.addOrUpdateDocument(sourceId, docWithMetadata);
+            HttpResponse<String> resAddSimpleDoc = source.addOrUpdateDocument(sourceId, doc);
+            HttpResponse<String> resAddOrUpdateMetadata = source.addOrUpdateDocument(sourceId, docWithMetadata);
+            HttpResponse<String> resDelete = source.deleteDocument(sourceId, doc.getDocument().uri, true);
+
+            System.out.println(resAddSimpleDoc.statusCode());
+            System.out.println(resAddOrUpdateMetadata.statusCode());
+            System.out.println(resDelete.statusCode());
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
