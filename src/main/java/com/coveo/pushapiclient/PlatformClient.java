@@ -143,12 +143,13 @@ public class PlatformClient {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> uploadContentToFileContainer(String sourceId, FileContainer fileContainer, BatchUpdate batchUpdate) throws IOException, InterruptedException {
+    public HttpResponse<String> uploadContentToFileContainer(String sourceId, FileContainer fileContainer, BatchUpdateRecord batchUpdate) throws IOException, InterruptedException {
         String[] headers = fileContainer.requiredHeaders.entrySet()
                 .stream()
                 .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
                 .toArray(String[]::new);
         URI uri = URI.create(fileContainer.uploadUri);
+
 
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)

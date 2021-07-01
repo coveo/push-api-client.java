@@ -1,13 +1,22 @@
 package com.coveo.pushapiclient;
 
-import java.util.ArrayList;
+import com.google.gson.JsonObject;
+
+import java.util.List;
 
 public class BatchUpdate {
-    private final ArrayList<DocumentBuilder> addOrUpdate;
-    private final ArrayList<DocumentBuilder> delete;
+    private List<DocumentBuilder> addOrUpdate;
+    private List<DocumentBuilder> delete;
 
-    public BatchUpdate(ArrayList<DocumentBuilder> addOrUpdate, ArrayList<DocumentBuilder> delete) {
+    public BatchUpdate(List<DocumentBuilder> addOrUpdate, List<DocumentBuilder> delete) {
         this.addOrUpdate = addOrUpdate;
         this.delete = delete;
+    }
+
+    public BatchUpdateRecord marshal() {
+        return new BatchUpdateRecord(
+                this.addOrUpdate.stream().map(documentBuilder -> documentBuilder.marshalJsonObject()).toArray(JsonObject[]::new),
+                this.delete.stream().map(documentBuilder -> documentBuilder.marshalJsonObject()).toArray(JsonObject[]::new)
+        );
     }
 }

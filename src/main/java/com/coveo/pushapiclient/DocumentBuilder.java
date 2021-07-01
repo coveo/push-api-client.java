@@ -147,13 +147,17 @@ public class DocumentBuilder {
     }
 
     public String marshal() {
+        return this.marshalJsonObject().toString();
+    }
+
+    public JsonObject marshalJsonObject() {
         JsonObject jsonDocument = new Gson().toJsonTree(this.document).getAsJsonObject();
         this.document.metadata.forEach((key, value) -> {
             jsonDocument.add(key, new Gson().toJsonTree(value));
         });
         jsonDocument.remove("metadata");
-        return jsonDocument.toString();
-
+        jsonDocument.addProperty("documentId", this.document.uri);
+        return jsonDocument;
     }
 
     private String dateFormat(DateTime dt) {

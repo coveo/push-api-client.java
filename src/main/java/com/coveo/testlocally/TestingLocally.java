@@ -36,8 +36,6 @@ public class TestingLocally {
             put("my_field_3", 1234);
             put("my_field_4", new String[]{"a", "b", "c"});
         }});
-        System.out.println(doc.marshal());
-        System.out.println(docWithMetadata.marshal());
 
         ArrayList<DocumentBuilder> docToAdd = new ArrayList<>();
         ArrayList<DocumentBuilder> docToRemove = new ArrayList<>();
@@ -52,6 +50,7 @@ public class TestingLocally {
         try {
             source.addOrUpdateDocument(sourceId, doc);
             source.addOrUpdateDocument(sourceId, docWithMetadata);
+            source.batchUpdateDocuments(sourceId, new BatchUpdate(docToAdd, docToRemove));
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
