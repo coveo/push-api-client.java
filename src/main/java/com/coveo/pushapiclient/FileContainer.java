@@ -1,9 +1,9 @@
 package com.coveo.pushapiclient;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class FileContainer {
     public String uploadUri;
     public String fileId;
-    public HashMap<String, String> requiredHeaders;
+    public Map<String, String> requiredHeaders;
 }
