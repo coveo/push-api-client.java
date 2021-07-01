@@ -6,6 +6,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -28,9 +29,20 @@ public class TestingLocally {
 
     public static void testPushDocument(String sourceId, Source source) {
         DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
-        System.out.println(doc.marshal());
+
+        ArrayList<DocumentBuilder> docToAdd = new ArrayList<>();
+        ArrayList<DocumentBuilder> docToRemove = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            docToAdd.add(new DocumentBuilder(String.format("https://perdu.com/%s", i), String.format("the title %s", i)).withData(String.format("this is searchable %s", i)));
+        }
+        for (int i = 10; i < 20; i++) {
+            docToRemove.add(new DocumentBuilder(String.format("https://perdu.com/%s", i), String.format("the title %s", i)).withData(String.format("this is searchable %s", i)));
+        }
+
+
         try {
             source.addOrUpdateDocument(sourceId, doc);
+            source.batchUpdateDocuments(sourceId, new BatchUpdate(docToAdd, docToRemove));
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
