@@ -1,8 +1,26 @@
 package com.coveo.pushapiclient;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class Document {
+    /**
+     * The metadata key-value pairs for a given document.
+     * <p>
+     * Each metadata in the document must be unique.
+     * <p>
+     * Metadata are case-insensitive (e.g., the Push API considers mykey, MyKey, myKey, MYKEY, etc. as identical).
+     * <p>
+     * See https://docs.coveo.com/en/115 for more information.
+     */
+    public final HashMap<String, Object> metadata;
+    /**
+     * The list of permission sets for this item.
+     * <p>
+     * This is useful when item based security is required (i.e., when security isn't configured at the source level).
+     * <p>
+     * See https://docs.coveo.com/en/107 for more information.
+     */
+    public final DocumentPermissions[] permissions;
     /**
      * The Uniform Resource Identifier (URI) that uniquely identifies the document in a Coveo index.
      * <p>
@@ -74,24 +92,6 @@ public class Document {
      */
     public CompressedBinaryData compressedBinaryData;
     /**
-     * The metadata key-value pairs for a given document.
-     * <p>
-     * Each metadata in the document must be unique.
-     * <p>
-     * Metadata are case-insensitive (e.g., the Push API considers mykey, MyKey, myKey, MYKEY, etc. as identical).
-     * <p>
-     * See https://docs.coveo.com/en/115 for more information.
-     */
-    public Map<String, Object> metadata;
-    /**
-     * The list of permission sets for this item.
-     * <p>
-     * This is useful when item based security is required (i.e., when security isn't configured at the source level).
-     * <p>
-     * See https://docs.coveo.com/en/107 for more information.
-     */
-    public DocumentPermissions[] permissions;
-    /**
      * The file extension of the data you're pushing.
      * <p>
      * This is useful when pushing a compressed item. The converter uses this information to identify how to correctly process the item.
@@ -104,6 +104,7 @@ public class Document {
 
     public Document() {
         this.permissions = new DocumentPermissions[]{new DocumentPermissions()};
+        this.metadata = new HashMap<String, Object>();
     }
 }
 
