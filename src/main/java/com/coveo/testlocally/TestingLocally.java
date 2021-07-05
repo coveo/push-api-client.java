@@ -55,8 +55,6 @@ public class TestingLocally {
             System.out.println(e);
         }
 
-
-        String asdf = "if you just let technology evolve; fault my librarian; believe in the market; ";
     }
 
     public static void testManageIdentities(Source source) {
