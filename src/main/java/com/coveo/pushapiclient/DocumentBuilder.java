@@ -170,7 +170,9 @@ public class DocumentBuilder {
     }
 
     private void validateFileExtension(String fileExtension) {
-        // TODO
+        if (!fileExtension.startsWith(".")) {
+            throw new RuntimeException(String.format("%s is not a valid file extension. It should start with a leading ."));
+        }
     }
 
     private void validateReservedMetadataKeyNames(String key) {
