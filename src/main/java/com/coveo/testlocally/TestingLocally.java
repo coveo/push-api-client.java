@@ -6,6 +6,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -35,19 +36,30 @@ public class TestingLocally {
             put("my_field_3", 1234);
             put("my_field_4", new String[]{"a", "b", "c"});
         }});
-        DocumentBuilder docWithSecurity = new DocumentBuilder("https://perdu.com/2", "the title 2")
+         DocumentBuilder docWithSecurity = new DocumentBuilder("https://perdu.com/2", "the title 2")
                 .withData("this is searchable also")
                 .withAllowAnonymousUsers(false)
                 .withAllowedPermissions(new UserSecurityIdentityBuilder("olamothe@coveo.com"))
                 .withDeniedPermissions(new UserSecurityIdentityBuilder(new String[]{"lbompart@coveo.com", "ylakhdar@coveo.com"}));
 
+        ArrayList<DocumentBuilder> docToAdd = new ArrayList<>();
+        ArrayList<DocumentBuilder> docToRemove = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            docToAdd.add(new DocumentBuilder(String.format("https://perdu.com/%s", i), String.format("the title %s", i)).withData(String.format("this is searchable %s", i)));
+        }
+        for (int i = 10; i < 20; i++) {
+            docToRemove.add(new DocumentBuilder(String.format("https://perdu.com/%s", i), String.format("the title %s", i)).withData(String.format("this is searchable %s", i)));
+        }
+
         try {
             source.addOrUpdateDocument(sourceId, simpleDoc);
             source.addOrUpdateDocument(sourceId, docWithMetadata);
+            source.batchUpdateDocuments(sourceId, new BatchUpdate(docToAdd, docToRemove));
             source.addOrUpdateDocument(sourceId, docWithSecurity);
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
+
     }
 
     public static void testManageIdentities(Source source) {

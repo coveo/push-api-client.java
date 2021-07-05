@@ -1,5 +1,7 @@
 package com.coveo.pushapiclient;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.net.http.HttpResponse;
 
@@ -36,5 +38,12 @@ public class Source {
 
     public HttpResponse<String> addOrUpdateDocument(String sourceId, DocumentBuilder docBuilder) throws IOException, InterruptedException {
         return this.platformClient.pushDocument(sourceId, docBuilder.marshal(), docBuilder.getDocument().uri);
+    }
+
+    public HttpResponse<String> batchUpdateDocuments(String sourceId, BatchUpdate batchUpdate) throws IOException, InterruptedException {
+        HttpResponse<String> resFileContainer = this.platformClient.createFileContainer();
+        FileContainer fileContainer = new Gson().fromJson(resFileContainer.body(), FileContainer.class);
+        this.platformClient.uploadContentToFileContainer(sourceId, fileContainer, batchUpdate.marshal());
+        return this.platformClient.pushFileContainerContent(sourceId, fileContainer);
     }
 }
