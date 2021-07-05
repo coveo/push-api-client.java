@@ -51,8 +51,6 @@ public class TestingLocally {
             docToRemove.add(new DocumentBuilder(String.format("https://perdu.com/%s", i), String.format("the title %s", i)).withData(String.format("this is searchable %s", i)));
         }
 
-       
-
         try {
             source.addOrUpdateDocument(sourceId, simpleDoc);
             source.addOrUpdateDocument(sourceId, docWithMetadata);
