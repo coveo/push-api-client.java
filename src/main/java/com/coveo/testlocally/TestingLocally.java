@@ -7,6 +7,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -42,6 +43,10 @@ public class TestingLocally {
                 .withAllowedPermissions(new UserSecurityIdentityBuilder("olamothe@coveo.com"))
                 .withDeniedPermissions(new UserSecurityIdentityBuilder(new String[]{"lbompart@coveo.com", "ylakhdar@coveo.com"}));
 
+        String encoded = Base64.getEncoder().encodeToString("this is binary data".getBytes());
+        DocumentBuilder docWithBinaryData = new DocumentBuilder("https://perdu.com/binarydata", "the title binary data")
+                .withCompressedBinaryData(new CompressedBinaryData(encoded, CompressionType.UNCOMPRESSED)).withFileExtension(".txt");
+
         ArrayList<DocumentBuilder> docToAdd = new ArrayList<>();
         ArrayList<DocumentBuilder> docToRemove = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -56,13 +61,14 @@ public class TestingLocally {
             HttpResponse<String> resAddOrUpdateMetadata = source.addOrUpdateDocument(sourceId, docWithMetadata);
             HttpResponse<String> resDelete = source.deleteDocument(sourceId, simpleDoc.getDocument().uri, true);
             HttpResponse<String> resBatch = source.batchUpdateDocuments(sourceId, new BatchUpdate(docToAdd, docToRemove));
+            HttpResponse<String> resBinaryDoc = source.addOrUpdateDocument(sourceId, docWithBinaryData);
 
 
             System.out.println(resAddSimpleDoc.statusCode());
             System.out.println(resAddOrUpdateMetadata.statusCode());
             System.out.println(resDelete.statusCode());
             System.out.println(resBatch.statusCode());
-
+            System.out.println(resBinaryDoc.statusCode());
 
         } catch (IOException | InterruptedException e) {
             System.out.println(e);

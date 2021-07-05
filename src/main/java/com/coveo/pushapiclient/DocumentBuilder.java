@@ -85,7 +85,6 @@ public class DocumentBuilder {
     }
 
     public DocumentBuilder withCompressedBinaryData(CompressedBinaryData compressedBinaryData) {
-        this.validateCompressedBinaryData(compressedBinaryData.data);
         this.document.compressedBinaryData = compressedBinaryData;
         return this;
     }
@@ -161,6 +160,11 @@ public class DocumentBuilder {
             jsonDocument.add(key, new Gson().toJsonTree(value));
         });
         jsonDocument.remove("metadata");
+
+        if (this.document.compressedBinaryData != null) {
+            jsonDocument.addProperty("compressedBinaryData", this.document.compressedBinaryData.data());
+        }
+
         jsonDocument.addProperty("documentId", this.document.uri);
         return jsonDocument;
     }
@@ -172,10 +176,6 @@ public class DocumentBuilder {
     private void setMetadataValue(String key, Object metadataValue) {
         this.validateReservedMetadataKeyNames(key);
         this.document.metadata.put(key, metadataValue);
-    }
-
-    private void validateCompressedBinaryData(String data) {
-        // TODO
     }
 
     private void validateFileExtension(String fileExtension) {

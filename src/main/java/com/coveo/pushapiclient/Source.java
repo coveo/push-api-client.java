@@ -37,7 +37,8 @@ public class Source {
     }
 
     public HttpResponse<String> addOrUpdateDocument(String sourceId, DocumentBuilder docBuilder) throws IOException, InterruptedException {
-        return this.platformClient.pushDocument(sourceId, docBuilder.marshal(), docBuilder.getDocument().uri);
+        CompressionType compressionType = docBuilder.getDocument().compressedBinaryData != null ? docBuilder.getDocument().compressedBinaryData.compressionType() : CompressionType.UNCOMPRESSED;
+        return this.platformClient.pushDocument(sourceId, docBuilder.marshal(), docBuilder.getDocument().uri, compressionType);
     }
 
     public HttpResponse<String> deleteDocument(String sourceId, String documentId, Boolean deleteChildren) throws IOException, InterruptedException {
