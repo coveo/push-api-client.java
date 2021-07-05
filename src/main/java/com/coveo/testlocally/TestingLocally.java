@@ -6,7 +6,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
-import java.util.Date;
+import java.util.Base64;
 import java.util.HashMap;
 
 public class TestingLocally {
@@ -27,7 +27,10 @@ public class TestingLocally {
     }
 
     public static void testPushDocument(String sourceId, Source source) {
-        DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
+        DocumentBuilder doc = new DocumentBuilder("https://perdu.com", "the title")
+                .withData("this is searchable")
+                .withDate(123l)
+                .withModifiedDate(0l);
         DocumentBuilder docWithMetadata = new DocumentBuilder("https://perdu.com/3", "the title 3").withMetadata(new HashMap<>() {{
             put("foo", "bar");
             put("my_field_1", "1");
@@ -35,14 +38,25 @@ public class TestingLocally {
             put("my_field_3", 1234);
             put("my_field_4", new String[]{"a", "b", "c"});
         }});
+        String encoded = Base64.getEncoder().encodeToString("this is binary data".getBytes());
+        String decoded = new String(Base64.getDecoder().decode(encoded));
+        DocumentBuilder docWithBinaryData = new DocumentBuilder("https://perdu.com/binarydata", "the title binary data")
+                .withCompressedBinaryData(new CompressedBinaryData(encoded, CompressionType.UNCOMPRESSED)).withFileExtension(".txt");
+
+
         System.out.println(doc.marshal());
         System.out.println(docWithMetadata.marshal());
+        System.out.println(docWithBinaryData.marshal());
         try {
             source.addOrUpdateDocument(sourceId, doc);
             source.addOrUpdateDocument(sourceId, docWithMetadata);
+            source.addOrUpdateDocument(sourceId, docWithBinaryData);
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
+
+
+        String asdf = "if you just let technology evolve; fault my librarian; believe in the market; ";
     }
 
     public static void testManageIdentities(Source source) {

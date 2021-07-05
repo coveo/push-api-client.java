@@ -113,9 +113,9 @@ public class PlatformClient {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> pushDocument(String sourceId, String documentJSON, String documentId) throws IOException, InterruptedException {
+    public HttpResponse<String> pushDocument(String sourceId, String documentJSON, String documentId, CompressionType compressionType) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
-        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/documents?documentId=%s", sourceId, documentId));
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/documents?documentId=%s&compressionType=%s", sourceId, documentId, compressionType.toString()));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
