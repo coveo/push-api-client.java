@@ -40,6 +40,10 @@ public class Source {
         return this.platformClient.pushDocument(sourceId, docBuilder.marshal(), docBuilder.getDocument().uri);
     }
 
+    public HttpResponse<String> deleteDocument(String sourceId, String documentId, Boolean deleteChildren) throws IOException, InterruptedException {
+        return this.platformClient.deleteDocument(sourceId, documentId, deleteChildren);
+    }
+    
     public HttpResponse<String> batchUpdateDocuments(String sourceId, BatchUpdate batchUpdate) throws IOException, InterruptedException {
         HttpResponse<String> resFileContainer = this.platformClient.createFileContainer();
         FileContainer fileContainer = new Gson().fromJson(resFileContainer.body(), FileContainer.class);
