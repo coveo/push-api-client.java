@@ -28,17 +28,22 @@ public class TestingLocally {
 
     public static void testPushDocument(String sourceId, Source source) {
         DocumentBuilder simpleDoc = new DocumentBuilder("https://perdu.com", "the title").withData("this is searchable").withDate(new Date());
+        DocumentBuilder docWithMetadata = new DocumentBuilder("https://perdu.com/3", "the title 3").withMetadata(new HashMap<>() {{
+            put("foo", "bar");
+            put("my_field_1", "1");
+            put("my_field_2", false);
+            put("my_field_3", 1234);
+            put("my_field_4", new String[]{"a", "b", "c"});
+        }});
         DocumentBuilder docWithSecurity = new DocumentBuilder("https://perdu.com/2", "the title 2")
                 .withData("this is searchable also")
                 .withAllowAnonymousUsers(false)
                 .withAllowedPermissions(new UserSecurityIdentityBuilder("olamothe@coveo.com"))
                 .withDeniedPermissions(new UserSecurityIdentityBuilder(new String[]{"lbompart@coveo.com", "ylakhdar@coveo.com"}));
 
-        System.out.println(simpleDoc.marshal());
-        System.out.println(docWithSecurity.marshal());
-
         try {
             source.addOrUpdateDocument(sourceId, simpleDoc);
+            source.addOrUpdateDocument(sourceId, docWithMetadata);
             source.addOrUpdateDocument(sourceId, docWithSecurity);
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
