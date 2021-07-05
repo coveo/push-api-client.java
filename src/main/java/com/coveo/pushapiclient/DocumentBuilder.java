@@ -136,13 +136,18 @@ public class DocumentBuilder {
         return this;
     }
 
-    public DocumentBuilder withAllowedPermissions() {
-        // TODO
+    public DocumentBuilder withAllowedPermissions(SecurityIdentityBuilder allowedPermissions) {
+        this.document.permissions[0].allowedPermissions = allowedPermissions.build();
         return this;
     }
 
-    public DocumentBuilder withDeniedPermissions() {
-        // TODO
+    public DocumentBuilder withDeniedPermissions(SecurityIdentityBuilder deniedPermissions) {
+        this.document.permissions[0].deniedPermissions = deniedPermissions.build();
+        return this;
+    }
+
+    public DocumentBuilder withAllowAnonymousUsers(Boolean allowAnonymous) {
+        this.document.permissions[0].allowAnonymous = allowAnonymous;
         return this;
     }
 
@@ -174,7 +179,9 @@ public class DocumentBuilder {
     }
 
     private void validateFileExtension(String fileExtension) {
-        // TODO
+        if (!fileExtension.startsWith(".")) {
+            throw new RuntimeException(String.format("%s is not a valid file extension. It should start with a leading ."));
+        }
     }
 
     private void validateReservedMetadataKeyNames(String key) {
