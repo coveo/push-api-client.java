@@ -36,7 +36,7 @@ public class TestingLocally {
             put("my_field_3", 1234);
             put("my_field_4", new String[]{"a", "b", "c"});
         }});
-         DocumentBuilder docWithSecurity = new DocumentBuilder("https://perdu.com/2", "the title 2")
+        DocumentBuilder docWithSecurity = new DocumentBuilder("https://perdu.com/2", "the title 2")
                 .withData("this is searchable also")
                 .withAllowAnonymousUsers(false)
                 .withAllowedPermissions(new UserSecurityIdentityBuilder("olamothe@coveo.com"))
@@ -52,9 +52,9 @@ public class TestingLocally {
         }
 
         try {
-            HttpResponse<String> resAddSimpleDoc = source.addOrUpdateDocument(sourceId, doc);
+            HttpResponse<String> resAddSimpleDoc = source.addOrUpdateDocument(sourceId, simpleDoc);
             HttpResponse<String> resAddOrUpdateMetadata = source.addOrUpdateDocument(sourceId, docWithMetadata);
-            HttpResponse<String> resDelete = source.deleteDocument(sourceId, doc.getDocument().uri, true);
+            HttpResponse<String> resDelete = source.deleteDocument(sourceId, simpleDoc.getDocument().uri, true);
             HttpResponse<String> resBatch = source.batchUpdateDocuments(sourceId, new BatchUpdate(docToAdd, docToRemove));
 
 
@@ -63,7 +63,7 @@ public class TestingLocally {
             System.out.println(resDelete.statusCode());
             System.out.println(resBatch.statusCode());
 
-            
+
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
