@@ -126,20 +126,60 @@ public class PlatformClient {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void deleteDocument(String sourceId, String documentId, Boolean deleteChildren) {
-        // TODO
+    public HttpResponse<String> deleteDocument(String sourceId, String documentId, Boolean deleteChildren) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/documents?documentId=%s&deleteChildren=%s", sourceId, documentId, deleteChildren));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .DELETE()
+                .uri(uri)
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void createFileContainer() {
-        // TODO
+    public HttpResponse<String> createFileContainer() throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + "/files");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void uploadContentToFileContainer(String sourceId, Object fileContainer) {
-        // TODO
+    public HttpResponse<String> uploadContentToFileContainer(String sourceId, FileContainer fileContainer, BatchUpdateRecord batchUpdate) throws IOException, InterruptedException {
+        String[] headers = fileContainer.requiredHeaders.entrySet()
+                .stream()
+                .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
+                .toArray(String[]::new);
+        URI uri = URI.create(fileContainer.uploadUri);
+
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .PUT(HttpRequest.BodyPublishers.ofString(new Gson().toJson(batchUpdate)))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void pushFileContainerContent(String sourceId, Object fileContainer) {
-        // TODO
+    public HttpResponse<String> pushFileContainerContent(String sourceId, FileContainer fileContainer) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/documents/batch?fileId=%s", sourceId, fileContainer.fileId));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private String getBaseSourceURL() {
