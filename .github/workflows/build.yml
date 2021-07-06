@@ -5,9 +5,8 @@ name: Build
 
 on:
   push:
-    branches: [ CDX-440 ]
+    branches: [ main ]
   pull_request:
-    branches: [ CDX-440 ]
 
 jobs:
   build:
