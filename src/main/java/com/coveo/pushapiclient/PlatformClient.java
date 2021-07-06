@@ -23,6 +23,12 @@ public class PlatformClient {
         this.httpClient = HttpClient.newHttpClient();
     }
 
+    public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
+        this.apiKey = apiKey;
+        this.organizationId = organizationId;
+        this.httpClient = httpClient;
+    }
+
     public HttpResponse<String> createSource(String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
 
@@ -102,11 +108,11 @@ public class PlatformClient {
 
     public HttpResponse<String> manageSecurityIdentities(String securityProviderId, SecurityIdentityBatchConfig batchConfig) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
-        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/batch?fileId=%s&orderingId=%s", batchConfig.fileId, batchConfig.orderingId));
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/batch?fileId=%s&orderingId=%s", batchConfig.fileId(), batchConfig.orderingId()));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
-                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .PUT(HttpRequest.BodyPublishers.noBody())
                 .uri(uri)
                 .build();
 
