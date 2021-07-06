@@ -2,6 +2,7 @@ package com.coveo.pushapiclient;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -161,6 +162,8 @@ public class DocumentBuilder {
     }
 
     public JsonObject marshalJsonObject() {
+        this.generatePermanentId();
+
         JsonObject jsonDocument = new Gson().toJsonTree(this.document).getAsJsonObject();
         this.document.metadata.forEach((key, value) -> {
             jsonDocument.add(key, new Gson().toJsonTree(value));
@@ -193,6 +196,12 @@ public class DocumentBuilder {
     private void validateReservedMetadataKeyNames(String key) {
         if (reservedKeynames.contains(key)) {
             throw new RuntimeException(String.format("Cannot use %s as a metadata key: It is a reserved keynames. See https://docs.coveo.com/en/78/index-content/push-api-reference#json-document-reserved-key-names", key));
+        }
+    }
+
+    private void generatePermanentId() {
+        if (this.document.permanentId == null) {
+            this.document.permanentId = DigestUtils.sha256Hex(this.document.uri);
         }
     }
 }
