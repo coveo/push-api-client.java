@@ -79,6 +79,12 @@ public class DocumentBuilder {
         return this;
     }
 
+    public DocumentBuilder withModifiedDate(Date date) {
+        DateTime dt = new DateTime(date);
+        this.document.modifiedDate = this.dateFormat(dt);
+        return this;
+    }
+
     public DocumentBuilder withPermanentId(String permanentId) {
         this.document.permanentId = permanentId;
         return this;
