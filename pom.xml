@@ -45,22 +45,11 @@
     </dependencies>
     <repositories>
         <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>central</id>
-            <name>libs-release</name>
-            <url>https://maven.cloud.coveo.com/artifactory/libs-release</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <id>snapshots</id>
-            <name>libs-snapshot</name>
-            <url>https://maven.cloud.coveo.com/artifactory/libs-snapshot</url>
+            <id>jboss-community</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
         </repository>
     </repositories>
+
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
