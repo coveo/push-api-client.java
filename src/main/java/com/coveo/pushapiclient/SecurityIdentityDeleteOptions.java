@@ -1,11 +1,7 @@
 package com.coveo.pushapiclient;
 
-public class SecurityIdentityDeleteOptions {
-    public final Integer queueDelay;
-    public final Long orderingId;
-
-    public SecurityIdentityDeleteOptions(Integer queueDelay, Long orderingId) {
-        this.queueDelay = queueDelay;
-        this.orderingId = orderingId;
-    }
+/**
+ * See [Disabling Old Security Identities](https://docs.coveo.com/en/33)
+ */
+public record SecurityIdentityDeleteOptions(Integer queueDelay, Long orderingId) {
 }

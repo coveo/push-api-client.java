@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * Utility class to build a {@link Document}
+ */
 public class DocumentBuilder {
 
     private static final ArrayList<String> reservedKeynames = new ArrayList<>() {{
@@ -25,6 +28,10 @@ public class DocumentBuilder {
 
     private final Document document;
 
+    /**
+     * @param uri   the URI of the document. See {@link Document.uri}
+     * @param title the title of the document. See {@link Document.title}
+     */
     public DocumentBuilder(String uri, String title) {
         this.document = new Document();
         this.document.uri = uri;
@@ -35,132 +42,284 @@ public class DocumentBuilder {
         return this.document;
     }
 
+    /**
+     * Set the data of the document. See {@link Document.data}
+     *
+     * @param data
+     * @return
+     */
     public DocumentBuilder withData(String data) {
         this.document.data = data;
         return this;
     }
 
+    /**
+     * Set the date of the document. See {@link Document.date}
+     *
+     * @param date
+     * @return
+     */
     public DocumentBuilder withDate(String date) {
         DateTime dt = DateTime.parse(date);
         this.document.date = this.dateFormat(dt);
         return this;
     }
 
+    /**
+     * Set the date of the document. See {@link Document.date}
+     *
+     * @param date
+     * @return
+     */
     public DocumentBuilder withDate(Long date) {
         DateTime dt = new DateTime(date);
         this.document.date = this.dateFormat(dt);
         return this;
     }
 
+    /**
+     * Set the date of the document. See {@link Document.date}
+     *
+     * @param date
+     * @return
+     */
     public DocumentBuilder withDate(Date date) {
         DateTime dt = new DateTime(date);
         this.document.date = this.dateFormat(dt);
         return this;
     }
 
+    /**
+     * Set the date of the document. See {@link Document.date}
+     *
+     * @param date
+     * @return
+     */
     public DocumentBuilder withDate(DateTime date) {
         this.document.date = this.dateFormat(date);
         return this;
     }
 
+    /**
+     * Set the modified date of the document. See {@link Document.modifiedDate}
+     *
+     * @param date
+     * @returns
+     */
     public DocumentBuilder withModifiedDate(String date) {
         DateTime dt = DateTime.parse(date);
         this.document.modifiedDate = this.dateFormat(dt);
         return this;
     }
 
+    /**
+     * Set the modified date of the document. See {@link Document.modifiedDate}
+     *
+     * @param date
+     * @returns
+     */
     public DocumentBuilder withModifiedDate(Long date) {
         DateTime dt = new DateTime(date);
         this.document.modifiedDate = this.dateFormat(dt);
         return this;
     }
 
+    /**
+     * Set the modified date of the document. See {@link Document.modifiedDate}
+     *
+     * @param date
+     * @returns
+     */
     public DocumentBuilder withModifiedDate(DateTime date) {
         this.document.modifiedDate = this.dateFormat(date);
         return this;
     }
 
+    /**
+     * Set the modified date of the document. See {@link Document.modifiedDate}
+     *
+     * @param date
+     * @returns
+     */
     public DocumentBuilder withModifiedDate(Date date) {
         DateTime dt = new DateTime(date);
         this.document.modifiedDate = this.dateFormat(dt);
         return this;
     }
 
+    /**
+     * Set the permanentID of the document. See {@link Document.permanentId}
+     *
+     * @param permanentId
+     * @returns
+     */
     public DocumentBuilder withPermanentId(String permanentId) {
         this.document.permanentId = permanentId;
         return this;
     }
 
+    /**
+     * Set the base64 encoded, compressed binary data of the document. See {@link Document.compressedBinaryData}
+     *
+     * @param compressedBinaryData
+     * @returns
+     */
     public DocumentBuilder withCompressedBinaryData(CompressedBinaryData compressedBinaryData) {
         this.document.compressedBinaryData = compressedBinaryData;
         return this;
     }
 
+    /**
+     * Set the file extension on the document. See {@link Document.fileExtension}
+     *
+     * @param fileExtension
+     * @returns
+     */
     public DocumentBuilder withFileExtension(String fileExtension) {
         this.validateFileExtension(fileExtension);
         this.document.fileExtension = fileExtension;
         return this;
     }
 
+    /**
+     * Set the parentID on the document. See {@link Document.parentId}
+     *
+     * @param parentID
+     * @returns
+     */
     public DocumentBuilder withParentID(String parentID) {
         this.document.parentId = parentID;
         return this;
     }
 
+    /**
+     * Set the clickableURI on the document. See {@link Document.clickableUri}
+     *
+     * @param clickableUri
+     * @returns
+     */
     public DocumentBuilder withClickableUri(String clickableUri) {
         this.document.clickableUri = clickableUri;
         return this;
     }
 
+    /**
+     * Set the author on the document. See {@link Document.author}
+     *
+     * @param author
+     * @returns
+     */
     public DocumentBuilder withAuthor(String author) {
         this.document.author = author;
         return this;
     }
 
+    /**
+     * Add a single metadata key and value pair on the document. See {@link Document.metadata}
+     *
+     * @param key
+     * @param metadataValue
+     * @returns
+     */
     public DocumentBuilder withMetadataValue(String key, String metadataValue) {
         this.setMetadataValue(key, metadataValue);
         return this;
     }
 
+    /**
+     * Add a single metadata key and value pair on the document. See {@link Document.metadata}
+     *
+     * @param key
+     * @param metadataValue
+     * @returns
+     */
     public DocumentBuilder withMetadataValue(String key, String[] metadataValue) {
         this.setMetadataValue(key, metadataValue);
         return this;
     }
 
+    /**
+     * Add a single metadata key and value pair on the document. See {@link Document.metadata}
+     *
+     * @param key
+     * @param metadataValue
+     * @returns
+     */
     public DocumentBuilder withMetadataValue(String key, Integer metadataValue) {
         this.setMetadataValue(key, metadataValue);
         return this;
     }
 
+    /**
+     * Add a single metadata key and value pair on the document. See {@link Document.metadata}
+     *
+     * @param key
+     * @param metadataValue
+     * @returns
+     */
     public DocumentBuilder withMetadataValue(String key, Integer[] metadataValue) {
         this.setMetadataValue(key, metadataValue);
         return this;
     }
 
+    /**
+     * Set metadata on the document. See {@link Document.metadata}
+     *
+     * @param metadata
+     * @returns
+     */
     public DocumentBuilder withMetadata(Map<String, Object> metadata) {
         metadata.forEach(this::setMetadataValue);
         return this;
     }
 
+    /**
+     * Set allowed identities on the document. See {@link Document.permissions}
+     *
+     * @param allowedPermissions
+     * @returns
+     */
     public DocumentBuilder withAllowedPermissions(SecurityIdentityBuilder allowedPermissions) {
         this.document.permissions[0].allowedPermissions = allowedPermissions.build();
         return this;
     }
 
+    /**
+     * Set denied identities on the document. See {@link Document.permissions}
+     *
+     * @param deniedPermissions
+     * @returns
+     */
     public DocumentBuilder withDeniedPermissions(SecurityIdentityBuilder deniedPermissions) {
         this.document.permissions[0].deniedPermissions = deniedPermissions.build();
         return this;
     }
 
+    /**
+     * Set allowAnonymous for permissions on the document. See {@link Document.permissions}
+     *
+     * @param allowAnonymous
+     * @returns
+     */
     public DocumentBuilder withAllowAnonymousUsers(Boolean allowAnonymous) {
         this.document.permissions[0].allowAnonymous = allowAnonymous;
         return this;
     }
 
+    /**
+     * Marshal the document into a JSON string accepted by the push API.
+     *
+     * @returns
+     */
     public String marshal() {
         return this.marshalJsonObject().toString();
     }
 
+    /**
+     * Marshal the document into a JSON object accepted by the push API.
+     *
+     * @returns
+     */
     public JsonObject marshalJsonObject() {
         this.generatePermanentId();
 
