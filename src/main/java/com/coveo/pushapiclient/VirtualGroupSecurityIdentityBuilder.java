@@ -1,18 +1,10 @@
 package com.coveo.pushapiclient;
 
-public class VirtualGroupSecurityIdentityBuilder implements SecurityIdentityBuilder {
-    private final String[] identities;
-    private final String securityProvider;
+public record VirtualGroupSecurityIdentityBuilder(String[] identities,
+                                                  String securityProvider) implements SecurityIdentityBuilder {
 
     public VirtualGroupSecurityIdentityBuilder(String identity, String securityProvider) {
-        this.identities = new String[]{identity};
-        this.securityProvider = securityProvider;
-
-    }
-
-    public VirtualGroupSecurityIdentityBuilder(String[] identities, String securityProvider) {
-        this.identities = identities;
-        this.securityProvider = securityProvider;
+        this(new String[]{identity}, securityProvider);
     }
 
     public SecurityIdentity[] build() {
