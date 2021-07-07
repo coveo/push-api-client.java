@@ -1,9 +1,7 @@
 package com.coveo.pushapiclient;
 
-public class SecurityIdentityDelete {
-    public final IdentityModel identity;
-
-    public SecurityIdentityDelete(IdentityModel identity) {
-        this.identity = identity;
-    }
+/**
+ * See [Disabling a Single Security Identity](https://docs.coveo.com/en/84)
+ */
+public record SecurityIdentityDelete(IdentityModel identity) {
 }

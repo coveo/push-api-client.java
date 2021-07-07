@@ -1,5 +1,8 @@
 package com.coveo.pushapiclient;
 
+/**
+ * The compression type that was applied to your compressed document.
+ */
 public enum CompressionType {
     UNCOMPRESSED {
         public String toString() {
