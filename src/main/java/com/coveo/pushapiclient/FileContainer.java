@@ -3,7 +3,7 @@ package com.coveo.pushapiclient;
 import java.util.Map;
 
 /**
- * See [Creating a FileContainer](https://docs.coveo.com/en/43).
+ * See [Creating a FileContainer](https://docs.coveo.com/en/43)
  */
 public class FileContainer {
     public String uploadUri;
