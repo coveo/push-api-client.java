@@ -3,7 +3,7 @@ package com.coveo.pushapiclient;
 /**
  * Build a security identity of type `GROUP`.
  * <p>
- * Typically used in conjunction with {@link DocumentBuilder.withAllowedPermissions} or {@link DocumentBuilder.withDeniedPermissions}.
+ * Typically used in conjunction with {@link DocumentBuilder#withAllowedPermissions} or {@link DocumentBuilder#withDeniedPermissions}.
  * <p>
  * See {@link SecurityIdentity}.
  */

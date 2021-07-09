@@ -29,8 +29,8 @@ public class DocumentBuilder {
     private final Document document;
 
     /**
-     * @param uri   the URI of the document. See {@link Document.uri}
-     * @param title the title of the document. See {@link Document.title}
+     * @param uri   the URI of the document. See {@link Document#uri}
+     * @param title the title of the document. See {@link Document#title}
      */
     public DocumentBuilder(String uri, String title) {
         this.document = new Document();
@@ -43,7 +43,7 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the data of the document. See {@link Document.data}
+     * Set the data of the document. See {@link Document#data}
      *
      * @param data
      * @return
@@ -54,7 +54,7 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the date of the document. See {@link Document.date}
+     * Set the date of the document. See {@link Document#date}
      *
      * @param date
      * @return
@@ -66,7 +66,7 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the date of the document. See {@link Document.date}
+     * Set the date of the document. See {@link Document#date}
      *
      * @param date
      * @return
@@ -78,7 +78,7 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the date of the document. See {@link Document.date}
+     * Set the date of the document. See {@link Document#date}
      *
      * @param date
      * @return
@@ -90,7 +90,7 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the date of the document. See {@link Document.date}
+     * Set the date of the document. See {@link Document#date}
      *
      * @param date
      * @return
@@ -101,10 +101,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the modified date of the document. See {@link Document.modifiedDate}
+     * Set the modified date of the document. See {@link Document#modifiedDate}
      *
      * @param date
-     * @returns
+     * @return
      */
     public DocumentBuilder withModifiedDate(String date) {
         DateTime dt = DateTime.parse(date);
@@ -113,10 +113,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the modified date of the document. See {@link Document.modifiedDate}
+     * Set the modified date of the document. See {@link Document#modifiedDate}
      *
      * @param date
-     * @returns
+     * @return
      */
     public DocumentBuilder withModifiedDate(Long date) {
         DateTime dt = new DateTime(date);
@@ -125,10 +125,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the modified date of the document. See {@link Document.modifiedDate}
+     * Set the modified date of the document. See {@link Document#modifiedDate}
      *
      * @param date
-     * @returns
+     * @return
      */
     public DocumentBuilder withModifiedDate(DateTime date) {
         this.document.modifiedDate = this.dateFormat(date);
@@ -136,10 +136,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the modified date of the document. See {@link Document.modifiedDate}
+     * Set the modified date of the document. See {@link Document#modifiedDate}
      *
      * @param date
-     * @returns
+     * @return
      */
     public DocumentBuilder withModifiedDate(Date date) {
         DateTime dt = new DateTime(date);
@@ -148,10 +148,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the permanentID of the document. See {@link Document.permanentId}
+     * Set the permanentID of the document. See {@link Document#permanentId}
      *
      * @param permanentId
-     * @returns
+     * @return
      */
     public DocumentBuilder withPermanentId(String permanentId) {
         this.document.permanentId = permanentId;
@@ -159,10 +159,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the base64 encoded, compressed binary data of the document. See {@link Document.compressedBinaryData}
+     * Set the base64 encoded, compressed binary data of the document. See {@link Document#compressedBinaryData}
      *
      * @param compressedBinaryData
-     * @returns
+     * @return
      */
     public DocumentBuilder withCompressedBinaryData(CompressedBinaryData compressedBinaryData) {
         this.document.compressedBinaryData = compressedBinaryData;
@@ -170,10 +170,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the file extension on the document. See {@link Document.fileExtension}
+     * Set the file extension on the document. See {@link Document#fileExtension}
      *
      * @param fileExtension
-     * @returns
+     * @return
      */
     public DocumentBuilder withFileExtension(String fileExtension) {
         this.validateFileExtension(fileExtension);
@@ -182,10 +182,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the parentID on the document. See {@link Document.parentId}
+     * Set the parentID on the document. See {@link Document#parentId}
      *
      * @param parentID
-     * @returns
+     * @return
      */
     public DocumentBuilder withParentID(String parentID) {
         this.document.parentId = parentID;
@@ -193,10 +193,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the clickableURI on the document. See {@link Document.clickableUri}
+     * Set the clickableURI on the document. See {@link Document#clickableUri}
      *
      * @param clickableUri
-     * @returns
+     * @return
      */
     public DocumentBuilder withClickableUri(String clickableUri) {
         this.document.clickableUri = clickableUri;
@@ -204,10 +204,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set the author on the document. See {@link Document.author}
+     * Set the author on the document. See {@link Document#author}
      *
      * @param author
-     * @returns
+     * @return
      */
     public DocumentBuilder withAuthor(String author) {
         this.document.author = author;
@@ -215,11 +215,11 @@ public class DocumentBuilder {
     }
 
     /**
-     * Add a single metadata key and value pair on the document. See {@link Document.metadata}
+     * Add a single metadata key and value pair on the document. See {@link Document#metadata}
      *
      * @param key
      * @param metadataValue
-     * @returns
+     * @return
      */
     public DocumentBuilder withMetadataValue(String key, String metadataValue) {
         this.setMetadataValue(key, metadataValue);
@@ -227,11 +227,11 @@ public class DocumentBuilder {
     }
 
     /**
-     * Add a single metadata key and value pair on the document. See {@link Document.metadata}
+     * Add a single metadata key and value pair on the document. See {@link Document#metadata}
      *
      * @param key
      * @param metadataValue
-     * @returns
+     * @return
      */
     public DocumentBuilder withMetadataValue(String key, String[] metadataValue) {
         this.setMetadataValue(key, metadataValue);
@@ -239,11 +239,11 @@ public class DocumentBuilder {
     }
 
     /**
-     * Add a single metadata key and value pair on the document. See {@link Document.metadata}
+     * Add a single metadata key and value pair on the document. See {@link Document#metadata}
      *
      * @param key
      * @param metadataValue
-     * @returns
+     * @return
      */
     public DocumentBuilder withMetadataValue(String key, Integer metadataValue) {
         this.setMetadataValue(key, metadataValue);
@@ -251,11 +251,11 @@ public class DocumentBuilder {
     }
 
     /**
-     * Add a single metadata key and value pair on the document. See {@link Document.metadata}
+     * Add a single metadata key and value pair on the document. See {@link Document#metadata}
      *
      * @param key
      * @param metadataValue
-     * @returns
+     * @return
      */
     public DocumentBuilder withMetadataValue(String key, Integer[] metadataValue) {
         this.setMetadataValue(key, metadataValue);
@@ -263,10 +263,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set metadata on the document. See {@link Document.metadata}
+     * Set metadata on the document. See {@link Document#metadata}
      *
      * @param metadata
-     * @returns
+     * @return
      */
     public DocumentBuilder withMetadata(Map<String, Object> metadata) {
         metadata.forEach(this::setMetadataValue);
@@ -274,10 +274,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set allowed identities on the document. See {@link Document.permissions}
+     * Set allowed identities on the document. See {@link Document#permissions}
      *
      * @param allowedPermissions
-     * @returns
+     * @return
      */
     public DocumentBuilder withAllowedPermissions(SecurityIdentityBuilder allowedPermissions) {
         this.document.permissions[0].allowedPermissions = allowedPermissions.build();
@@ -285,10 +285,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set denied identities on the document. See {@link Document.permissions}
+     * Set denied identities on the document. See {@link Document#permissions}
      *
      * @param deniedPermissions
-     * @returns
+     * @return
      */
     public DocumentBuilder withDeniedPermissions(SecurityIdentityBuilder deniedPermissions) {
         this.document.permissions[0].deniedPermissions = deniedPermissions.build();
@@ -296,10 +296,10 @@ public class DocumentBuilder {
     }
 
     /**
-     * Set allowAnonymous for permissions on the document. See {@link Document.permissions}
+     * Set allowAnonymous for permissions on the document. See {@link Document#permissions}
      *
      * @param allowAnonymous
-     * @returns
+     * @return
      */
     public DocumentBuilder withAllowAnonymousUsers(Boolean allowAnonymous) {
         this.document.permissions[0].allowAnonymous = allowAnonymous;
@@ -309,7 +309,7 @@ public class DocumentBuilder {
     /**
      * Marshal the document into a JSON string accepted by the push API.
      *
-     * @returns
+     * @return
      */
     public String marshal() {
         return this.marshalJsonObject().toString();
@@ -318,7 +318,7 @@ public class DocumentBuilder {
     /**
      * Marshal the document into a JSON object accepted by the push API.
      *
-     * @returns
+     * @return
      */
     public JsonObject marshalJsonObject() {
         this.generatePermanentId();
