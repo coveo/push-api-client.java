@@ -32,6 +32,12 @@ public class PlatformClient {
         this.httpClient = HttpClient.newHttpClient();
     }
 
+    public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
+        this.apiKey = apiKey;
+        this.organizationId = organizationId;
+        this.httpClient = httpClient;
+    }
+
     /**
      * Create a new push source
      *
@@ -169,7 +175,7 @@ public class PlatformClient {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
-                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .PUT(HttpRequest.BodyPublishers.noBody())
                 .uri(uri)
                 .build();
 
