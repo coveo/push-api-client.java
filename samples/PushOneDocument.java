@@ -12,8 +12,8 @@ public class PushOneDocument {
 
         try {
             HttpResponse<String> response = source.addOrUpdateDocument("my_source_id", documentBuilder);
-            System.out.println(String.format("Source creation status: %s", response.statusCode()));
-            System.out.println(String.format("Source creation response: %s", response.body()));
+            System.out.println(String.format("Push document status: %s", response.statusCode()));
+            System.out.println(String.format("Push document response: %s", response.body()));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
