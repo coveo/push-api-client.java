@@ -132,9 +132,11 @@ public class DocumentBuilderTest {
 
     @Test
     public void testWithPermanentIdGeneration() {
-        assertTrue(
+        docBuilder = new DocumentBuilder("https://foo.com", "bar");
+        assertEquals(
                 "permanentId should be generated automatically if not set",
-                docBuilder.marshalJsonObject().get("permanentId").getAsString().length() > 0
+                "aa2e0510b66edff7f05e2b30d4f1b3a4b5481c06b69f41751c54675c5afb",
+                docBuilder.marshalJsonObject().get("permanentId").getAsString()
         );
     }
 
