@@ -7,8 +7,15 @@ package com.coveo.pushapiclient;
  * <p>
  * See {@link SecurityIdentity}.
  */
-public record GroupSecurityIdentityBuilder(String[] identities,
-                                           String securityProvider) implements SecurityIdentityBuilder {
+public class GroupSecurityIdentityBuilder implements SecurityIdentityBuilder {
+
+    private String[] identities;
+    private String securityProvider;
+
+    public GroupSecurityIdentityBuilder(String[] identities, String securityProvider) {
+        this.identities = identities;
+        this.securityProvider = securityProvider;
+    }
 
     /**
      * Construct a GroupSecurityIdentityBuilder with a single identity
@@ -22,5 +29,13 @@ public record GroupSecurityIdentityBuilder(String[] identities,
 
     public SecurityIdentity[] build() {
         return new AnySecurityIdentityBuilder(this.identities, SecurityIdentityType.GROUP, this.securityProvider).build();
+    }
+
+    public String[] getIdentities() {
+        return identities;
+    }
+
+    public String getSecurityProvider() {
+        return securityProvider;
     }
 }
