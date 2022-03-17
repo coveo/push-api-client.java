@@ -1,5 +1,7 @@
 package com.coveo.pushapiclient;
 
+import java.util.Objects;
+
 /**
  * The original binary item content, compressed using one of the supported compression types (Deflate, GZip, LZMA, Uncompressed, or ZLib), and then Base64 encoded.
  * <p>
@@ -13,8 +15,8 @@ package com.coveo.pushapiclient;
  */
 public class CompressedBinaryData {
 
-    private String data;
-    private CompressionType compressionType;
+    private final String data;
+    private final CompressionType compressionType;
 
     /**
      * @param data            The base64 encoded binary data. Example: `eJxzrUjMLchJBQAK4ALN`
@@ -31,5 +33,26 @@ public class CompressedBinaryData {
 
     public CompressionType getCompressionType() {
         return compressionType;
+    }
+
+    @Override
+    public String toString() {
+        return "CompressedBinaryData[" +
+                "data='" + data + '\'' +
+                ", compressionType=" + compressionType +
+                ']';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        CompressedBinaryData that = (CompressedBinaryData) obj;
+        return Objects.equals(data, that.data) && compressionType == that.compressionType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data, compressionType);
     }
 }

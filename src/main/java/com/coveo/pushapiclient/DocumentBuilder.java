@@ -330,7 +330,7 @@ public class DocumentBuilder {
         jsonDocument.remove("metadata");
 
         if (this.document.compressedBinaryData != null) {
-            jsonDocument.addProperty("compressedBinaryData", this.document.compressedBinaryData.data());
+            jsonDocument.addProperty("compressedBinaryData", this.document.compressedBinaryData.getData());
         }
 
         jsonDocument.addProperty("documentId", this.document.uri);

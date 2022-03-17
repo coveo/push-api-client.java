@@ -104,7 +104,7 @@ public class Source {
      * @throws InterruptedException
      */
     public HttpResponse<String> addOrUpdateDocument(String sourceId, DocumentBuilder docBuilder) throws IOException, InterruptedException {
-        CompressionType compressionType = docBuilder.getDocument().compressedBinaryData != null ? docBuilder.getDocument().compressedBinaryData.compressionType() : CompressionType.UNCOMPRESSED;
+        CompressionType compressionType = docBuilder.getDocument().compressedBinaryData != null ? docBuilder.getDocument().compressedBinaryData.getCompressionType() : CompressionType.UNCOMPRESSED;
         return this.platformClient.pushDocument(sourceId, docBuilder.marshal(), docBuilder.getDocument().uri, compressionType);
     }
 

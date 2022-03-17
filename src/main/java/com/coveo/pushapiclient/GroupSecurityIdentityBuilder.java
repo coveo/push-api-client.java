@@ -1,5 +1,8 @@
 package com.coveo.pushapiclient;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Build a security identity of type `GROUP`.
  * <p>
@@ -9,8 +12,8 @@ package com.coveo.pushapiclient;
  */
 public class GroupSecurityIdentityBuilder implements SecurityIdentityBuilder {
 
-    private String[] identities;
-    private String securityProvider;
+    private final String[] identities;
+    private final String securityProvider;
 
     public GroupSecurityIdentityBuilder(String[] identities, String securityProvider) {
         this.identities = identities;
@@ -37,5 +40,28 @@ public class GroupSecurityIdentityBuilder implements SecurityIdentityBuilder {
 
     public String getSecurityProvider() {
         return securityProvider;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupSecurityIdentityBuilder[" +
+                "identities=" + Arrays.toString(identities) +
+                ", securityProvider='" + securityProvider + '\'' +
+                ']';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        GroupSecurityIdentityBuilder that = (GroupSecurityIdentityBuilder) obj;
+        return Arrays.equals(identities, that.identities) && Objects.equals(securityProvider, that.securityProvider);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(securityProvider);
+        result = 31 * result + Arrays.hashCode(identities);
+        return result;
     }
 }

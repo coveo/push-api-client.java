@@ -188,8 +188,8 @@ public class PlatformClientTest {
 
         assertEquals("PUT", argument.getValue().method());
         assertTrue(argument.getValue().uri().getPath().contains("the_org_id/providers/my_provider/permissions/batch"));
-        assertTrue(argument.getValue().uri().getQuery().contains(String.format("fileId=%s", securityIdentityBatchConfig().fileId())));
-        assertTrue(argument.getValue().uri().getQuery().contains(String.format("orderingId=%s", securityIdentityBatchConfig().orderingId())));
+        assertTrue(argument.getValue().uri().getQuery().contains(String.format("fileId=%s", securityIdentityBatchConfig().getFileId())));
+        assertTrue(argument.getValue().uri().getQuery().contains(String.format("orderingId=%s", securityIdentityBatchConfig().getOrderingId())));
         assertAuthorizationHeader();
         assertApplicationJsonHeader();
     }

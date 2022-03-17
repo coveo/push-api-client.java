@@ -3,16 +3,17 @@ package com.coveo.pushapiclient;
 import com.google.gson.JsonObject;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * See [Manage Batches of Items in a Push Source](https://docs.coveo.com/en/90)
  */
 public class BatchUpdate {
 
-    private List<DocumentBuilder> addOrUpdate;
-    private List<DeleteDocument> delete;
+    private final List<DocumentBuilder> addOrUpdate;
+    private final List<DocumentBuilder> delete;
 
-    public BatchUpdate(List<DocumentBuilder> addOrUpdate, List<DeleteDocument> delete) {
+    public BatchUpdate(List<DocumentBuilder> addOrUpdate, List<DocumentBuilder> delete) {
         this.addOrUpdate = addOrUpdate;
         this.delete = delete;
     }
@@ -20,7 +21,7 @@ public class BatchUpdate {
     public BatchUpdateRecord marshal() {
         return new BatchUpdateRecord(
                 this.addOrUpdate.stream().map(DocumentBuilder::marshalJsonObject).toArray(JsonObject[]::new),
-                this.delete.stream().map(DeleteDocument::marshalJsonObject).toArray(JsonObject[]::new)
+                this.delete.stream().map(DocumentBuilder::marshalJsonObject).toArray(JsonObject[]::new)
         );
     }
 
@@ -28,7 +29,28 @@ public class BatchUpdate {
         return addOrUpdate;
     }
 
-    public List<DeleteDocument> getDelete() {
+    public List<DocumentBuilder> getDelete() {
         return delete;
+    }
+
+    @Override
+    public String toString() {
+        return "BatchUpdate[" +
+                "addOrUpdate=" + addOrUpdate +
+                ", delete=" + delete +
+                ']';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        BatchUpdate that = (BatchUpdate) obj;
+        return addOrUpdate.equals(that.addOrUpdate) && delete.equals(that.delete);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(addOrUpdate, delete);
     }
 }

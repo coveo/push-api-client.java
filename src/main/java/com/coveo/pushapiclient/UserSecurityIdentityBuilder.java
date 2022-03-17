@@ -1,5 +1,8 @@
 package com.coveo.pushapiclient;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Build a security identity of type `USER`.
  * <p>
@@ -9,8 +12,8 @@ package com.coveo.pushapiclient;
  */
 public class UserSecurityIdentityBuilder implements SecurityIdentityBuilder {
 
-    private String[] identities;
-    private String securityProvider;
+    private final String[] identities;
+    private final String securityProvider;
 
     public UserSecurityIdentityBuilder(String[] identities, String securityProvider) {
         this.identities = identities;
@@ -56,5 +59,28 @@ public class UserSecurityIdentityBuilder implements SecurityIdentityBuilder {
 
     public String getSecurityProvider() {
         return securityProvider;
+    }
+
+    @Override
+    public String toString() {
+        return "UserSecurityIdentityBuilder[" +
+                "identities=" + Arrays.toString(identities) +
+                ", securityProvider='" + securityProvider + '\'' +
+                ']';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UserSecurityIdentityBuilder that = (UserSecurityIdentityBuilder) obj;
+        return Arrays.equals(identities, that.identities) && Objects.equals(securityProvider, that.securityProvider);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(securityProvider);
+        result = 31 * result + Arrays.hashCode(identities);
+        return result;
     }
 }
