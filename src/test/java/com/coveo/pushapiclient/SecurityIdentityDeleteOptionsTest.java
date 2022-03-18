@@ -45,7 +45,6 @@ public class SecurityIdentityDeleteOptionsTest {
 
     @Test
     public void testHashCode() {
-        System.out.println(opt1.hashCode());
         assertEquals(opt1.hashCode(), opt1.hashCode());
         assertEquals(opt1.hashCode(), opt2.hashCode());
         assertEquals(opt1.hashCode(), opt5.hashCode());

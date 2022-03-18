@@ -66,7 +66,6 @@ public class GroupSecurityIdentityBuilderTest {
 
     @Test
     public void testHashCode() {
-        System.out.println(gsib1.hashCode());
         assertEquals(gsib1.hashCode(), gsib1.hashCode());
         assertEquals(gsib1.hashCode(), gsib2.hashCode());
         assertEquals(gsib1.hashCode(), gsib5.hashCode());

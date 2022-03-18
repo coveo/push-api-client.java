@@ -46,7 +46,6 @@ public class BatchUpdateTest {
 
     @Test
     public void testToString() {
-        System.out.println("Mine  : " + batch1.toString());
         assertEquals(batch1.toString(), batch1.toString());
         assertEquals(batch1.toString(), batch2.toString());
         assertEquals(batch1.toString(), batch4.toString());
