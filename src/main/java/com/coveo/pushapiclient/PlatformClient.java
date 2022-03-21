@@ -149,7 +149,7 @@ public class PlatformClient {
      */
     public HttpResponse<String> deleteOldSecurityIdentities(String securityProviderId, SecurityIdentityDeleteOptions batchDelete) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
-        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/olderthan?orderingId=%s&queueDelay=%s", batchDelete.orderingId(), batchDelete.queueDelay()));
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/olderthan?orderingId=%s&queueDelay=%s", batchDelete.getOrderingId(), batchDelete.getQueueDelay()));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
@@ -171,7 +171,7 @@ public class PlatformClient {
      */
     public HttpResponse<String> manageSecurityIdentities(String securityProviderId, SecurityIdentityBatchConfig batchConfig) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
-        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/batch?fileId=%s&orderingId=%s", batchConfig.fileId(), batchConfig.orderingId()));
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/batch?fileId=%s&orderingId=%s", batchConfig.getFileId(), batchConfig.getOrderingId()));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
