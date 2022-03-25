@@ -12,8 +12,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Flow;
 
-record StringSubscriber(
-        HttpResponse.BodySubscriber<String> wrapped) implements Flow.Subscriber<ByteBuffer> {
+class StringSubscriber implements Flow.Subscriber<ByteBuffer> {
+
+    HttpResponse.BodySubscriber<String> wrapped;
+
+    public StringSubscriber(HttpResponse.BodySubscriber<String> wrapped) {
+        this.wrapped = wrapped;
+    }
 
     public static Map toMap(Optional<HttpRequest.BodyPublisher> bodyPublisher) {
         return bodyPublisher.map(p -> {

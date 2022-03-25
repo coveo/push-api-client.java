@@ -330,7 +330,7 @@ public class DocumentBuilder {
         jsonDocument.remove("metadata");
 
         if (this.document.compressedBinaryData != null) {
-            jsonDocument.addProperty("compressedBinaryData", this.document.compressedBinaryData.data());
+            jsonDocument.addProperty("compressedBinaryData", this.document.compressedBinaryData.getData());
         }
 
         jsonDocument.addProperty("documentId", this.document.uri);
@@ -360,7 +360,9 @@ public class DocumentBuilder {
 
     private void generatePermanentId() {
         if (this.document.permanentId == null) {
-            this.document.permanentId = DigestUtils.sha256Hex(this.document.uri);
+            String md5 = DigestUtils.md5Hex(this.document.uri);
+            String sha1 = DigestUtils.sha1Hex(this.document.uri);
+            this.document.permanentId = md5.substring(0, 30) + sha1.substring(0, 30);
         }
     }
 }
