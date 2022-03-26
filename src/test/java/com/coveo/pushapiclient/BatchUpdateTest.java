@@ -38,9 +38,21 @@ public class BatchUpdateTest {
         list3.add(db3);
         list3.add(db4);
 
-        batch1 = new BatchUpdate(list1, list2);
-        batch2 = new BatchUpdate(list1, list2);
-        batch3 = new BatchUpdate(list2, list3);
+        DeleteDocument del1 = new DeleteDocument("123");
+        DeleteDocument del2 = new DeleteDocument("456");
+        DeleteDocument del3 = new DeleteDocument("789");
+
+        List<DeleteDocument> delList1 = new ArrayList<>();
+        delList1.add(del1);
+        delList1.add(del2);
+
+        List<DeleteDocument> delList2 = new ArrayList<>();
+        delList2.add(del2);
+        delList2.add(del3);
+
+        batch1 = new BatchUpdate(list1, delList1);
+        batch2 = new BatchUpdate(list1, delList1);
+        batch3 = new BatchUpdate(list2, delList2);
         batch4 = batch1;
     }
 

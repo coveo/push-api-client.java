@@ -19,6 +19,7 @@ public class PlatformClient {
     private final String apiKey;
     private final String organizationId;
     private final HttpClient httpClient;
+    private final Environment environment;
 
     /**
      * Construct a PlatformClient
@@ -30,12 +31,35 @@ public class PlatformClient {
         this.apiKey = apiKey;
         this.organizationId = organizationId;
         this.httpClient = HttpClient.newHttpClient();
+        this.environment = Environment.PRODUCTION;
     }
 
+    /**
+     * Construct a PlatformClient
+     *
+     * @param apiKey         An apiKey capable of pushing documents and managing sources in a Coveo organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+     * @param organizationId The Coveo Organization identifier.
+     * @param httpClient     The HttpClient.
+     */
     public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
         this.apiKey = apiKey;
         this.organizationId = organizationId;
         this.httpClient = httpClient;
+        this.environment = Environment.PRODUCTION;
+    }
+
+    /**
+     * Construct a PlatformClient
+     *
+     * @param apiKey         An apiKey capable of pushing documents and managing sources in a Coveo organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+     * @param organizationId The Coveo Organization identifier.
+     * @param environment    The Environment to be used.
+     */
+    public PlatformClient(String apiKey, String organizationId, Environment environment) {
+        this.apiKey = apiKey;
+        this.organizationId = organizationId;
+        this.httpClient = HttpClient.newHttpClient();
+        this.environment = environment;
     }
 
     /**
@@ -149,7 +173,7 @@ public class PlatformClient {
      */
     public HttpResponse<String> deleteOldSecurityIdentities(String securityProviderId, SecurityIdentityDeleteOptions batchDelete) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
-        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/olderthan?orderingId=%s&queueDelay=%s", batchDelete.getOrderingId(), batchDelete.getQueueDelay()));
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/olderthan?queueDelay=%s%s", batchDelete.getQueueDelay(), appendOrderingId(batchDelete.getOrderingId())));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
@@ -158,6 +182,19 @@ public class PlatformClient {
                 .build();
 
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    /**
+     * Returns the orderingId for the query string only when a valid orderingId is available.
+     *
+     * @param orderingId
+     * @return
+     */
+    public String appendOrderingId(long orderingId) {
+        if (orderingId > 0) {
+            return String.format("&orderingId=%s", orderingId);
+        }
+        return "";
     }
 
     /**
@@ -171,7 +208,7 @@ public class PlatformClient {
      */
     public HttpResponse<String> manageSecurityIdentities(String securityProviderId, SecurityIdentityBatchConfig batchConfig) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
-        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/batch?fileId=%s&orderingId=%s", batchConfig.getFileId(), batchConfig.getOrderingId()));
+        URI uri = URI.create(this.getBaseProviderURL(securityProviderId) + String.format("/permissions/batch?fileId=%s%s", batchConfig.getFileId(), appendOrderingId(batchConfig.getOrderingId())));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
@@ -250,16 +287,36 @@ public class PlatformClient {
     }
 
     /**
-     * Upload content update into a file container. See [Upload the Content Update into the File Container](https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-2-upload-the-content-update-into-the-file-container).
+     * Update the status of a Push source. See [Updating the Status of a Push Source](https://docs.coveo.com/en/35).
      *
-     * @param sourceId
-     * @param fileContainer
-     * @param batchUpdate
+     * @param status
      * @return
      * @throws IOException
      * @throws InterruptedException
      */
-    public HttpResponse<String> uploadContentToFileContainer(String sourceId, FileContainer fileContainer, BatchUpdateRecord batchUpdate) throws IOException, InterruptedException {
+    public HttpResponse<String> updateSourceStatus(String sourceId, PushAPIStatus status) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/status?statusType=%s", sourceId, status.toString()));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    /**
+     * Upload content update into a file container. See [Upload the Content Update into the File Container](https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-2-upload-the-content-update-into-the-file-container).
+     *
+     * @param fileContainer
+     * @param batchUpdateJson
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public HttpResponse<String> uploadContentToFileContainer(FileContainer fileContainer, String batchUpdateJson) throws IOException, InterruptedException {
         String[] headers = fileContainer.requiredHeaders.entrySet()
                 .stream()
                 .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
@@ -270,7 +327,7 @@ public class PlatformClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
                 .uri(uri)
-                .PUT(HttpRequest.BodyPublishers.ofString(new Gson().toJson(batchUpdate)))
+                .PUT(HttpRequest.BodyPublishers.ofString(batchUpdateJson))
                 .build();
 
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -298,6 +355,28 @@ public class PlatformClient {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * Push a binary to a File Container. See [Upload the Item Data Into the File Container](https://docs.coveo.com/en/69#step-2-upload-the-item-data-into-the-file-container)
+     *
+     * @param fileContainer
+     * @param fileAsBytes
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public HttpResponse<String> pushBinaryToFileContainer(FileContainer fileContainer, byte[] fileAsBytes) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAes256Header(), this.getContentTypeApplicationOctetStreamHeader());
+        URI uri = URI.create(fileContainer.uploadUri);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .PUT(HttpRequest.BodyPublishers.ofByteArray(fileAsBytes))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
     private String getBaseSourceURL() {
         return String.format("%s/sources", this.getBasePlatformURL());
     }
@@ -307,7 +386,7 @@ public class PlatformClient {
     }
 
     private String getBasePushURL() {
-        return String.format("https://api.cloud.coveo.com/push/v1/organizations/%s", this.organizationId);
+        return String.format("%s/push/v1/organizations/%s", this.environment.getHost(), this.organizationId);
     }
 
     private String getBaseProviderURL(String providerId) {
@@ -329,6 +408,14 @@ public class PlatformClient {
 
     private String[] getContentTypeApplicationJSONHeader() {
         return new String[]{"Content-Type", "application/json", "Accept", "application/json"};
+    }
+
+    private String[] getAes256Header() {
+        return new String[]{"x-amz-server-side-encryption", "AES256"};
+    }
+
+    private String[] getContentTypeApplicationOctetStreamHeader() {
+        return new String[]{"Content-Type", "application/octet-stream"};
     }
 
     private String toJSON(HashMap<String, Object> hashMap) {
