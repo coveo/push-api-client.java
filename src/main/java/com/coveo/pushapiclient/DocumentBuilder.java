@@ -170,6 +170,17 @@ public class DocumentBuilder {
     }
 
     /**
+     * Set the file container file ID for the compressed binary data of the document. See {@link Document#compressedBinaryDataFileId}
+     *
+     * @param compressedBinaryDataFileId
+     * @return
+     */
+    public DocumentBuilder withCompressedBinaryDataFileId(String compressedBinaryDataFileId) {
+        this.document.compressedBinaryDataFileId = compressedBinaryDataFileId;
+        return this;
+    }
+
+    /**
      * Set the file extension on the document. See {@link Document#fileExtension}
      *
      * @param fileExtension
@@ -303,6 +314,16 @@ public class DocumentBuilder {
      */
     public DocumentBuilder withAllowAnonymousUsers(Boolean allowAnonymous) {
         this.document.permissions[0].allowAnonymous = allowAnonymous;
+        return this;
+    }
+
+    /**
+     * Set the fully built out DocumentPermissions array. See {@Link Document#permissions}
+     * @param documentPermissions
+     * @return
+     */
+    public DocumentBuilder withDocumentPermissions(DocumentPermissions[] documentPermissions) {
+        this.document.permissions = documentPermissions;
         return this;
     }
 

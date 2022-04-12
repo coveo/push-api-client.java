@@ -1,5 +1,6 @@
 package com.coveo.pushapiclient;
 
+import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,7 +15,9 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class PlatformClientTest {
     private PlatformClient client;
@@ -43,11 +46,15 @@ public class PlatformClientTest {
     }
 
     public SecurityIdentityBatchConfig securityIdentityBatchConfig() {
-        return new SecurityIdentityBatchConfig("the_file_id", 1234l);
+        return new SecurityIdentityBatchConfig("the_file_id", 1234L);
     }
 
     public DocumentBuilder documentBuilder() {
         return new DocumentBuilder("the_uri", "the_title");
+    }
+
+    public DeleteDocument deleteDocument() {
+        return new DeleteDocument("12345");
     }
 
     public Document document() {
@@ -72,7 +79,7 @@ public class PlatformClientTest {
         BatchUpdate batchUpdate = new BatchUpdate(new ArrayList<>() {{
             add(documentBuilder());
         }}, new ArrayList<>() {{
-            add(documentBuilder());
+            add(deleteDocument());
         }});
         return batchUpdate.marshal();
     }
@@ -195,6 +202,15 @@ public class PlatformClientTest {
     }
 
     @Test
+    public void testAppendOrderingId() throws IOException, InterruptedException {
+        String standardOrderingParam = client.appendOrderingId(1234L);
+        String noOrderingParam = client.appendOrderingId(0L);
+
+        assertTrue(standardOrderingParam.contains(String.format("orderingId=%s", "1234")));
+        assertEquals("", noOrderingParam);
+    }
+
+    @Test
     public void testPushDocument() throws IOException, InterruptedException {
         client.pushDocument("my_source", documentString(), document().uri, CompressionType.UNCOMPRESSED);
         verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
@@ -223,7 +239,7 @@ public class PlatformClientTest {
 
     @Test
     public void testUploadContentToFileContainer() throws IOException, InterruptedException {
-        client.uploadContentToFileContainer("my_source", fileContainer(), batchUpdateRecord());
+        client.uploadContentToFileContainer(fileContainer(), new Gson().toJson(batchUpdateRecord()));
         verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
 
         assertEquals("PUT", argument.getValue().method());
@@ -235,7 +251,7 @@ public class PlatformClientTest {
         ArrayList<Map> delete = (ArrayList<Map>) requestBody.get("delete");
 
         assertEquals(document().uri, addOrUpdate.get(0).get("documentId"));
-        assertEquals(document().uri, delete.get(0).get("documentId"));
+        assertEquals(deleteDocument().documentId, delete.get(0).get("documentId"));
     }
 
     @Test

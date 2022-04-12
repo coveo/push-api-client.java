@@ -17,6 +17,15 @@ public class Source {
     }
 
     /**
+     * @param apiKey         An apiKey capable of pushing documents and managing sources in a Coveo organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+     * @param organizationId The Coveo Organization identifier.
+     * @param environment    The Environment to be used.
+     */
+    public Source(String apiKey, String organizationId, Environment environment) {
+        this.platformClient = new PlatformClient(apiKey, organizationId, environment);
+    }
+
+    /**
      * Create a new push source.
      *
      * @param name             The name of the source to create
@@ -66,6 +75,19 @@ public class Source {
      */
     public HttpResponse<String> deleteSecurityIdentity(String securityProviderId, SecurityIdentityDelete securityIdentityDelete) throws IOException, InterruptedException {
         return this.platformClient.deleteSecurityIdentity(securityProviderId, securityIdentityDelete);
+    }
+
+    /**
+     * Update the status of a Push source. See [Updating the Status of a Push Source](https://docs.coveo.com/en/35).
+     *
+     * @param sourceId
+     * @param status
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public HttpResponse<String> updateSourceStatus(String sourceId, PushAPIStatus status) throws IOException, InterruptedException {
+        return this.platformClient.updateSourceStatus(sourceId, status);
     }
 
     /**
@@ -134,7 +156,54 @@ public class Source {
     public HttpResponse<String> batchUpdateDocuments(String sourceId, BatchUpdate batchUpdate) throws IOException, InterruptedException {
         HttpResponse<String> resFileContainer = this.platformClient.createFileContainer();
         FileContainer fileContainer = new Gson().fromJson(resFileContainer.body(), FileContainer.class);
-        this.platformClient.uploadContentToFileContainer(sourceId, fileContainer, batchUpdate.marshal());
+        this.platformClient.uploadContentToFileContainer(fileContainer, new Gson().toJson(batchUpdate.marshal()));
         return this.platformClient.pushFileContainerContent(sourceId, fileContainer);
+    }
+
+    /**
+     * Manages pushing batches of Security Identities to a File Container, then into Coveo. See [Manage Batches of Security Identities](https://docs.coveo.com/en/55)
+     *
+     * @param securityProviderId
+     * @param batchIdentity
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public SecurityIdentityBatchResponse batchUpdateSecurityIdentities(String securityProviderId, BatchIdentity batchIdentity) throws IOException, InterruptedException {
+        SecurityIdentityBatchResponse securityIdentityBatchResponse = new SecurityIdentityBatchResponse();
+        HttpResponse<String> resFileContainer = this.platformClient.createFileContainer();
+        FileContainer fileContainer = new Gson().fromJson(resFileContainer.body(), FileContainer.class);
+        String batchIdJson = new Gson().toJson(batchIdentity.marshal());
+        securityIdentityBatchResponse.s3Response = this.platformClient.uploadContentToFileContainer(fileContainer, batchIdJson);
+        if (securityIdentityBatchResponse.s3Response.statusCode() >= 200 && securityIdentityBatchResponse.s3Response.statusCode() <= 299) { //maybe just 200 or 202
+            SecurityIdentityBatchConfig batchConfig = new SecurityIdentityBatchConfig(fileContainer.fileId, 0l);
+            securityIdentityBatchResponse.batchResponse = this.manageSecurityIdentities(securityProviderId, batchConfig);
+        }
+        return securityIdentityBatchResponse;
+    }
+
+    /**
+     * Creates a File Container. [Creating a File Container](https://docs.coveo.com/en/43)
+     *
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public FileContainer createFileContainer() throws IOException, InterruptedException {
+        HttpResponse<String> resFileContainer = this.platformClient.createFileContainer();
+        return new Gson().fromJson(resFileContainer.body(), FileContainer.class);
+    }
+
+    /**
+     * Push file to a File Container. [Using the compressedBinaryDataFileId Property](https://docs.coveo.com/en/69)
+     *
+     * @param fileContainer
+     * @param fileAsBytes
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public HttpResponse<String> pushBinaryToFileContainer(FileContainer fileContainer, byte[] fileAsBytes) throws IOException, InterruptedException {
+        return this.platformClient.pushBinaryToFileContainer(fileContainer, fileAsBytes);
     }
 }

@@ -11,9 +11,9 @@ import java.util.Objects;
 public class BatchUpdate {
 
     private final List<DocumentBuilder> addOrUpdate;
-    private final List<DocumentBuilder> delete;
+    private final List<DeleteDocument> delete;
 
-    public BatchUpdate(List<DocumentBuilder> addOrUpdate, List<DocumentBuilder> delete) {
+    public BatchUpdate(List<DocumentBuilder> addOrUpdate, List<DeleteDocument> delete) {
         this.addOrUpdate = addOrUpdate;
         this.delete = delete;
     }
@@ -21,7 +21,7 @@ public class BatchUpdate {
     public BatchUpdateRecord marshal() {
         return new BatchUpdateRecord(
                 this.addOrUpdate.stream().map(DocumentBuilder::marshalJsonObject).toArray(JsonObject[]::new),
-                this.delete.stream().map(DocumentBuilder::marshalJsonObject).toArray(JsonObject[]::new)
+                this.delete.stream().map(DeleteDocument::marshalJsonObject).toArray(JsonObject[]::new)
         );
     }
 
@@ -29,7 +29,7 @@ public class BatchUpdate {
         return addOrUpdate;
     }
 
-    public List<DocumentBuilder> getDelete() {
+    public List<DeleteDocument> getDelete() {
         return delete;
     }
 
