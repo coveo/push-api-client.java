@@ -37,9 +37,12 @@ body:
   - type: textarea
     attributes:
       label: Environment
-      description: "Temporary description"
-      value: "Java version"
-      render: markdown
+      description: "Describe your environment in as much details as possible"
+      value: |
+        JDK Version
+        OS Version
+        ...
+      render: Markdown
     validations:
       required: false
   - type: textarea
