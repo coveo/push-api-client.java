@@ -36,7 +36,7 @@ public class PlatformClient {
      *
      * @param apiKey         An apiKey capable of pushing documents and managing sources in a Coveo organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
      * @param organizationId The Coveo Organization identifier.
-     * @param platformUrl    TODO:
+     * @param platformUrl    The PlatformUrl.
      */
     public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
         this.apiKey = apiKey;
