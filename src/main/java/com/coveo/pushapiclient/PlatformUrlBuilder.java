@@ -2,11 +2,8 @@ package com.coveo.pushapiclient;
 
 public class PlatformUrlBuilder {
 
-    public static final Environment DEFAULT_ENVIRONMENT = Environment.PRODUCTION;
-    public static final Region DEFAULT_REGION = Region.US;
-
-    private Environment environment = PlatformUrlBuilder.DEFAULT_ENVIRONMENT;
-    private Region region = PlatformUrlBuilder.DEFAULT_REGION;
+    private Environment environment = PlatformUrl.DEFAULT_ENVIRONMENT;
+    private Region region = PlatformUrl.DEFAULT_REGION;
 
     public PlatformUrlBuilder withEnvironment(Environment environment) {
         this.environment = environment;
