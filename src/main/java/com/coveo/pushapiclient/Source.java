@@ -9,7 +9,9 @@ public class Source {
     PlatformClient platformClient;
 
     /**
-     * @param apiKey         An apiKey capable of pushing documents and managing sources in a Coveo organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+     * @param apiKey         An apiKey capable of pushing documents and managing
+     *                       sources in a Coveo organization. See [Manage API
+     *                       Keys](https://docs.coveo.com/en/1718).
      * @param organizationId The Coveo Organization identifier.
      */
     public Source(String apiKey, String organizationId) {
@@ -17,10 +19,25 @@ public class Source {
     }
 
     /**
+     * @param apiKey         An apiKey capable of pushing documents and managing
+     *                       sources in a Coveo organization. See [Manage API
+     *                       Keys](https://docs.coveo.com/en/1718).
+     * @param organizationId The Coveo Organization identifier.
+     * @param platformUrl
+     */
+    public Source(String apiKey, String organizationId, PlatformUrl platformUrl) {
+        this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
+    }
+
+    /**
+     * @deprecated Please now use PlatformUrl to define your Platform environment
+     * @see PlatformUrl Construct a PlatformUrl
+     *
      * @param apiKey         An apiKey capable of pushing documents and managing sources in a Coveo organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
      * @param organizationId The Coveo Organization identifier.
      * @param environment    The Environment to be used.
      */
+    @Deprecated
     public Source(String apiKey, String organizationId, Environment environment) {
         this.platformClient = new PlatformClient(apiKey, organizationId, environment);
     }

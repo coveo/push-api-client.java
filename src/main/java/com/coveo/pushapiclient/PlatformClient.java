@@ -19,7 +19,7 @@ public class PlatformClient {
     private final String apiKey;
     private final String organizationId;
     private final HttpClient httpClient;
-    private final Environment environment;
+    private final PlatformUrl platformUrl;
 
     /**
      * Construct a PlatformClient
@@ -28,10 +28,21 @@ public class PlatformClient {
      * @param organizationId The Coveo Organization identifier.
      */
     public PlatformClient(String apiKey, String organizationId) {
+        this(apiKey, organizationId, new PlatformUrlBuilder().build());
+    }
+
+    /**
+     * Construct a PlatformClient
+     *
+     * @param apiKey         An apiKey capable of pushing documents and managing sources in a Coveo organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+     * @param organizationId The Coveo Organization identifier.
+     * @param platformUrl    The PlatformUrl.
+     */
+    public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
         this.apiKey = apiKey;
         this.organizationId = organizationId;
         this.httpClient = HttpClient.newHttpClient();
-        this.environment = Environment.PRODUCTION;
+        this.platformUrl = platformUrl;
     }
 
     /**
@@ -45,21 +56,26 @@ public class PlatformClient {
         this.apiKey = apiKey;
         this.organizationId = organizationId;
         this.httpClient = httpClient;
-        this.environment = Environment.PRODUCTION;
+        this.platformUrl = new PlatformUrlBuilder().build();
     }
 
+
     /**
-     * Construct a PlatformClient
+     * @deprecated Please now use PlatformUrl to define your Platform environment
+     * @see PlatformUrl Construct a PlatformUrl
      *
      * @param apiKey         An apiKey capable of pushing documents and managing sources in a Coveo organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
      * @param organizationId The Coveo Organization identifier.
      * @param environment    The Environment to be used.
      */
+    @Deprecated
     public PlatformClient(String apiKey, String organizationId, Environment environment) {
         this.apiKey = apiKey;
         this.organizationId = organizationId;
         this.httpClient = HttpClient.newHttpClient();
-        this.environment = environment;
+        this.platformUrl = new PlatformUrlBuilder()
+                .withEnvironment(environment)
+                .build();
     }
 
     /**
@@ -382,11 +398,11 @@ public class PlatformClient {
     }
 
     private String getBasePlatformURL() {
-        return String.format("https://platform.cloud.coveo.com/rest/organizations/%s", this.organizationId);
+        return String.format("%s/rest/organizations/%s", this.platformUrl.getPlatformUrl(),this.organizationId);
     }
 
     private String getBasePushURL() {
-        return String.format("%s/push/v1/organizations/%s", this.environment.getHost(), this.organizationId);
+        return String.format("%s/push/v1/organizations/%s", this.platformUrl.getApiUrl(), this.organizationId);
     }
 
     private String getBaseProviderURL(String providerId) {
