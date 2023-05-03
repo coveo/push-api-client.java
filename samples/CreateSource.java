@@ -14,7 +14,7 @@ public class CreateSource {
                 .withEnvironment(Environment.STAGING)
                 .withRegion(Region.US) // If your organization is located in a different region than Region.US
                 .build();
-        SourceClient sourceClient = new SourceClient("xx4bdaab13-04d1-48b3-9c30-da32d98f971d", "streamsdkj6qntl86", platformUrl);
+        SourceClient sourceClient = new SourceClient("my_api_key", "my_org_id", platformUrl);
         try {
             HttpResponse<String> response = sourceClient.create("pushy", SourceVisibility.SHARED);
             System.out.println(String.format("SourceClient creation status: %s", response.statusCode()));
