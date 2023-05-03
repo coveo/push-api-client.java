@@ -1,33 +1,33 @@
-import com.coveo.pushapiclient.BatchUpdate;
-import com.coveo.pushapiclient.DocumentBuilder;
-import com.coveo.pushapiclient.Source;
+import com.coveo.pushclient.BatchUpdate;
+import com.coveo.document.DeleteDocument;
+import com.coveo.document.DocumentBuilder;
+import com.coveo.source.SourceClient;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PushBatchOfDocuments {
     public static void main(String[] args) {
-        Source source = new Source("my_api_key", "my_org_id");
+        SourceClient sourceClient = new SourceClient("my_api_key", "my_org_id");
 
         DocumentBuilder firstDocumentToAdd = new DocumentBuilder("https://my.document.uri?ref=1", "My first document title");
         DocumentBuilder secondDocumentToAdd = new DocumentBuilder("https://my.document.uri?ref=2", "My second document title");
-
-        DocumentBuilder firstDocumentToDelete = new DocumentBuilder("https://my.document.uri?ref=3", "My document to delete");
 
         ArrayList<DocumentBuilder> listOfDocumentsToAddOrUpdate = new ArrayList<>() {{
             add(firstDocumentToAdd);
             add(secondDocumentToAdd);
         }};
 
-        ArrayList<DocumentBuilder> listOfDocumentsToDelete = new ArrayList<>() {{
-            add(firstDocumentToDelete);
-        }};
+        DeleteDocument del1 = new DeleteDocument("123");
+        List<DeleteDocument> delList1 = new ArrayList<>();
+        delList1.add(del1);
 
-        BatchUpdate batchUpdate = new BatchUpdate(listOfDocumentsToAddOrUpdate, listOfDocumentsToDelete);
+        BatchUpdate batchUpdate = new BatchUpdate(listOfDocumentsToAddOrUpdate, delList1);
 
         try {
-            HttpResponse<String> response = source.batchUpdateDocuments("my_source_id", batchUpdate);
+            HttpResponse<String> response = sourceClient.batchUpdateDocuments("my_source_id", batchUpdate);
             System.out.println(String.format("Batch status: %s", response.statusCode()));
             System.out.println(String.format("Batch response: %s", response.body()));
         } catch (IOException e) {

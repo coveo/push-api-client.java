@@ -1,8 +1,9 @@
-import com.coveo.pushapiclient.Region;
-import com.coveo.pushapiclient.PlatformUrl;
-import com.coveo.pushapiclient.PlatformUrlBuilder;
-import com.coveo.pushapiclient.Source;
-import com.coveo.pushapiclient.SourceVisibility;
+import com.coveo.platform.Environment;
+import com.coveo.platform.Region;
+import com.coveo.platform.PlatformUrl;
+import com.coveo.platform.PlatformUrlBuilder;
+import com.coveo.source.SourceClient;
+import com.coveo.source.SourceVisibility;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -10,13 +11,14 @@ import java.net.http.HttpResponse;
 public class CreateSource {
     public static void main(String[] args) {
         PlatformUrl platformUrl = new PlatformUrlBuilder()
-                .withRegion(Region.AU) // If your organization is located in a different region than Region.US
+                .withEnvironment(Environment.STAGING)
+                .withRegion(Region.US) // If your organization is located in a different region than Region.US
                 .build();
-        Source source = new Source("my_api_key", "my_org_id", platformUrl);
+        SourceClient sourceClient = new SourceClient("xx4bdaab13-04d1-48b3-9c30-da32d98f971d", "streamsdkj6qntl86", platformUrl);
         try {
-            HttpResponse<String> response = source.create("the_name_of_my_source", SourceVisibility.SECURED);
-            System.out.println(String.format("Source creation status: %s", response.statusCode()));
-            System.out.println(String.format("Source creation response: %s", response.body()));
+            HttpResponse<String> response = sourceClient.create("pushy", SourceVisibility.SHARED);
+            System.out.println(String.format("SourceClient creation status: %s", response.statusCode()));
+            System.out.println(String.format("SourceClient creation response: %s", response.body()));
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
