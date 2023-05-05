@@ -1,0 +1,17 @@
+name: 'CodeQL'
+
+on:
+  workflow_dispatch: {}
+
+  push:
+    branches: ['main']
+
+  pull_request:
+    branches: ['main']
+
+  schedule:
+    - cron: '29 3 * * 6' # Runs at 03:29, only on Saturday.
+
+jobs:
+  analyze-java:
+    uses: coveo/actions/.github/workflows/java-maven-openjdk11-codeql.yml@main
