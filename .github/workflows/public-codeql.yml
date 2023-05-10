@@ -1,4 +1,4 @@
-name: 'CodeQL'
+name: 'Public CodeQL'
 
 on:
   workflow_dispatch: {}
@@ -14,4 +14,4 @@ on:
 
 jobs:
   analyze-java:
-    uses: coveo/actions/.github/workflows/java-maven-openjdk11-codeql.yml@main
+    uses: coveo/public-actions/.github/workflows/java-maven-openjdk11-codeql.yml@main
