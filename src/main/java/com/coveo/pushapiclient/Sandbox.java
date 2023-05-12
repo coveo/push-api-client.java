@@ -44,9 +44,6 @@ public class Sandbox {
     public static void streamBatch() {
         CatalogSource source = new CatalogSource("my_api_key", "my_org_id");
 
-        // Create a stream for pushing documents
-        // PushStream stream = source.getStream("source_id");
-
         // Prepare the push in "Stream" mode. In this mode, the push Service opens a
         // stream and creates the appropriates stream chunks
         FullCatalogUploadService service = source.startfullCatalogUpload("my_source_id");
