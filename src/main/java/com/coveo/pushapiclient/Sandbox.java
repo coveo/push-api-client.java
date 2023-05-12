@@ -89,16 +89,3 @@ public class Sandbox {
     }
 
 }
-
-/**
- * Reasons of this approach
- * 1. Simply feed documentes to the service and prevent user from having to
- * store a list of documents before feeding them to the SDK... and avoid
- * java.lang.OutOfMemoryError errors.
- * 2. Both modes uses the same logic: 1. Create the appropriate service, feed
- * documents to the service, flush once finished feeding documents. The SDK
- * automatically handles batching.
- * 3. Create a disctinction between the 2 mode. Update and Stream mode. Each
- * mode has a dedicted service which only allow operations allowed by the
- * choosen mode. E.g. partial updates cannot be used in Stream mode.
- */
