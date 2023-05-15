@@ -9,60 +9,53 @@ public class Sandbox {
      * Upload a document batch in push mode -> using the /files endpoint
      */
     public static void uploadBatch() {
-        CatalogSource source = new CatalogSource("my_api_key", "my_org_id");
+        StreamSource source = new StreamSource("source_url", "my_api_key");
 
-        // Prepare the push in "Update" mode. In this mode, the push Service will create
-        // S3 file containers with appropriate batches sizes.
-        DocumentUpdateService service = source.startDocumentUpdate("my_source_id");
+        // Prepare the push in "Update" mode by creating the appropriate upload service.
+        // In this mode, the push Service will create S3 file containers with
+        // appropriate batches sizes.
+        try (UpdateStream stream = new UpdateStream(source)) {
 
-        // Create a stream for pushing documents
+            // Prepare a list of documents to add or update from an imaginary method
+            // The SDK handles the batching. Simply feed documents into the service
+            for (DocumentBuilder document : prepareDocuments()) {
+                stream.addOrUpdate(document);
+            }
 
-        // Prepare a list of documents to add or update from an imaginary method
-        // The SDK handles the batching. Simply feed documents into the service
-        for (DocumentBuilder document : prepareDocuments()) {
-            service.addOrUpdate(document);
+            // Prepare a list of documents to partially update from an imaginary method
+            // Same method can be used for both full and partial updates
+            for (PartialUpdateDocument document : preparePartialUpdateDocuments()) {
+                stream.partialUpdate(document);
+            }
+
+            // Prepare a list of documents to delete from an imaginary method
+            for (DeleteDocument document : prepareDocumentsToDelete()) {
+                stream.delete(document);
+            }
         }
-
-        // Prepare a list of documents to partially update from an imaginary method
-        // Same method can be used for both full and partial updates
-        for (PartialUpdateDocument document : preparePartialUpdateDocuments()) {
-            service.partialUpdate(document);
-        }
-
-        // Prepare a list of documents to delete from an imaginary method
-        for (DeleteDocument document : prepareDocumentsToDelete()) {
-            service.delete(document);
-        }
-
-        // Flush any previous documents buffered and not yet sent to the API.
-        service.flush();
     }
 
     /**
      * Upload a document batch in stream mode -> using the /chunk endpoint
      */
     public static void streamBatch() {
-        CatalogSource source = new CatalogSource("my_api_key", "my_org_id");
-
-        // Prepare the push in "Stream" mode. In this mode, the push Service opens a
-        // stream and creates the appropriates stream chunks
-        FullCatalogUploadService service = source.startfullCatalogUpload("my_source_id");
-
-        // Prepare a list of documents to add from an imaginary method
-        // The SDK handles the batching.
-        for (DocumentBuilder document : prepareDocuments()) {
-            service.add(document);
+        // Instanciate a stream source in "Stream" mode. In this mode, the push Service
+        // opens a stream and creates the appropriates stream chunks
+        StreamSource source = new StreamSource("source_url", "my_api_key");
+        try (FullUploadStream stream = new FullUploadStream(source)) {
+            // Prepare a list of documents to add from an imaginary method
+            // The SDK handles the batching.
+            for (DocumentBuilder document : prepareDocuments()) {
+                stream.add(document);
+            }
         }
-        // Flush any previous documents buffered and not yet sent to the API.
-        // Closes the stream
-        service.flush();
     }
 
     /**
      * Push and delete documents individually.
      */
     public static void pushSingleDocument() {
-        CatalogSource source = new CatalogSource("my_api_key", "my_org_id");
+        StreamSource source = new StreamSource("my_api_key", "my_org_id");
         DocumentBuilder documentToAdd = new DocumentBuilder("https://my.document.uri", "My document title")
                 .withData("these words will be searchable")
                 .withAuthor("bob")
