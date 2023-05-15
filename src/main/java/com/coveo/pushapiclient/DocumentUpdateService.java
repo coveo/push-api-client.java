@@ -2,15 +2,15 @@ package com.coveo.pushapiclient;
 
 public class DocumentUpdateService {
 
-    public DocumentUpdateService addOrUpdateDocument(DocumentBuilder document) {
+    public DocumentUpdateService addOrUpdate(DocumentBuilder document) {
         throw new java.lang.UnsupportedOperationException("TODO: To implement");
     }
 
-    public DocumentUpdateService addOrUpdateDocument(PartialUpdateDocument document) {
+    public DocumentUpdateService addOrUpdate(PartialUpdateDocument document) {
         throw new java.lang.UnsupportedOperationException("TODO: To implement");
     }
 
-    public DocumentUpdateService deleteDocument(DeleteDocument document) {
+    public DocumentUpdateService delete(DeleteDocument document) {
         throw new java.lang.UnsupportedOperationException("TODO: To implement");
     }
 

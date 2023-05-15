@@ -20,18 +20,18 @@ public class Sandbox {
         // Prepare a list of documents to add or update from an imaginary method
         // The SDK handles the batching. Simply feed documents into the service
         for (DocumentBuilder document : prepareDocuments()) {
-            service.addOrUpdateDocument(document);
+            service.addOrUpdate(document);
         }
 
         // Prepare a list of documents to partially update from an imaginary method
         // Same method can be used for both full and partial updates
         for (PartialUpdateDocument document : preparePartialUpdateDocuments()) {
-            service.addOrUpdateDocument(document);
+            service.addOrUpdate(document);
         }
 
         // Prepare a list of documents to delete from an imaginary method
         for (DeleteDocument document : prepareDocumentsToDelete()) {
-            service.deleteDocument(document);
+            service.delete(document);
         }
 
         // Flush any previous documents buffered and not yet sent to the API.
@@ -51,7 +51,7 @@ public class Sandbox {
         // Prepare a list of documents to add from an imaginary method
         // The SDK handles the batching.
         for (DocumentBuilder document : prepareDocuments()) {
-            service.addDocument(document);
+            service.add(document);
         }
         // Flush any previous documents buffered and not yet sent to the API.
         // Closes the stream
@@ -79,8 +79,8 @@ public class Sandbox {
         DeleteDocument documentToDelete = new DeleteDocument("https:/document.todelete.uri");
 
         source.startDocumentUpdate("my_source_id")
-                .addOrUpdateDocument(documentToAdd)
-                .deleteDocument(documentToDelete)
+                .addOrUpdate(documentToAdd)
+                .delete(documentToDelete)
                 .flush();
 
     }
