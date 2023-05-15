@@ -26,7 +26,7 @@ public class Sandbox {
         // Prepare a list of documents to partially update from an imaginary method
         // Same method can be used for both full and partial updates
         for (PartialUpdateDocument document : preparePartialUpdateDocuments()) {
-            service.addOrUpdate(document);
+            service.partialUpdate(document);
         }
 
         // Prepare a list of documents to delete from an imaginary method

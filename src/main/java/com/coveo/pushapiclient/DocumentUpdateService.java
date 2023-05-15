@@ -6,7 +6,7 @@ public class DocumentUpdateService {
         throw new java.lang.UnsupportedOperationException("TODO: To implement");
     }
 
-    public DocumentUpdateService addOrUpdate(PartialUpdateDocument document) {
+    public DocumentUpdateService partialUpdate(PartialUpdateDocument document) {
         throw new java.lang.UnsupportedOperationException("TODO: To implement");
     }
 
