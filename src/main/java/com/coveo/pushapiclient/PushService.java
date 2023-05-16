@@ -1,8 +1,8 @@
 package com.coveo.pushapiclient;
 
-public class UpdateStream implements AutoCloseable {
+public class PushService implements AutoCloseable {
 
-    public UpdateStream(StreamSource source) {
+    public PushService(CatalogSource source) {
     }
 
     public void addOrUpdate(DocumentBuilder document) {

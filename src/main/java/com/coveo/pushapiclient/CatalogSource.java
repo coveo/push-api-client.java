@@ -1,8 +1,8 @@
 package com.coveo.pushapiclient;
 
-public class StreamSource {
+public class CatalogSource {
 
-    public StreamSource(String url, String apiKey) {
+    public CatalogSource(String url, String apiKey) {
     }
 
     public void flush() {

@@ -1,8 +1,8 @@
 package com.coveo.pushapiclient;
 
-public class FullUploadStream implements AutoCloseable {
+public class StreamService implements AutoCloseable {
 
-    public FullUploadStream(StreamSource source) {
+    public StreamService(CatalogSource source) {
     }
 
     /**

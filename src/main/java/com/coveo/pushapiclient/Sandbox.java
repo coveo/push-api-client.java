@@ -9,12 +9,12 @@ public class Sandbox {
      * Upload a document batch in push mode -> using the /files endpoint
      */
     public static void uploadBatch() {
-        StreamSource source = new StreamSource("source_url", "my_api_key");
+        CatalogSource source = new CatalogSource("source_url", "my_api_key");
 
         // Prepare the push in "Update" mode by creating the appropriate upload service.
         // In this mode, the push Service will create S3 file containers with
         // appropriate batches sizes.
-        try (UpdateStream stream = new UpdateStream(source)) {
+        try (PushService stream = new PushService(source)) {
 
             // Prepare a list of documents to add or update from an imaginary method
             // The SDK handles the batching. Simply feed documents into the service
@@ -41,8 +41,8 @@ public class Sandbox {
     public static void streamBatch() {
         // Instanciate a stream source in "Stream" mode. In this mode, the push Service
         // opens a stream and creates the appropriates stream chunks
-        StreamSource source = new StreamSource("source_url", "my_api_key");
-        try (FullUploadStream stream = new FullUploadStream(source)) {
+        CatalogSource source = new CatalogSource("source_url", "my_api_key");
+        try (StreamService stream = new StreamService(source)) {
             // Prepare a list of documents to add from an imaginary method
             // The SDK handles the batching.
             for (DocumentBuilder document : prepareDocuments()) {
@@ -53,9 +53,11 @@ public class Sandbox {
 
     /**
      * Push and delete documents individually.
+     * 
+     * @throws Exception
      */
-    public static void pushSingleDocument() {
-        StreamSource source = new StreamSource("my_api_key", "my_org_id");
+    public static void pushSingleDocument() throws Exception {
+        CatalogSource source = new CatalogSource("my_api_key", "my_org_id");
         DocumentBuilder documentToAdd = new DocumentBuilder("https://my.document.uri", "My document title")
                 .withData("these words will be searchable")
                 .withAuthor("bob")
@@ -71,10 +73,10 @@ public class Sandbox {
 
         DeleteDocument documentToDelete = new DeleteDocument("https:/document.todelete.uri");
 
-        source.startDocumentUpdate("my_source_id")
-                .addOrUpdate(documentToAdd)
-                .delete(documentToDelete)
-                .flush();
+        PushService stream = new PushService(source);
+        stream.addOrUpdate(documentToAdd);
+        stream.delete(documentToDelete);
+        stream.close();
 
     }
 
