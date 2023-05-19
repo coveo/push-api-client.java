@@ -37,13 +37,15 @@ public class StreamService {
         }
         queue.flush();
         PlatformClient platformClient = source.getPlatformClient();
-        return platformClient.closeStream(this.streamId);
+        String sourceId = this.source.getId();
+        return platformClient.closeStream(sourceId, this.streamId);
     }
 
     private UpdloadStrategy getUploadStrategy() {
         return (batchUpdate) -> {
+            String sourceId = this.source.getId();
             PlatformClient platformClient = source.getPlatformClient();
-            HttpResponse<String> resFileContainer = platformClient.requireStreamChunk();
+            HttpResponse<String> resFileContainer = platformClient.requireStreamChunk(sourceId, this.streamId);
             FileContainer fileContainer = new Gson().fromJson(resFileContainer.body(), FileContainer.class);
             String batchUpdateJson = new Gson().toJson(batchUpdate.marshal());
             return platformClient.uploadContentToFileContainer(fileContainer,
@@ -53,7 +55,8 @@ public class StreamService {
     }
 
     private String getStreamId() throws IOException, InterruptedException {
-        HttpResponse<String> response = this.source.getPlatformClient().openStream();
+        String sourceId = this.source.getId();
+        HttpResponse<String> response = this.source.getPlatformClient().openStream(sourceId);
         return "TODO: get streamID from response";
     }
 
