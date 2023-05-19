@@ -282,16 +282,43 @@ public class PlatformClient {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> openStream() throws IOException, InterruptedException {
-        throw new UnsupportedOperationException("Unimplemented method");
+    public HttpResponse<String> openStream(String sourceId) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/open", sourceId));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> closeStream(String streamId) throws IOException, InterruptedException {
-        throw new UnsupportedOperationException("Unimplemented method");
+    public HttpResponse<String> closeStream(String sourceId, String streamId) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/%s/close", sourceId, streamId));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> requireStreamChunk() throws IOException, InterruptedException {
-        throw new UnsupportedOperationException("Unimplemented method");
+    public HttpResponse<String> requireStreamChunk(String sourceId, String streamId) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/%s/chunk", sourceId, streamId));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     /**
