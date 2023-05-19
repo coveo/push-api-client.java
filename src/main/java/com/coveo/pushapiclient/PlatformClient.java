@@ -91,10 +91,10 @@ public class PlatformClient {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
 
         String json = this.toJSON(new HashMap<>() {{
-            put("sourceType", "PUSH");
-            put("pushEnabled", true);
-            put("name", name);
-            put("sourceVisibility", sourceVisibility);
+                put("sourceType", "PUSH");
+                put("pushEnabled", true);
+                put("name", name);
+                put("sourceVisibility", sourceVisibility);
         }});
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -280,6 +280,18 @@ public class PlatformClient {
                 .build();
 
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    public HttpResponse<String> openStream() throws IOException, InterruptedException {
+        throw new UnsupportedOperationException("Unimplemented method");
+    }
+
+    public HttpResponse<String> closeStream(String streamId) throws IOException, InterruptedException {
+        throw new UnsupportedOperationException("Unimplemented method");
+    }
+
+    public HttpResponse<String> requireStreamChunk() throws IOException, InterruptedException {
+        throw new UnsupportedOperationException("Unimplemented method");
     }
 
     /**
