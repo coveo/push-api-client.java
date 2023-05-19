@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 
+// TODO: LENS-844 - Deprecate class
 public class Source {
     PlatformClient platformClient;
 
