@@ -39,9 +39,9 @@ class ApiUrl {
     }
 
     private List<String> extractIdentifiers(URL sourceUrl) throws MalformedURLException {
-        String host = sourceUrl.getPath();
+        String path = sourceUrl.getPath();
         Pattern pattern = Pattern.compile("/push/v1/organizations/([^/]+)/sources/([^/]+)");
-        Matcher matcher = pattern.matcher(host);
+        Matcher matcher = pattern.matcher(path);
 
         if (matcher.find()) {
             String organizationId = matcher.group(1);
