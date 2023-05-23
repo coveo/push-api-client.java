@@ -9,9 +9,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Private util class to extract dynamic parts from a Push API URL
+ * Private util class to extract dynamic parts from a API URL
  *
  * @See https://docs.coveo.com/en/1546#push-api-url
+ *      https://docs.coveo.com/en/3295#stream-api-url
  */
 class ApiUrl {
     private final String organizationId;
@@ -39,7 +40,7 @@ class ApiUrl {
 
     private List<String> extractIdentifiers(URL sourceUrl) throws MalformedURLException {
         String host = sourceUrl.getPath();
-        Pattern pattern = Pattern.compile("/push/v1/organizations/([^/]+)/sources/([^/]+)", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile("/push/v1/organizations/([^/]+)/sources/([^/]+)");
         Matcher matcher = pattern.matcher(host);
 
         if (matcher.find()) {
@@ -55,7 +56,7 @@ class ApiUrl {
 
     private PlatformUrl extractPlatformUrl(URL sourceUrl) throws MalformedURLException {
         String host = sourceUrl.getHost();
-        Pattern pattern = Pattern.compile("api([a-z]*)([a-z-]*)\\.cloud\\.coveo\\.com", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile("api([a-z]*)([a-z-]*)\\.cloud\\.coveo\\.com");
         Matcher matcher = pattern.matcher(host);
 
         if (matcher.find()) {
