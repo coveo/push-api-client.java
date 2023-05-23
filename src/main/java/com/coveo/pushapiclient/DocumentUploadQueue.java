@@ -2,7 +2,8 @@ package com.coveo.pushapiclient;
 
 import java.io.IOException;
 
-public class DocumentUploadQueue {
+// TODO: LENS-851 - Make public
+class DocumentUploadQueue {
     private final UpdloadStrategy uploader;
 
     public DocumentUploadQueue(UpdloadStrategy uploader) {
@@ -10,16 +11,11 @@ public class DocumentUploadQueue {
     }
 
     public void flush() throws IOException, InterruptedException {
-    }
-
-    public void add(DocumentBuilder documentToAdd, DeleteDocument documentToDelete)
-            throws IOException, InterruptedException {
+        throw new UnsupportedOperationException("Unimplemented method (TODO: LENS-856)");
     }
 
     public void add(DocumentBuilder document) throws IOException, InterruptedException {
-        // Once batch is ready, send it like:
-        // this.uploader.apply(batchUpdate);
-        throw new UnsupportedOperationException("Unimplemented method");
+        throw new UnsupportedOperationException("Unimplemented method (TODO: LENS-856)");
     }
 
 }

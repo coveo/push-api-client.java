@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 /**
  * Private util class to extract dynamic parts from a API URL
+ * Handles extraction of identifiers and platform URL from a source URL.
  *
  * @See https://docs.coveo.com/en/1546#push-api-url
  *      https://docs.coveo.com/en/3295#stream-api-url
@@ -18,12 +19,26 @@ class ApiUrl {
     private final String organizationId;
     private final String sourceId;
     private final PlatformUrl platformUrl;
+    private final String sourceUrl;
 
     public ApiUrl(URL sourceUrl) throws MalformedURLException {
         List<String> identifiers = this.extractIdentifiers(sourceUrl);
         this.organizationId = identifiers.get(0);
         this.sourceId = identifiers.get(1);
+        this.sourceUrl = sourceUrl.toString();
         this.platformUrl = this.extractPlatformUrl(sourceUrl);
+    }
+
+    public ApiUrl(String organizationId, String sourceId, PlatformUrl platformUrl) {
+        this.organizationId = organizationId;
+        this.sourceId = sourceId;
+        this.platformUrl = platformUrl;
+        this.sourceUrl = String.format("https://api.cloud.coveo.com/push/v1/organizations/%s/sources/%s",
+                this.organizationId, this.sourceId);
+    }
+
+    public String getUrl() {
+        return this.sourceUrl;
     }
 
     public String getOrganizationId() {

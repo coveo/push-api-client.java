@@ -91,10 +91,10 @@ public class PlatformClient {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
 
         String json = this.toJSON(new HashMap<>() {{
-                put("sourceType", "PUSH");
-                put("pushEnabled", true);
-                put("name", name);
-                put("sourceVisibility", sourceVisibility);
+            put("sourceType", "PUSH");
+            put("pushEnabled", true);
+            put("name", name);
+            put("sourceVisibility", sourceVisibility);
         }});
 
         HttpRequest request = HttpRequest.newBuilder()

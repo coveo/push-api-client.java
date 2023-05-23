@@ -9,17 +9,28 @@ import java.net.http.HttpResponse;
 
 // TODO: LENS-851 - Make public when ready
 class PushSource implements PushEnabledSource {
+    private final String apiKey;
+    private final ApiUrl urlExtractor;
     private final PlatformClient platformClient;
-    private final String sourceId;
 
     @Override
-    public PlatformClient getPlatformClient() {
-        return this.platformClient;
+    public String getOrganizationId() {
+        return this.urlExtractor.getOrganizationId();
+    }
+
+    @Override
+    public PlatformUrl getPlatformUrl() {
+        return this.urlExtractor.getPlatformUrl();
     }
 
     @Override
     public String getId() {
-        return this.sourceId;
+        return this.urlExtractor.getSourceId();
+    }
+
+    @Override
+    public String getApiKey() {
+        return this.apiKey;
     }
 
     /**
@@ -55,17 +66,15 @@ class PushSource implements PushEnabledSource {
      * @throws MalformedURLException
      */
     public PushSource(String apiKey, URL sourceUrl) throws MalformedURLException {
-        ApiUrl parser = new ApiUrl(sourceUrl);
-        PlatformUrl platformUrl = parser.getPlatformUrl();
-        String organizationId = parser.getOrganizationId();
-        this.sourceId = parser.getSourceId();
-        this.platformClient = new PlatformClient(apiKey, organizationId,
-                platformUrl);
+        this.apiKey = apiKey;
+        this.urlExtractor = new ApiUrl(sourceUrl);
+        String organizationId = urlExtractor.getOrganizationId();
+        PlatformUrl platformUrl = urlExtractor.getPlatformUrl();
+        this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
     }
 
     /**
-     * Create a Push source instance from its
-     * <a href="https://docs.coveo.com/en/3295#stream-api-url">Stream API URL</a>
+     * Create a Push source instance
      *
      * @param apiKey         The API key used for all operations regarding your
      *                       source.
@@ -94,16 +103,13 @@ class PushSource implements PushEnabledSource {
      *                       Administration Console</a>
      *
      */
-    public PushSource(String apiKey, String organizationId, String sourceId) {
+    public static PushSource fromPlatformUrl(String apiKey, String organizationId, String sourceId) {
         PlatformUrl platformUrl = new PlatformUrl(PlatformUrl.DEFAULT_ENVIRONMENT, PlatformUrl.DEFAULT_REGION);
-        this.sourceId = sourceId;
-        this.platformClient = new PlatformClient(apiKey, organizationId,
-                platformUrl);
+        return new PushSource(apiKey, organizationId, sourceId, platformUrl);
     }
 
     /**
-     * Create a Push source instance from its
-     * <a href="https://docs.coveo.com/en/3295#stream-api-url">Stream API URL</a>
+     * Create a Push source instance
      *
      * @param apiKey         The API key used for all operations regarding your
      *                       source.
@@ -135,13 +141,21 @@ class PushSource implements PushEnabledSource {
      *                       URL endpoint.
      *                       You can use the {@link PlatformUrl} when your
      *                       organization is located in a non-default Coveo
-     *                       environement and/or region.
+     *                       environement and/or region. When not specified, the
+     *                       default platform URL values will be used:
+     *                       {@link PlatformUrl#DEFAULT_ENVIRONMENT} and
+     *                       {@link PlatformUrl#DEFAULT_REGION}
      *
      */
-    public PushSource(String apiKey, String organizationId, String sourceId, PlatformUrl platformUrl) {
-        this.sourceId = sourceId;
-        this.platformClient = new PlatformClient(apiKey, organizationId,
-                platformUrl);
+    public static PushSource fromPlatformUrl(String apiKey, String organizationId, String sourceId,
+            PlatformUrl platformUrl) {
+        return new PushSource(apiKey, organizationId, sourceId, platformUrl);
+    }
+
+    private PushSource(String apiKey, String organizationId, String sourceId, PlatformUrl platformUrl) {
+        this.apiKey = apiKey;
+        this.urlExtractor = new ApiUrl(organizationId, sourceId, platformUrl);
+        this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
     }
 
     /**
@@ -202,7 +216,7 @@ class PushSource implements PushEnabledSource {
      */
     public HttpResponse<String> updateSourceStatus(PushAPIStatus status)
             throws IOException, InterruptedException {
-        return this.platformClient.updateSourceStatus(this.sourceId, status);
+        return this.platformClient.updateSourceStatus(this.getId(), status);
     }
 
     /**
@@ -277,7 +291,7 @@ class PushSource implements PushEnabledSource {
         CompressionType compressionType = docBuilder.getDocument().compressedBinaryData != null
                 ? docBuilder.getDocument().compressedBinaryData.getCompressionType()
                 : CompressionType.UNCOMPRESSED;
-        return this.platformClient.pushDocument(this.sourceId, docBuilder.marshal(), docBuilder.getDocument().uri,
+        return this.platformClient.pushDocument(this.getId(), docBuilder.marshal(), docBuilder.getDocument().uri,
                 compressionType);
     }
 
@@ -294,7 +308,7 @@ class PushSource implements PushEnabledSource {
      */
     public HttpResponse<String> deleteDocument(String documentId, Boolean deleteChildren)
             throws IOException, InterruptedException {
-        return this.platformClient.deleteDocument(this.sourceId, documentId, deleteChildren);
+        return this.platformClient.deleteDocument(this.getId(), documentId, deleteChildren);
     }
 
 }
