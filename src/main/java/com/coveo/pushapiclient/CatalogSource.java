@@ -5,8 +5,8 @@ import java.net.URL;
 
 // TODO: LENS-851 - Make public when ready
 class CatalogSource implements StreamEnabledSource {
-    private final PlatformClient platformClient;
-    private final String sourceId;
+    private final String apiKey;
+    private final ApiUrl urlExtractor;
 
     /**
      * Create a Catalog source instance from its
@@ -41,12 +41,8 @@ class CatalogSource implements StreamEnabledSource {
      * @throws MalformedURLException
      */
     public CatalogSource(String apiKey, URL sourceUrl) throws MalformedURLException {
-        ApiUrl parser = new ApiUrl(sourceUrl);
-        PlatformUrl platformUrl = parser.getPlatformUrl();
-        String organizationId = parser.getOrganizationId();
-        this.sourceId = parser.getSourceId();
-        this.platformClient = new PlatformClient(apiKey, organizationId,
-                platformUrl);
+        this.apiKey = apiKey;
+        this.urlExtractor = new ApiUrl(sourceUrl);
     }
 
     /**
@@ -80,11 +76,9 @@ class CatalogSource implements StreamEnabledSource {
      *                       Administration Console</a>
      *
      */
-    public CatalogSource(String apiKey, String organizationId, String sourceId) {
+    public static CatalogSource fromPlatformUrl(String apiKey, String organizationId, String sourceId) {
         PlatformUrl platformUrl = new PlatformUrl(PlatformUrl.DEFAULT_ENVIRONMENT, PlatformUrl.DEFAULT_REGION);
-        this.sourceId = sourceId;
-        this.platformClient = new PlatformClient(apiKey, organizationId,
-                platformUrl);
+        return new CatalogSource(apiKey, organizationId, sourceId, platformUrl);
     }
 
     /**
@@ -121,23 +115,40 @@ class CatalogSource implements StreamEnabledSource {
      *                       URL endpoint.
      *                       You can use the {@link PlatformUrl} when your
      *                       organization is located in a non-default Coveo
-     *                       environement and/or region.
+     *                       environement and/or region. When not specified, the
+     *                       default platform URL values will be used:
+     *                       {@link PlatformUrl#DEFAULT_ENVIRONMENT} and
+     *                       {@link PlatformUrl#DEFAULT_REGION}
      *
      */
-    public CatalogSource(String apiKey, String organizationId, String sourceId, PlatformUrl platformUrl) {
-        this.sourceId = sourceId;
-        this.platformClient = new PlatformClient(apiKey, organizationId,
-                platformUrl);
+    public static CatalogSource fromPlatformUrl(String apiKey, String organizationId, String sourceId,
+            PlatformUrl platformUrl) {
+        return new CatalogSource(apiKey, organizationId, sourceId, platformUrl);
+    }
+
+    private CatalogSource(String apiKey, String organizationId, String sourceId, PlatformUrl platformUrl) {
+        this.apiKey = apiKey;
+        this.urlExtractor = new ApiUrl(organizationId, sourceId, platformUrl);
+    }
+
+    @Override
+    public String getOrganizationId() {
+        return this.urlExtractor.getOrganizationId();
+    }
+
+    @Override
+    public PlatformUrl getPlatformUrl() {
+        return this.urlExtractor.getPlatformUrl();
     }
 
     @Override
     public String getId() {
-        return this.sourceId;
+        return this.urlExtractor.getSourceId();
     }
 
     @Override
-    public PlatformClient getPlatformClient() {
-        return this.platformClient;
+    public String getApiKey() {
+        return this.apiKey;
     }
 
 }
