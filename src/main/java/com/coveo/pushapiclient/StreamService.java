@@ -14,7 +14,7 @@ class StreamService {
     private DocumentUploadQueue queue;
 
     /**
-     * Creates a service to stream your documents to to provided source by
+     * Creates a service to stream your documents to the provided source by
      * interacting with
      * the Stream API.
      *
