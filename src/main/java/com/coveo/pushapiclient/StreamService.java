@@ -15,8 +15,7 @@ class StreamService {
 
     /**
      * Creates a service to stream your documents to the provided source by
-     * interacting with
-     * the Stream API.
+     * interacting with the Stream API.
      *
      * <p>
      * To perform <a href="https://docs.coveo.com/en/l62e0540">full document
