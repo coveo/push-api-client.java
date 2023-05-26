@@ -15,17 +15,16 @@ class StreamService {
     private DocumentUploadQueue queue;
 
     /**
-     * Creates a service to stream your documents to to provided source by
-     * interacting with
-     * the Stream API.
+     * Creates a service to stream your documents to the provided source by
+     * interacting with the Stream API.
      *
      * <p>
      * To perform <a href="https://docs.coveo.com/en/l62e0540">full document
-     * updates</a>, use the {@PushService} since pushing documents with the
+     * updates</a>, use the {@PushService}, since pushing documents with the
      * {@StreamService} is equivalent to triggering a full source rebuild. The
      * {@StreamService} can also be used for an initial catalog upload.
      *
-     * @param source The source to which you want to send your document to.
+     * @param source The source to which you want to send your documents.
      */
     public StreamService(StreamEnabledSource source) {
         String apiKey = source.getApiKey();
@@ -40,7 +39,7 @@ class StreamService {
     }
 
     /**
-     * Adds documents to the previously provided source.
+     * Adds documents to the previously specified source.
      * This function will open a stream before uploading documents into it.
      *
      * <p>
@@ -50,7 +49,7 @@ class StreamService {
      * set for the Stream API.
      *
      * <p>
-     * Once there are no more documents to be added, it is important to call the {@link StreamService#close} function
+     * Once there are no more documents to add, it is important to call the {@link StreamService#close} function
      * in order to send any buffered documents and close the open stream.
      * Otherwise, changes will not be reflected in the index.
      *
@@ -77,7 +76,7 @@ class StreamService {
     }
 
     /**
-     * Sends any buffered documents and <a href="https://docs.coveo.com/en/lb4a0344#step-3-close-the-stream">close the stream</a>.
+     * Sends any buffered documents and <a href="https://docs.coveo.com/en/lb4a0344#step-3-close-the-stream">closes the stream</a>.
      *
      * <p>
      * Upon invoking this method, any indexed items not added through this {@link StreamService} instance will be removed.
@@ -87,10 +86,6 @@ class StreamService {
      * <p>
      * When you upload a catalog into a source, it will replace the previous content
      * of the source completely. Expect a 15-minute delay for the removal of the old
-     * items from the index.
-     *
-     * <p>
-     * Expect a 15-minute delay for the removal of the old
      * items from the index.
      *
      * @return
