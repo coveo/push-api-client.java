@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 class StreamService {
     private final StreamEnabledSource source;
     private final PlatformClient platformClient;
+    private StreamServiceInternal service;
     private String streamId;
     private DocumentUploadQueue queue;
 
@@ -35,6 +36,7 @@ class StreamService {
         this.source = source;
         this.queue = new DocumentUploadQueue(uploader);
         this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
+        this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient);
     }
 
     /**
@@ -71,10 +73,7 @@ class StreamService {
      * @throws IOException
      */
     public void add(DocumentBuilder document) throws IOException, InterruptedException {
-        if (this.streamId == null) {
-            this.streamId = this.getStreamId();
-        }
-        queue.add(document);
+        this.service.add(document);
     }
 
     /**
@@ -100,13 +99,7 @@ class StreamService {
      * @throws NoOpenStreamException
      */
     public HttpResponse<String> close() throws IOException, InterruptedException, NoOpenStreamException {
-        if (this.streamId == null) {
-            throw new NoOpenStreamException(
-                    "No open stream detected. A stream will automatically be opened once you start adding documents.");
-        }
-        queue.flush();
-        String sourceId = this.getSourceId();
-        return this.platformClient.closeStream(sourceId, this.streamId);
+        return this.service.close();
     }
 
     private UpdloadStrategy getUploadStrategy() {
@@ -119,13 +112,6 @@ class StreamService {
                     batchUpdateJson);
 
         };
-    }
-
-    private String getStreamId() throws IOException, InterruptedException {
-        String sourceId = this.getSourceId();
-        HttpResponse<String> response = this.platformClient.openStream(sourceId);
-        StreamResponse streamResponse = new Gson().fromJson(response.body(), StreamResponse.class);
-        return streamResponse.streamId;
     }
 
     private String getSourceId() {
