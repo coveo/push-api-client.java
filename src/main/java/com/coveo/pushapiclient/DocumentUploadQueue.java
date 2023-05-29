@@ -1,24 +1,29 @@
 package com.coveo.pushapiclient;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a queue for uploading documents using a specified upload strategy
- * and accumulator.
  */
 class DocumentUploadQueue {
+    static final int maxContentLength = 5 * 1024 * 1024;
     private final UpdloadStrategy uploader;
-    private final BatchUpdateAccumulator accumulator;
+
+    private List<DocumentBuilder> documentToAddList;
+    private List<DeleteDocument> documentToDeleteList;
+    private int size;
 
     /**
      * Constructs a new DocumentUploadQueue object.
      *
-     * @param uploader    The upload strategy to be used for document uploads.
-     * @param accumulator The accumulator for queuing documents to be uploaded.
+     * @param uploader The upload strategy to be used for document uploads.
      */
-    public DocumentUploadQueue(UpdloadStrategy uploader, BatchUpdateAccumulator accumulator) {
+    public DocumentUploadQueue(UpdloadStrategy uploader) {
+        this.documentToAddList = new ArrayList<>();
+        this.documentToDeleteList = new ArrayList<>();
         this.uploader = uploader;
-        this.accumulator = accumulator;
     }
 
     /**
@@ -28,13 +33,12 @@ class DocumentUploadQueue {
      * @throws InterruptedException If the upload process is interrupted.
      */
     public void flush() throws IOException, InterruptedException {
-        if (!this.accumulator.isEmpty()) {
-            BatchUpdate batch = this.accumulator.getBatch();
-            // TODO: LENS-871: support concurrent requests
-            this.uploader.apply(batch);
-        }
-        this.accumulator.resetBatch();
-        this.accumulator.setSize(0);
+        BatchUpdate batch = this.getBatch();
+        // TODO: LENS-871: support concurrent requests
+        this.uploader.apply(batch);
+        this.size = 0;
+        this.documentToAddList.clear();
+        this.documentToDeleteList.clear();
     }
 
     /**
@@ -42,17 +46,19 @@ class DocumentUploadQueue {
      * it exceeds the maximum content length.
      * See {@link DocumentUploadQueue#flush}.
      *
-     * @param document              The document to be added to the index.
+     * @param document The document to be added to the index.
      * @throws IOException          If an I/O error occurs during the upload.
      * @throws InterruptedException If the upload process is interrupted.
      */
     public void add(DocumentBuilder document) throws IOException, InterruptedException {
         final int sizeOfDoc = document.marshal().getBytes().length;
-        if (accumulator.getSize() + sizeOfDoc >= BatchUpdateAccumulator.maxContentLength) {
+        if (!this.isEmpty() && this.size + sizeOfDoc >= maxContentLength) {
             this.flush();
         }
-        this.accumulator.addToBatch(document);
-        this.accumulator.setSize(sizeOfDoc);
+        if (document != null) {
+            documentToAddList.add(document);
+            this.size += sizeOfDoc;
+        }
     }
 
     /**
@@ -60,19 +66,28 @@ class DocumentUploadQueue {
      * it exceeds the maximum content length.
      * See {@link DocumentUploadQueue#flush}.
      *
-     * @param document              The document to be delete from the index.
+     * @param document The document to be delete from the index.
      * @throws IOException          If an I/O error occurs during the upload.
      * @throws InterruptedException If the upload process is interrupted.
      */
     public void add(DeleteDocument document) throws IOException, InterruptedException {
         final int sizeOfDoc = document.marshalJsonObject().toString().getBytes().length;
-        if (accumulator.getSize() + sizeOfDoc >= BatchUpdateAccumulator.maxContentLength) {
+        if (!this.isEmpty() && this.size + sizeOfDoc >= maxContentLength) {
             this.flush();
         }
-        this.accumulator.addToBatch(document);
-        this.accumulator.setSize(sizeOfDoc);
+        if (document != null) {
+            documentToDeleteList.add(document);
+            this.size += sizeOfDoc;
+        }
     }
 
-    // TODO: LENS-843: include partial document updates
+    private BatchUpdate getBatch() {
+        return new BatchUpdate(this.documentToAddList, this.documentToDeleteList);
+    }
+
+    private boolean isEmpty() {
+        // TODO: LENS-843: include partial document updates
+        return documentToAddList.isEmpty() && documentToDeleteList.isEmpty();
+    }
 
 }
