@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Represents a queue for uploading documents using a specified upload strategy
  */
 class DocumentUploadQueue {
-    private final UpdloadStrategy uploader;
+    private final UploadStrategy uploader;
     private final int maxQueueSize = 5 * 1024 * 1024;
     private ArrayList<DocumentBuilder> documentToAddList;
     private ArrayList<DeleteDocument> documentToDeleteList;
@@ -19,7 +19,7 @@ class DocumentUploadQueue {
      *
      * @param uploader The upload strategy to be used for document uploads.
      */
-    public DocumentUploadQueue(UpdloadStrategy uploader) {
+    public DocumentUploadQueue(UploadStrategy uploader) {
         this.documentToAddList = new ArrayList<>();
         this.documentToDeleteList = new ArrayList<>();
         this.uploader = uploader;
