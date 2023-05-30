@@ -4,6 +4,6 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 
 @FunctionalInterface
-public interface UpdloadStrategy {
+public interface UploadStrategy {
     HttpResponse<String> apply(BatchUpdate batchUpdate) throws IOException, InterruptedException;
 }

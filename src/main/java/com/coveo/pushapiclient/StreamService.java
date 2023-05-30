@@ -30,7 +30,7 @@ class StreamService {
         String apiKey = source.getApiKey();
         String organizationId = source.getOrganizationId();
         PlatformUrl platformUrl = source.getPlatformUrl();
-        UpdloadStrategy uploader = this.getUploadStrategy();
+        UploadStrategy uploader = this.getUploadStrategy();
 
         this.source = source;
         this.queue = new DocumentUploadQueue(uploader);
@@ -97,7 +97,7 @@ class StreamService {
         return this.service.close();
     }
 
-    private UpdloadStrategy getUploadStrategy() {
+    private UploadStrategy getUploadStrategy() {
         return (batchUpdate) -> {
             String sourceId = this.getSourceId();
             HttpResponse<String> resFileContainer = this.platformClient.requireStreamChunk(sourceId, this.streamId);
