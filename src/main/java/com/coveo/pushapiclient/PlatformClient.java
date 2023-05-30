@@ -82,17 +82,21 @@ public class PlatformClient {
      * Create a new push source
      *
      * @param name             The name of the source to create
+     * @param sourceType
+     * @param isPushEnabled
+     * @param isStreamEnabled
      * @param sourceVisibility The security option that should be applied to the content of the source. See [Content Security](https://docs.coveo.com/en/1779).
      * @return
      * @throws IOException
      * @throws InterruptedException
      */
-    public HttpResponse<String> createSource(String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
+    public HttpResponse<String> createSource(String name, final String sourceType, final boolean isPushEnabled, final boolean isStreamEnabled, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
 
         String json = this.toJSON(new HashMap<>() {{
-            put("sourceType", "PUSH");
-            put("pushEnabled", true);
+            put("sourceType", sourceType);
+            put("pushEnabled", isPushEnabled);
+            put("streamEnabled", isStreamEnabled);
             put("name", name);
             put("sourceVisibility", sourceVisibility);
         }});

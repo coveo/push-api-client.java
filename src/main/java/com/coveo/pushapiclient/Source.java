@@ -53,7 +53,7 @@ public class Source {
      * @throws InterruptedException
      */
     public HttpResponse<String> create(String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
-        return this.platformClient.createSource(name, sourceVisibility);
+        return this.platformClient.createSource(name, SourceType.PUSH.name(), true, false, sourceVisibility);
     }
 
     /**

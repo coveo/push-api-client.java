@@ -108,8 +108,8 @@ public class PlatformClientTest {
     }
 
     @Test
-    public void testCreateSource() throws IOException, InterruptedException {
-        client.createSource("the_name", SourceVisibility.SECURED);
+    public void testCreatePushSource() throws IOException, InterruptedException {
+        client.createSource("the_name", SourceType.PUSH.name(), true, false, SourceVisibility.SECURED);
         verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
 
         assertEquals("POST", argument.getValue().method());
@@ -122,6 +122,24 @@ public class PlatformClientTest {
         assertEquals(SourceVisibility.SECURED.toString(), requestBody.get("sourceVisibility"));
         assertEquals("PUSH", requestBody.get("sourceType"));
         assertEquals(true, requestBody.get("pushEnabled"));
+    }
+
+    @Test
+    public void testCreateCatalogSource() throws IOException, InterruptedException {
+        client.createSource("the_name", SourceType.CATALOG.name(), true, true, SourceVisibility.SECURED);
+        verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+
+        assertEquals("POST", argument.getValue().method());
+        assertTrue(argument.getValue().uri().getPath().contains("the_org_id/sources"));
+        assertAuthorizationHeader();
+        assertApplicationJsonHeader();
+
+        Map requestBody = StringSubscriber.toMap(argument.getValue().bodyPublisher());
+        assertEquals("the_name", requestBody.get("name"));
+        assertEquals(SourceVisibility.SECURED.toString(), requestBody.get("sourceVisibility"));
+        assertEquals("CATALOG", requestBody.get("sourceType"));
+        assertEquals(true, requestBody.get("pushEnabled"));
+        assertEquals(true, requestBody.get("streamEnabled"));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.coveo.pushapiclient;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -7,6 +8,23 @@ import java.net.URL;
 class CatalogSource implements StreamEnabledSource {
     private final String apiKey;
     private final ApiUrl urlExtractor;
+
+
+    /**
+     * Creates a Catalog Source in Coveo Org
+     *
+     * @param platformUrl
+     * @param organizationId
+     * @param apiKey
+     * @param name
+     * @param sourceVisibility
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static void create(PlatformUrl platformUrl, String organizationId, String apiKey, String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
+        new PlatformClient(apiKey,organizationId,platformUrl).createSource(name, SourceType.CATALOG.name(), true, true, sourceVisibility);
+    }
 
     /**
      * Create a Catalog source instance from its
