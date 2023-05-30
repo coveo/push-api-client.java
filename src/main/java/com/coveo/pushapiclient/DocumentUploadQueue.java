@@ -2,21 +2,21 @@ package com.coveo.pushapiclient;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents a queue for uploading documents using a specified upload strategy
  */
 class DocumentUploadQueue {
-    static final int maxContentLength = 5 * 1024 * 1024;
+    static final int defaultMaxQueueSize = 5 * 1024 * 1024;
     private final UpdloadStrategy uploader;
-
-    private List<DocumentBuilder> documentToAddList;
-    private List<DeleteDocument> documentToDeleteList;
+    private final int maxQueueSize;
+    private ArrayList<DocumentBuilder> documentToAddList;
+    private ArrayList<DeleteDocument> documentToDeleteList;
     private int size;
 
     /**
-     * Constructs a new DocumentUploadQueue object.
+     * Constructs a new DocumentUploadQueue object with a default maximum queue size
+     * limit of 5MB.
      *
      * @param uploader The upload strategy to be used for document uploads.
      */
@@ -24,7 +24,23 @@ class DocumentUploadQueue {
         this.documentToAddList = new ArrayList<>();
         this.documentToDeleteList = new ArrayList<>();
         this.uploader = uploader;
+        this.maxQueueSize = defaultMaxQueueSize;
     }
+
+    // /**
+    // * Constructs a new DocumentUploadQueue object with the specified uploader and
+    // * maximum queue size.
+    // *
+    // * @param uploader The upload strategy to be used for document uploads.
+    // * @param maxQueueSize The maximum size of the upload queue before it gets
+    // * automatically flushed.
+    // */
+    // public DocumentUploadQueue(UpdloadStrategy uploader, int maxQueueSize) {
+    // this.documentToAddList = new ArrayList<>();
+    // this.documentToDeleteList = new ArrayList<>();
+    // this.uploader = uploader;
+    // this.maxQueueSize = maxQueueSize;
+    // }
 
     /**
      * Flushes the accumulated documents by applying the upload strategy.
@@ -33,6 +49,9 @@ class DocumentUploadQueue {
      * @throws InterruptedException If the upload process is interrupted.
      */
     public void flush() throws IOException, InterruptedException {
+        if (this.isEmpty()) {
+            return;
+        }
         BatchUpdate batch = this.getBatch();
         // TODO: LENS-871: support concurrent requests
         this.uploader.apply(batch);
@@ -51,8 +70,12 @@ class DocumentUploadQueue {
      * @throws InterruptedException If the upload process is interrupted.
      */
     public void add(DocumentBuilder document) throws IOException, InterruptedException {
+        if (document == null) {
+            return;
+        }
+
         final int sizeOfDoc = document.marshal().getBytes().length;
-        if (!this.isEmpty() && this.size + sizeOfDoc >= maxContentLength) {
+        if (this.size + sizeOfDoc >= this.maxQueueSize) {
             this.flush();
         }
         if (document != null) {
@@ -71,8 +94,12 @@ class DocumentUploadQueue {
      * @throws InterruptedException If the upload process is interrupted.
      */
     public void add(DeleteDocument document) throws IOException, InterruptedException {
+        if (document == null) {
+            return;
+        }
+
         final int sizeOfDoc = document.marshalJsonObject().toString().getBytes().length;
-        if (!this.isEmpty() && this.size + sizeOfDoc >= maxContentLength) {
+        if (this.size + sizeOfDoc >= this.maxQueueSize) {
             this.flush();
         }
         if (document != null) {
@@ -81,11 +108,13 @@ class DocumentUploadQueue {
         }
     }
 
-    private BatchUpdate getBatch() {
-        return new BatchUpdate(this.documentToAddList, this.documentToDeleteList);
+    public BatchUpdate getBatch() {
+        return new BatchUpdate(
+                new ArrayList<DocumentBuilder>(this.documentToAddList),
+                new ArrayList<DeleteDocument>(this.documentToDeleteList));
     }
 
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         // TODO: LENS-843: include partial document updates
         return documentToAddList.isEmpty() && documentToDeleteList.isEmpty();
     }
