@@ -20,7 +20,7 @@ import org.mockito.MockitoAnnotations;
 public class DocumentUploadQueueTest {
 
     @Mock
-    private UpdloadStrategy updloadStrategy;
+    private UploadStrategy uploadStrategy;
 
     @InjectMocks
     private DocumentUploadQueue queue;
@@ -108,7 +108,7 @@ public class DocumentUploadQueueTest {
         queue.add(documentToAdd);
         queue.add(documentToDelete);
 
-        verify(updloadStrategy, times(0)).apply(any(BatchUpdate.class));
+        verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
     }
 
     @Test
@@ -137,8 +137,8 @@ public class DocumentUploadQueueTest {
         // queue size limit has been reached
         queue.add(thirdBulkyDocument);
 
-        verify(updloadStrategy, times(1)).apply(any(BatchUpdate.class));
-        verify(updloadStrategy, times(1)).apply(firstBatch);
+        verify(uploadStrategy, times(1)).apply(any(BatchUpdate.class));
+        verify(uploadStrategy, times(1)).apply(firstBatch);
     }
 
     @Test
@@ -175,9 +175,9 @@ public class DocumentUploadQueueTest {
         // Additional flush will have no effect if documents where already flushed
         queue.flush();
 
-        verify(updloadStrategy, times(2)).apply(any(BatchUpdate.class));
-        verify(updloadStrategy, times(1)).apply(firstBatch);
-        verify(updloadStrategy, times(1)).apply(secondBatch);
+        verify(uploadStrategy, times(2)).apply(any(BatchUpdate.class));
+        verify(uploadStrategy, times(1)).apply(firstBatch);
+        verify(uploadStrategy, times(1)).apply(secondBatch);
     }
 
     @Test
@@ -187,6 +187,6 @@ public class DocumentUploadQueueTest {
         queue.add(nullDocument);
         queue.flush();
 
-        verify(updloadStrategy, times(0)).apply(any(BatchUpdate.class));
+        verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
     }
 }
