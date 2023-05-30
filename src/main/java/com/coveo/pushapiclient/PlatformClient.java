@@ -284,8 +284,10 @@ public class PlatformClient {
 
     public HttpResponse<String> openStream(String sourceId) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        // TODO: LENS-875: standardize string manipulation
         URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/open", sourceId));
 
+        // TODO: LENS-876: reduce code duplication
         HttpRequest request = HttpRequest.newBuilder()
                 .headers(headers)
                 .uri(uri)
