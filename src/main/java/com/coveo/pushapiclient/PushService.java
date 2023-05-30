@@ -14,7 +14,7 @@ public class PushService {
         String apiKey = source.getApiKey();
         String organizationId = source.getOrganizationId();
         PlatformUrl platformUrl = source.getPlatformUrl();
-        UpdloadStrategy uploader = this.getUploadStrategy();
+        UploadStrategy uploader = this.getUploadStrategy();
         DocumentUploadQueue queue = new DocumentUploadQueue(uploader);
 
         this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
@@ -35,7 +35,7 @@ public class PushService {
         this.service.close();
     }
 
-    private UpdloadStrategy getUploadStrategy() {
+    private UploadStrategy getUploadStrategy() {
         return (batchUpdate) -> {
             String sourceId = this.getSourceId();
             HttpResponse<String> resFileContainer = this.platformClient.createFileContainer();
