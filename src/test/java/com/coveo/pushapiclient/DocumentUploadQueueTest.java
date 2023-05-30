@@ -125,16 +125,16 @@ public class DocumentUploadQueueTest {
                     }
                 }, emptyList);
 
-        // Adding the same 2MB document 3 times to the queue. After adding the second
-        // document, the queue size will reach 6MB, which exceeds the maximum queue size
-        // limit. Therefore the added documents will automatically be uploaded to the
-        // source.
+        // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
+        // the queue size will reach 6MB, which exceeds the maximum queue size
+        // limit. Therefore, the 2 first added documents will automatically be uploaded
+        // to the source.
         queue.add(firstBulkyDocument);
         queue.add(secondBulkyDocument);
 
-        // The 3rd document to be added will be included in a separate batch, which will
-        // not be uploaded unless the `flush()` method is called or until the queue size
-        // limit has been reached
+        // The 3rd document added to the queue will be included in a separate batch,
+        // which will not be uploaded unless the `flush()` method is called or until the
+        // queue size limit has been reached
         queue.add(thirdBulkyDocument);
 
         verify(updloadStrategy, times(1)).apply(any(BatchUpdate.class));
@@ -162,10 +162,10 @@ public class DocumentUploadQueueTest {
                     }
                 }, emptyList);
 
-        // Adding the same 2MB document 3 times to the queue. After adding the second
-        // document, the queue size will reach 6MB, which exceeds the maximum queue size
-        // limit. Therefore the added documents will automatically be uploaded to the
-        // source.
+        // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
+        // the queue size will reach 6MB, which exceeds the maximum queue size
+        // limit. Therefore, the 2 first added documents will automatically be uploaded
+        // to the source.
         queue.add(firstBulkyDocument);
         queue.add(secondBulkyDocument);
         queue.add(thirdBulkyDocument);
