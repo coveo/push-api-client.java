@@ -267,6 +267,39 @@ public class PlatformClientTest {
     }
 
     @Test
+    public void testOpenStream() throws IOException, InterruptedException {
+        client.openStream("my_source");
+        verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+
+        assertEquals("POST", argument.getValue().method());
+        assertTrue(argument.getValue().uri().getPath().contains("the_org_id/sources/my_source/stream/open"));
+        assertApplicationJsonHeader();
+        assertAuthorizationHeader();
+    }
+
+    @Test
+    public void testRequireStreamChunk() throws IOException, InterruptedException {
+        client.requireStreamChunk("my_source", "stream_id");
+        verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+
+        assertEquals("POST", argument.getValue().method());
+        assertTrue(argument.getValue().uri().getPath().contains("the_org_id/sources/my_source/stream/stream_id/chunk"));
+        assertApplicationJsonHeader();
+        assertAuthorizationHeader();
+    }
+
+    @Test
+    public void testCloseStream() throws IOException, InterruptedException {
+        client.closeStream("my_source", "stream_id");
+        verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+
+        assertEquals("POST", argument.getValue().method());
+        assertTrue(argument.getValue().uri().getPath().contains("the_org_id/sources/my_source/stream/stream_id/close"));
+        assertApplicationJsonHeader();
+        assertAuthorizationHeader();
+    }
+
+    @Test
     public void testDeleteDocument() throws IOException, InterruptedException {
         client.deleteDocument("my_source", document().uri, true);
         verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
