@@ -282,6 +282,47 @@ public class PlatformClient {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
+    public HttpResponse<String> openStream(String sourceId) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        // TODO: LENS-875: standardize string manipulation
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/open", sourceId));
+
+        // TODO: LENS-876: reduce code duplication
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    public HttpResponse<String> closeStream(String sourceId, String streamId) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/%s/close", sourceId, streamId));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    public HttpResponse<String> requireStreamChunk(String sourceId, String streamId) throws IOException, InterruptedException {
+        String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+        URI uri = URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/%s/chunk", sourceId, streamId));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .headers(headers)
+                .uri(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .build();
+
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
     /**
      * Create a file container. See [Creating a File Container](https://docs.coveo.com/en/43).
      *
