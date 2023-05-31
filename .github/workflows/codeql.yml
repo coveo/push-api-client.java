@@ -14,4 +14,4 @@ jobs:
   analyze-java:
     uses: coveo/public-actions/.github/workflows/java-maven-openjdk11-codeql.yml@main
     with:
-      runs-on: ubuntu-latest
+      runs-on: "ubuntu-latest"
