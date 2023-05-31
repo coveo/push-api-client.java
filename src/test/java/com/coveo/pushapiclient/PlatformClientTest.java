@@ -109,7 +109,7 @@ public class PlatformClientTest {
 
     @Test
     public void testCreatePushSource() throws IOException, InterruptedException {
-        client.createSource("the_name", SourceType.PUSH.name(), true, false, SourceVisibility.SECURED);
+        client.createSource("the_name", SourceType.PUSH, SourceVisibility.SECURED);
         verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
 
         assertEquals("POST", argument.getValue().method());
@@ -126,7 +126,7 @@ public class PlatformClientTest {
 
     @Test
     public void testCreateCatalogSource() throws IOException, InterruptedException {
-        client.createSource("the_name", SourceType.CATALOG.name(), true, true, SourceVisibility.SECURED);
+        client.createSource("the_name", SourceType.CATALOG, SourceVisibility.SECURED);
         verify(httpClient).send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
 
         assertEquals("POST", argument.getValue().method());

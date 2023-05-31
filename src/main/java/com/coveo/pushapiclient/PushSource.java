@@ -34,19 +34,17 @@ class PushSource implements PushEnabledSource {
     }
 
     /**
-     * Creates a push Source in Coveo Org
+     * Creates a <a href="https://docs.coveo.com/en/94/index-content/create-a-push-source">push Source </a> in Coveo Org
      *
-     * @param platformUrl
-     * @param organizationId
-     * @param apiKey
+     * @param platformClient
      * @param name
      * @param sourceVisibility
      * @return
      * @throws IOException
      * @throws InterruptedException
      */
-    public static void create(PlatformUrl platformUrl, String organizationId, String apiKey, String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
-        new PlatformClient(apiKey,organizationId,platformUrl).createSource(name, SourceType.PUSH.name(), true, false, sourceVisibility);
+    public static HttpResponse<String> create(PlatformClient platformClient, String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
+        return platformClient.createSource(name, SourceType.PUSH, sourceVisibility);
     }
 
     /**

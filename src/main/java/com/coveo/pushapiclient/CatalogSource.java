@@ -3,6 +3,7 @@ package com.coveo.pushapiclient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.http.HttpResponse;
 
 // TODO: LENS-851 - Make public when ready
 class CatalogSource implements StreamEnabledSource {
@@ -11,19 +12,17 @@ class CatalogSource implements StreamEnabledSource {
 
 
     /**
-     * Creates a Catalog Source in Coveo Org
+     * Creates a <a href='https://docs.coveo.com/en/3295/index-content/add-or-edit-a-catalog-source'>Catalog Source</a> in Coveo Org
      *
-     * @param platformUrl
-     * @param organizationId
-     * @param apiKey
+     * @param platformClient
      * @param name
      * @param sourceVisibility
      * @return
      * @throws IOException
      * @throws InterruptedException
      */
-    public static void create(PlatformUrl platformUrl, String organizationId, String apiKey, String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
-        new PlatformClient(apiKey,organizationId,platformUrl).createSource(name, SourceType.CATALOG.name(), true, true, sourceVisibility);
+    public static HttpResponse<String> create(PlatformClient platformClient, String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
+        return platformClient.createSource(name, SourceType.CATALOG, sourceVisibility);
     }
 
     /**
