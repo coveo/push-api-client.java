@@ -82,7 +82,7 @@ public class PlatformClient {
      * Create a new push source
      *
      * @param name             The name of the source to create
-     * @param sourceType
+     * @param sourceType The type of the source to create
      * @param sourceVisibility The security option that should be applied to the content of the source. See [Content Security](https://docs.coveo.com/en/1779).
      * @return
      * @throws IOException
