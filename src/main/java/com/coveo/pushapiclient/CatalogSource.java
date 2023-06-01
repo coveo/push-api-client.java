@@ -12,7 +12,7 @@ class CatalogSource implements StreamEnabledSource {
 
 
     /**
-     * Creates a <a href='https://docs.coveo.com/en/3295/index-content/add-or-edit-a-catalog-source'>Catalog Source</a> in Coveo Org
+     * Creates a <a href='https://docs.coveo.com/en/3295'>Catalog Source</a> in Coveo Org
      *
      * @param platformClient
      * @param name
