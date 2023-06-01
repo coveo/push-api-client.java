@@ -38,7 +38,8 @@ class PushSource implements PushEnabledSource {
      *
      * @param platformClient
      * @param name
-     * @param sourceVisibility
+     * @param name The name of the source to create
+     * @param sourceVisibility The security option that should be applied to the content of the source. See [Content Security](https://docs.coveo.com/en/1779).
      * @return
      * @throws IOException
      * @throws InterruptedException
