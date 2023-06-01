@@ -80,6 +80,22 @@ public class PlatformClient {
 
     /**
      * Create a new push source
+     * @deprecated
+     * Please use {@link PlatformClient#createSource(String, SourceType, SourceVisibility)} instead
+     *
+     * @param name
+     * @param sourceVisibility
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Deprecated
+    public HttpResponse<String> createSource(String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
+        return createSource(name,SourceType.PUSH,sourceVisibility);
+    }
+
+    /**
+     * Create a new source
      *
      * @param name             The name of the source to create
      * @param sourceType The type of the source to create
