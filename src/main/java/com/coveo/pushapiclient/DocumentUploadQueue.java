@@ -61,10 +61,8 @@ class DocumentUploadQueue {
         if (this.size + sizeOfDoc >= this.maxQueueSize) {
             this.flush();
         }
-        if (document != null) {
-            documentToAddList.add(document);
-            this.size += sizeOfDoc;
-        }
+        documentToAddList.add(document);
+        this.size += sizeOfDoc;
     }
 
     /**
@@ -85,10 +83,8 @@ class DocumentUploadQueue {
         if (this.size + sizeOfDoc >= this.maxQueueSize) {
             this.flush();
         }
-        if (document != null) {
-            documentToDeleteList.add(document);
-            this.size += sizeOfDoc;
-        }
+        documentToDeleteList.add(document);
+        this.size += sizeOfDoc;
     }
 
     public BatchUpdate getBatch() {
