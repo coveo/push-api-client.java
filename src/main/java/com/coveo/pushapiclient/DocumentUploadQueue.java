@@ -68,11 +68,11 @@ class DocumentUploadQueue {
     }
 
     /**
-     * Adds a {@link DeleteDocument} to the upload queue and flushes the queue if
+     * Adds the {@link DeleteDocument} to the upload queue and flushes the queue if
      * it exceeds the maximum content length.
      * See {@link DocumentUploadQueue#flush}.
      *
-     * @param document The document to be delete from the index.
+     * @param document The document to be deleted from the index.
      * @throws IOException          If an I/O error occurs during the upload.
      * @throws InterruptedException If the upload process is interrupted.
      */
