@@ -80,19 +80,37 @@ public class PlatformClient {
 
     /**
      * Create a new push source
+     * @deprecated
+     * Please use {@link PlatformClient#createSource(String, SourceType, SourceVisibility)} instead
+     *
+     * @param name
+     * @param sourceVisibility
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Deprecated
+    public HttpResponse<String> createSource(String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
+        return createSource(name,SourceType.PUSH,sourceVisibility);
+    }
+
+    /**
+     * Create a new source
      *
      * @param name             The name of the source to create
+     * @param sourceType The type of the source to create
      * @param sourceVisibility The security option that should be applied to the content of the source. See [Content Security](https://docs.coveo.com/en/1779).
      * @return
      * @throws IOException
      * @throws InterruptedException
      */
-    public HttpResponse<String> createSource(String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
+    public HttpResponse<String> createSource(String name, final SourceType sourceType, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
         String[] headers = this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
 
         String json = this.toJSON(new HashMap<>() {{
-            put("sourceType", "PUSH");
-            put("pushEnabled", true);
+            put("sourceType", sourceType.toString());
+            put("pushEnabled", sourceType.isPushEnabled());
+            put("streamEnabled", sourceType.isStreamEnabled());
             put("name", name);
             put("sourceVisibility", sourceVisibility);
         }});
