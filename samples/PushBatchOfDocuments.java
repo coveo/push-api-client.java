@@ -1,4 +1,5 @@
 import com.coveo.pushapiclient.BatchUpdate;
+import com.coveo.pushapiclient.DeleteDocument;
 import com.coveo.pushapiclient.DocumentBuilder;
 import com.coveo.pushapiclient.Source;
 
@@ -13,14 +14,14 @@ public class PushBatchOfDocuments {
         DocumentBuilder firstDocumentToAdd = new DocumentBuilder("https://my.document.uri?ref=1", "My first document title");
         DocumentBuilder secondDocumentToAdd = new DocumentBuilder("https://my.document.uri?ref=2", "My second document title");
 
-        DocumentBuilder firstDocumentToDelete = new DocumentBuilder("https://my.document.uri?ref=3", "My document to delete");
+        DeleteDocument firstDocumentToDelete = new DeleteDocument("https://my.document.uri?ref=3");
 
         ArrayList<DocumentBuilder> listOfDocumentsToAddOrUpdate = new ArrayList<>() {{
             add(firstDocumentToAdd);
             add(secondDocumentToAdd);
         }};
 
-        ArrayList<DocumentBuilder> listOfDocumentsToDelete = new ArrayList<>() {{
+        ArrayList<DeleteDocument> listOfDocumentsToDelete = new ArrayList<>() {{
             add(firstDocumentToDelete);
         }};
 
