@@ -7,6 +7,7 @@ import com.coveo.pushapiclient.SourceVisibility;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 
+@Deprecated
 public class CreateSource {
     public static void main(String[] args) {
         PlatformUrl platformUrl = new PlatformUrlBuilder()

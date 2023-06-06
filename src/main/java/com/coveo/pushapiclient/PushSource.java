@@ -8,7 +8,7 @@ import java.net.URL;
 import java.net.http.HttpResponse;
 
 // TODO: LENS-851 - Make public when ready
-class PushSource implements PushEnabledSource {
+public class PushSource implements PushEnabledSource {
     private final String apiKey;
     private final ApiUrl urlExtractor;
     private final PlatformClient platformClient;
