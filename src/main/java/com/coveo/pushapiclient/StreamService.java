@@ -7,7 +7,7 @@ import com.coveo.pushapiclient.exceptions.NoOpenStreamException;
 import com.google.gson.Gson;
 
 // TODO: LENS-851 - Make public
-public class StreamService {
+class StreamService {
     private final StreamEnabledSource source;
     private final PlatformClient platformClient;
     private StreamServiceInternal service;
