@@ -1,4 +1,6 @@
 /target/
 .env
 /.idea/
-.vscode
+.vscode/*
+
+!.vscode/code-style.xml
