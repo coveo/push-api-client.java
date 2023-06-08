@@ -34,6 +34,21 @@ class PushSource implements PushEnabledSource {
     }
 
     /**
+     * Creates a <a href="https://docs.coveo.com/en/94/index-content/create-a-push-source">push Source </a> in Coveo Org
+     *
+     * @param platformClient
+     * @param name
+     * @param name The name of the source to create
+     * @param sourceVisibility The security option that should be applied to the content of the source. See [Content Security](https://docs.coveo.com/en/1779).
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static HttpResponse<String> create(PlatformClient platformClient, String name, SourceVisibility sourceVisibility) throws IOException, InterruptedException {
+        return platformClient.createSource(name, SourceType.PUSH, sourceVisibility);
+    }
+
+    /**
      * Create a Push source instance from its
      * <a href="https://docs.coveo.com/en/1546#push-api-url">Push API URL</a>
      *
@@ -310,5 +325,6 @@ class PushSource implements PushEnabledSource {
             throws IOException, InterruptedException {
         return this.platformClient.deleteDocument(this.getId(), documentId, deleteChildren);
     }
+
 
 }
