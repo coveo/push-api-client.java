@@ -7,7 +7,7 @@ import com.coveo.pushapiclient.exceptions.NoOpenStreamException;
 import com.google.gson.Gson;
 
 // TODO: LENS-851 - Make public
-class StreamService {
+public class StreamService {
     private final StreamEnabledSource source;
     private final PlatformClient platformClient;
     private StreamServiceInternal service;
@@ -72,7 +72,7 @@ class StreamService {
      * @throws IOException
      */
     public void add(DocumentBuilder document) throws IOException, InterruptedException {
-        this.service.add(document);
+        this.streamId = this.service.add(document);
     }
 
     /**
