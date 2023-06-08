@@ -45,6 +45,20 @@ public class PushOneDocument {
 
 ```
 
+## Local Setup to Contribute
+
+### Formatting
+Make sure to format your code before each pull request by manually invoking the [formatter-maven-plugin](https://code.revelc.net/formatter-maven-plugin/) Java plugin:
+```bash
+mvn formatter:format
+```
+
+You could also configure your IDE to use `.vscode/code-style.xml` for the formatting rules.
+In VSCode, you can either update `~/Library/Application Support/Code/User/settings.json` or `.vscode/settings.json` by adding the following instruction:
+```json
+"java.format.settings.url": ".vscode/code-style.xml"
+```
+
 ## Release
 
 * Tag the commit following semver.
