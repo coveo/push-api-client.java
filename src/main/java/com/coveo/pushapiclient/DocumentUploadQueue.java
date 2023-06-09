@@ -57,17 +57,15 @@ class DocumentUploadQueue {
     if (this.size + sizeOfDoc >= this.maxQueueSize) {
       this.flush();
     }
-    if (document != null) {
-      documentToAddList.add(document);
-      this.size += sizeOfDoc;
-    }
+    documentToAddList.add(document);
+    this.size += sizeOfDoc;
   }
 
   /**
-   * Adds a {@link DeleteDocument} to the upload queue and flushes the queue if it exceeds the
+   * Adds the {@link DeleteDocument} to the upload queue and flushes the queue if it exceeds the
    * maximum content length. See {@link DocumentUploadQueue#flush}.
    *
-   * @param document The document to be delete from the index.
+   * @param document The document to be deleted from the index.
    * @throws IOException If an I/O error occurs during the upload.
    * @throws InterruptedException If the upload process is interrupted.
    */
@@ -80,10 +78,8 @@ class DocumentUploadQueue {
     if (this.size + sizeOfDoc >= this.maxQueueSize) {
       this.flush();
     }
-    if (document != null) {
-      documentToDeleteList.add(document);
-      this.size += sizeOfDoc;
-    }
+    documentToDeleteList.add(document);
+    this.size += sizeOfDoc;
   }
 
   public BatchUpdate getBatch() {

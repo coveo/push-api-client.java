@@ -1,0 +1,16 @@
+{
+  "name": "publish-java-package-with-maven-on-github-packages",
+  "private": true,
+  "version": "1.0.0",
+  "author": "Coveo",
+  "description": "CI related stuff only",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@commitlint/config-conventional": "17.4.4"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
+}
