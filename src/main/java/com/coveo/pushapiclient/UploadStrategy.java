@@ -5,5 +5,5 @@ import java.net.http.HttpResponse;
 
 @FunctionalInterface
 public interface UploadStrategy {
-    HttpResponse<String> apply(BatchUpdate batchUpdate) throws IOException, InterruptedException;
+  HttpResponse<String> apply(BatchUpdate batchUpdate) throws IOException, InterruptedException;
 }
