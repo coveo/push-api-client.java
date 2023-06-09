@@ -72,7 +72,6 @@ class StreamService {
     this.streamId = this.service.add(document);
   }
 
-
   /**
    * Sends any buffered documents and <a
    * href="https://docs.coveo.com/en/lb4a0344#step-3-close-the-stream">closes the stream</a>.

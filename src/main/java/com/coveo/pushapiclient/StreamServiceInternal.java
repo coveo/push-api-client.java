@@ -27,7 +27,6 @@ class StreamServiceInternal {
     return this.streamId;
   }
 
-
   public HttpResponse<String> close()
       throws IOException, InterruptedException, NoOpenStreamException {
     if (this.streamId == null) {
