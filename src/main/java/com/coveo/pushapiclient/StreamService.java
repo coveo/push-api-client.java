@@ -69,7 +69,7 @@ class StreamService {
    * @throws IOException
    */
   public void add(DocumentBuilder document) throws IOException, InterruptedException {
-    this.service.add(document);
+    this.streamId = this.service.add(document);
   }
 
   /**
