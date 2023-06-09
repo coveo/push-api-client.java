@@ -64,6 +64,60 @@
                 </executions>
             </plugin>
 
+            <!-- Format code -->
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <configuration>
+                    <configFile>.vscode/code-style.xml</configFile>
+                    <lineEnding>LF</lineEnding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <includes>
+                            <include>src/main/java/**/*.java</include>
+                            <include>src/test/java/**/*.java</include>
+                        </includes>
+
+                        <!-- Not sure this should be included -->
+
+                        <googleJavaFormat />
+                        <!-- <eclipse /> -->
+                        <!-- <prettier>
+                            <devDependencies>
+                                <prettier>2.0.5</prettier>
+                                <prettier-plugin-java>0.8.0</prettier-plugin-java>
+                            </devDependencies>
+                            <config>
+                                <tabWidth>4</tabWidth>
+                                <parser>java</parser>
+                            </config>
+                        </prettier> -->
+
+
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
         </plugins>
     </build>
@@ -109,6 +163,18 @@
                             </execution>
                         </executions>
                     </plugin>
+                        <plugin>
+                            <groupId>com.spotify.fmt</groupId>
+                            <artifactId>fmt-maven-plugin</artifactId>
+                            <version>VERSION</version>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>format</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
                 </plugins>
             </build>
         </profile>
@@ -162,6 +228,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spotless.version>2.37.0</spotless.version>
         <github.packages.url>https://maven.pkg.github.com/coveo/push-api-client.java</github.packages.url>
     </properties>
 </project>
