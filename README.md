@@ -45,6 +45,15 @@ public class PushOneDocument {
 
 ```
 
+## Local Setup to Contribute
+
+### Formatting
+
+This project uses [Google Java Format](https://github.com/google/google-java-format), so make sure your code is properly formatted before opening a pull request.
+```bash
+mvn spotless:apply
+```
+
 ## Release
 
 * Tag the commit following semver.
