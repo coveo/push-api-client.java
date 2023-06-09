@@ -7,6 +7,7 @@ import com.coveo.pushapiclient.SourceVisibility;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 
+// TODO: LENS-844 - Deprecate class
 public class CreateSource {
     public static void main(String[] args) {
         PlatformUrl platformUrl = new PlatformUrlBuilder()
