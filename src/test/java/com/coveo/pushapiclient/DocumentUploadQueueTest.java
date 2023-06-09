@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,174 +18,181 @@ import org.mockito.MockitoAnnotations;
 
 public class DocumentUploadQueueTest {
 
-    @Mock
-    private UploadStrategy uploadStrategy;
+  @Mock private UploadStrategy uploadStrategy;
 
-    @InjectMocks
-    private DocumentUploadQueue queue;
+  @InjectMocks private DocumentUploadQueue queue;
 
-    private AutoCloseable closeable;
-    private DocumentBuilder documentToAdd;
-    private DeleteDocument documentToDelete;
+  private AutoCloseable closeable;
+  private DocumentBuilder documentToAdd;
+  private DeleteDocument documentToDelete;
 
-    private int oneMegaByte = 1 * 1024 * 1024;
+  private int oneMegaByte = 1 * 1024 * 1024;
 
-    private String generateStringFromBytes(int numBytes) {
-        // Check if the number of bytes is valid
-        if (numBytes <= 0) {
-            return "";
-        }
-
-        // Create a byte array with the specified length
-        byte[] bytes = new byte[numBytes];
-
-        // Fill the byte array with a pattern of ASCII characters
-        byte pattern = 65; // ASCII value for 'A'
-        for (int i = 0; i < numBytes; i++) {
-            bytes[i] = pattern;
-        }
-
-        return new String(bytes);
+  private String generateStringFromBytes(int numBytes) {
+    // Check if the number of bytes is valid
+    if (numBytes <= 0) {
+      return "";
     }
 
-    private DocumentBuilder generateDocumentFromSize(int numBytes) {
-        return new DocumentBuilder("https://my.document.uri?ref=1",
-                "My bulky document")
-                .withData(generateStringFromBytes(numBytes));
+    // Create a byte array with the specified length
+    byte[] bytes = new byte[numBytes];
+
+    // Fill the byte array with a pattern of ASCII characters
+    byte pattern = 65; // ASCII value for 'A'
+    for (int i = 0; i < numBytes; i++) {
+      bytes[i] = pattern;
     }
 
-    @Before
-    public void setup() {
-        String twoMegaByteData = generateStringFromBytes(2 * oneMegaByte);
+    return new String(bytes);
+  }
 
-        documentToAdd = new DocumentBuilder(
-                "https://my.document.uri?ref=1",
-                "My new document")
-                .withData(twoMegaByteData);
+  private DocumentBuilder generateDocumentFromSize(int numBytes) {
+    return new DocumentBuilder("https://my.document.uri?ref=1", "My bulky document")
+        .withData(generateStringFromBytes(numBytes));
+  }
 
-        documentToDelete = new DeleteDocument("https://my.document.uri?ref=3");
+  @Before
+  public void setup() {
+    String twoMegaByteData = generateStringFromBytes(2 * oneMegaByte);
 
-        closeable = MockitoAnnotations.openMocks(this);
-    }
+    documentToAdd =
+        new DocumentBuilder("https://my.document.uri?ref=1", "My new document")
+            .withData(twoMegaByteData);
 
-    @After
-    public void closeService() throws Exception {
-        closeable.close();
-    }
+    documentToDelete = new DeleteDocument("https://my.document.uri?ref=3");
 
-    @Test
-    public void testIsEmpty() throws IOException, InterruptedException {
-        assertTrue(queue.isEmpty());
-    }
+    closeable = MockitoAnnotations.openMocks(this);
+  }
 
-    @Test
-    public void testIsNotEmpty() throws IOException, InterruptedException {
-        queue.add(documentToAdd);
-        assertFalse(queue.isEmpty());
-    }
+  @After
+  public void closeService() throws Exception {
+    closeable.close();
+  }
 
-    @Test
-    public void testShouldReturnBatch() throws IOException, InterruptedException {
-        BatchUpdate batchUpdate = new BatchUpdate(
-                new ArrayList<>() {
-                    {
-                        add(documentToAdd);
-                    }
-                }, new ArrayList<>() {
-                    {
-                        add(documentToDelete);
-                    }
-                });
-        queue.add(documentToAdd);
-        queue.add(documentToDelete);
+  @Test
+  public void testIsEmpty() throws IOException, InterruptedException {
+    assertTrue(queue.isEmpty());
+  }
 
-        assertEquals(batchUpdate, queue.getBatch());
-    }
+  @Test
+  public void testIsNotEmpty() throws IOException, InterruptedException {
+    queue.add(documentToAdd);
+    assertFalse(queue.isEmpty());
+  }
 
-    @Test
-    public void testFlushShouldNotUploadDocumentaWhenRequiredSizeIsNotMet() throws IOException, InterruptedException {
-        queue.add(documentToAdd);
-        queue.add(documentToDelete);
+  @Test
+  public void testShouldReturnBatch() throws IOException, InterruptedException {
+    BatchUpdate batchUpdate =
+        new BatchUpdate(
+            new ArrayList<>() {
+              {
+                add(documentToAdd);
+              }
+            },
+            new ArrayList<>() {
+              {
+                add(documentToDelete);
+              }
+            });
+    queue.add(documentToAdd);
+    queue.add(documentToDelete);
 
-        verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
-    }
+    assertEquals(batchUpdate, queue.getBatch());
+  }
 
-    @Test
-    public void testShouldAutomaticallyFlushAccumulatedDocuments() throws IOException, InterruptedException {
-        DocumentBuilder firstBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
-        DocumentBuilder secondBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
-        DocumentBuilder thirdBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
-        ArrayList<DeleteDocument> emptyList = new ArrayList<>();
-        BatchUpdate firstBatch = new BatchUpdate(
-                new ArrayList<>() {
-                    {
-                        add(firstBulkyDocument);
-                        add(secondBulkyDocument);
-                    }
-                }, emptyList);
+  @Test
+  public void testFlushShouldNotUploadDocumentaWhenRequiredSizeIsNotMet()
+      throws IOException, InterruptedException {
+    queue.add(documentToAdd);
+    queue.add(documentToDelete);
 
-        // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
-        // the queue size will reach 6MB, which exceeds the maximum queue size
-        // limit. Therefore, the 2 first added documents will automatically be uploaded
-        // to the source.
-        queue.add(firstBulkyDocument);
-        queue.add(secondBulkyDocument);
+    verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
+  }
 
-        // The 3rd document added to the queue will be included in a separate batch,
-        // which will not be uploaded unless the `flush()` method is called or until the
-        // queue size limit has been reached
-        queue.add(thirdBulkyDocument);
+  @Test
+  public void testShouldAutomaticallyFlushAccumulatedDocuments()
+      throws IOException, InterruptedException {
+    DocumentBuilder firstBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
+    DocumentBuilder secondBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
+    DocumentBuilder thirdBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
+    ArrayList<DeleteDocument> emptyList = new ArrayList<>();
+    BatchUpdate firstBatch =
+        new BatchUpdate(
+            new ArrayList<>() {
+              {
+                add(firstBulkyDocument);
+                add(secondBulkyDocument);
+              }
+            },
+            emptyList);
 
-        verify(uploadStrategy, times(1)).apply(any(BatchUpdate.class));
-        verify(uploadStrategy, times(1)).apply(firstBatch);
-    }
+    // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
+    // the queue size will reach 6MB, which exceeds the maximum queue size
+    // limit. Therefore, the 2 first added documents will automatically be uploaded
+    // to the source.
+    queue.add(firstBulkyDocument);
+    queue.add(secondBulkyDocument);
 
-    @Test
-    public void testShouldManuallyFlushAccumulatedDocuments() throws IOException, InterruptedException {
-        DocumentBuilder firstBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
-        DocumentBuilder secondBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
-        DocumentBuilder thirdBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
-        ArrayList<DeleteDocument> emptyList = new ArrayList<>();
-        BatchUpdate firstBatch = new BatchUpdate(
-                new ArrayList<>() {
-                    {
-                        add(firstBulkyDocument);
-                        add(secondBulkyDocument);
-                    }
-                }, emptyList);
+    // The 3rd document added to the queue will be included in a separate batch,
+    // which will not be uploaded unless the `flush()` method is called or until the
+    // queue size limit has been reached
+    queue.add(thirdBulkyDocument);
 
-        BatchUpdate secondBatch = new BatchUpdate(
-                new ArrayList<>() {
-                    {
-                        add(thirdBulkyDocument);
-                    }
-                }, emptyList);
+    verify(uploadStrategy, times(1)).apply(any(BatchUpdate.class));
+    verify(uploadStrategy, times(1)).apply(firstBatch);
+  }
 
-        // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
-        // the queue size will reach 6MB, which exceeds the maximum queue size
-        // limit. Therefore, the 2 first added documents will automatically be uploaded
-        // to the source.
-        queue.add(firstBulkyDocument);
-        queue.add(secondBulkyDocument);
-        queue.add(thirdBulkyDocument);
+  @Test
+  public void testShouldManuallyFlushAccumulatedDocuments()
+      throws IOException, InterruptedException {
+    DocumentBuilder firstBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
+    DocumentBuilder secondBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
+    DocumentBuilder thirdBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
+    ArrayList<DeleteDocument> emptyList = new ArrayList<>();
+    BatchUpdate firstBatch =
+        new BatchUpdate(
+            new ArrayList<>() {
+              {
+                add(firstBulkyDocument);
+                add(secondBulkyDocument);
+              }
+            },
+            emptyList);
 
-        queue.flush();
+    BatchUpdate secondBatch =
+        new BatchUpdate(
+            new ArrayList<>() {
+              {
+                add(thirdBulkyDocument);
+              }
+            },
+            emptyList);
 
-        // Additional flush will have no effect if documents where already flushed
-        queue.flush();
+    // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
+    // the queue size will reach 6MB, which exceeds the maximum queue size
+    // limit. Therefore, the 2 first added documents will automatically be uploaded
+    // to the source.
+    queue.add(firstBulkyDocument);
+    queue.add(secondBulkyDocument);
+    queue.add(thirdBulkyDocument);
 
-        verify(uploadStrategy, times(2)).apply(any(BatchUpdate.class));
-        verify(uploadStrategy, times(1)).apply(firstBatch);
-        verify(uploadStrategy, times(1)).apply(secondBatch);
-    }
+    queue.flush();
 
-    @Test
-    public void testAddingEmptyDocument() throws IOException, InterruptedException {
-        DocumentBuilder nullDocument = null;
+    // Additional flush will have no effect if documents where already flushed
+    queue.flush();
 
-        queue.add(nullDocument);
-        queue.flush();
+    verify(uploadStrategy, times(2)).apply(any(BatchUpdate.class));
+    verify(uploadStrategy, times(1)).apply(firstBatch);
+    verify(uploadStrategy, times(1)).apply(secondBatch);
+  }
 
-        verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
-    }
+  @Test
+  public void testAddingEmptyDocument() throws IOException, InterruptedException {
+    DocumentBuilder nullDocument = null;
+
+    queue.add(nullDocument);
+    queue.flush();
+
+    verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
+  }
 }

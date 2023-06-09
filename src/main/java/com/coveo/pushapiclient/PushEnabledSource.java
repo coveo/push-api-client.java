@@ -1,6 +1,4 @@
 package com.coveo.pushapiclient;
 
 // Marker Interface
-public interface PushEnabledSource extends BaseSource {
-
-}
+public interface PushEnabledSource extends BaseSource {}
