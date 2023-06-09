@@ -104,10 +104,17 @@ public class DocumentUploadQueueTest {
     }
 
     @Test
-    public void testFlushShouldNotUploadDocumentaWhenRequiredSizeIsNotMet() throws IOException, InterruptedException {
+    public void testFlushShouldNotUploadDocumentsWhenRequiredSizeIsNotMet() throws IOException, InterruptedException {
+        // Adding 2MB document to the queue => queue has now 3MB of free space
+        // (5MB - 2MB = 3MB)
         queue.add(documentToAdd);
+        // Adding 2MB document to the queue => queue has now 1MB of free space
+        // (3MB - 2MB = 1MB)
         queue.add(documentToDelete);
 
+        // The maximum queue size has not been reached yet (1MB left of free space).
+        // Therefore, the accumulated documents will not be automatically flushed.
+        // Unless the user runs `.flush()` the queue will keep the 4MB of documents
         verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
     }
 
@@ -127,10 +134,11 @@ public class DocumentUploadQueueTest {
 
         // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
         // the queue size will reach 6MB, which exceeds the maximum queue size
-        // limit. Therefore, the 2 first added documents will automatically be uploaded
-        // to the source.
+        // limit by 1MB. Therefore, the 2 first added documents will automatically be
+        // uploaded to the source.
         queue.add(firstBulkyDocument);
         queue.add(secondBulkyDocument);
+        verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
 
         // The 3rd document added to the queue will be included in a separate batch,
         // which will not be uploaded unless the `flush()` method is called or until the
