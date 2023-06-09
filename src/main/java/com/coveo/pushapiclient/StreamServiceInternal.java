@@ -19,11 +19,12 @@ class StreamServiceInternal {
     this.platformClient = platformClient;
   }
 
-  public void add(DocumentBuilder document) throws IOException, InterruptedException {
+  public String add(DocumentBuilder document) throws IOException, InterruptedException {
     if (this.streamId == null) {
       this.streamId = this.getStreamId();
     }
     queue.add(document);
+    return this.streamId;
   }
 
   public HttpResponse<String> close()
