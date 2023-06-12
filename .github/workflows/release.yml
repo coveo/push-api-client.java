@@ -22,6 +22,12 @@ jobs:
 
       - name: Get Release Token
         run: npm run get-token
+        env:
+          RELEASER_APP_ID: ${{ secrets.RELEASER_APP_ID }}
+          RELEASER_PRIVATE_KEY: ${{ secrets.RELEASER_PRIVATE_KEY }}
+          RELEASER_CLIENT_ID: ${{ secrets.RELEASER_CLIENT_ID }}
+          RELEASER_CLIENT_SECRET: ${{ secrets.RELEASER_CLIENT_SECRET }}
+          RELEASER_INSTALLATION_ID: ${{ secrets.RELEASER_INSTALLATION_ID }}
 
       - uses: actions/setup-java@v3
         name: Set up Java
