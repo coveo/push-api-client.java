@@ -12,7 +12,7 @@
     "@octokit/auth-app": "^4.0.9"
   },
   "scripts": {
-    "get-token": "node get-token.mjs"
+    "get-token": "node utils/get-token.mjs"
   },
   "commitlint": {
     "extends": [
