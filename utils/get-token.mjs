@@ -1,5 +1,5 @@
 import {createAppAuth} from '@octokit/auth-app';
-import {setSecret} from '@actions/core'
+import {setSecret, exportVariable} from '@actions/core'
 
 const auth = createAppAuth({
   appId: process.env.RELEASER_APP_ID,
