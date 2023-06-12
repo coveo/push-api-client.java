@@ -4,6 +4,8 @@
 name: Maven Package
 
 on:
+  # TODO: remove after release. This is a fail safe in case this workflow does not get triggered
+  workflow_dispatch:
   release:
     types: [created]
 
