@@ -1,0 +1,19 @@
+name: Automated approval
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - labeled
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    if:  (github.actor == 'developer-experience-bot[bot]') && (contains(join(github.event.pull_request.labels.*.name), 'snpashot'))
+    steps:
+    - name: auto-approve
+      id: auto-approve
+      uses: coveo/actions/auto-approve-action@main
+      with:
+        github-token: "${{ secrets.GITHUB_TOKEN }}"

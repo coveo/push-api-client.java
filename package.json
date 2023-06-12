@@ -1,12 +1,18 @@
 {
   "name": "publish-java-package-with-maven-on-github-packages",
   "private": true,
+  "type": "module",
   "version": "1.0.0",
   "author": "Coveo",
   "description": "CI related stuff only",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@commitlint/config-conventional": "17.4.4"
+    "@actions/core": "^1.10.0",
+    "@commitlint/config-conventional": "17.4.4",
+    "@octokit/auth-app": "^4.0.9"
+  },
+  "scripts": {
+    "get-token": "node get-token.mjs"
   },
   "commitlint": {
     "extends": [
