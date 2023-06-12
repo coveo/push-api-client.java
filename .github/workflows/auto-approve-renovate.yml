@@ -10,7 +10,7 @@ on:
 jobs:
   auto-approve:
     runs-on: ubuntu-latest
-    if:  (github.actor == 'TODO:') && (contains(join(github.event.pull_request.labels.*.name), 'snpashot'))
+    if:  (github.actor == 'developer-experience-bot[bot]') && (contains(join(github.event.pull_request.labels.*.name), 'snpashot'))
     steps:
     - name: auto-approve
       id: auto-approve
