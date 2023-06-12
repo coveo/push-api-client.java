@@ -62,7 +62,7 @@ class StreamService {
    * </pre>
    *
    * <p>
-   * For more code samples, @see StreamDocuments
+   * For more code samples, @see `samples/StreamDocuments.java`
    *
    * @param document The documentBuilder to add to your source
    * @throws InterruptedException
