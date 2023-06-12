@@ -3,11 +3,7 @@ name: Create release
 on:
   push:
     branches:
-      - master
-
-permissions:
-  contents: write
-  pull-requests: write
+      - main
 
 jobs:
   release:
@@ -28,7 +24,6 @@ jobs:
         with:
           release-type: maven
           package-name: release-please-action
-          default-branch: master
+          default-branch: main
           pull-request-title-pattern: 'chore${scope}: release${component} ${version} [skip-ci]'
-          # TODO: create PAT
-          token: ${{ secrets.RELEASE_KEY }}
+          token: $RELEASE_TOKEN
