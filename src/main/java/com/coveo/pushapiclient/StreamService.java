@@ -5,8 +5,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 
-// TODO: LENS-851 - Make public
-class StreamService {
+public class StreamService {
   private final StreamEnabledSource source;
   private final PlatformClient platformClient;
   private StreamServiceInternal service;
