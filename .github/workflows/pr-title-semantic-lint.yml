@@ -4,6 +4,21 @@ on:
     branches: [main]
     types: [opened, edited, synchronize, reopened]
 jobs:
+  troubleshoot:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Actor
+      run: echo "The GitHub Actor is ${{ github.actor }}"
+
+    - name: Actor is Developer experience bot
+      run: echo "is dev experience bot ${{ (github.actor == 'developer-experience-bot[bot]')  }}"
+
+    - name: Labels
+      run: echo "The PR labels are ${{ join(github.event.pull_request.labels.*.name) }}"
+
+    - name: Label condition
+      run: echo "The labels contain "snapshot" - ${{ contains(github.event.pull_request.labels.*.name, format('autorelease{0} snapshot', ':'))}}"
+
   Lint:
     runs-on: ubuntu-latest
     env:
