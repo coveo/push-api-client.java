@@ -45,4 +45,4 @@ jobs:
           package-name: release-please-action
           default-branch: main
           pull-request-title-pattern: 'chore${scope}: release${component} ${version} [skip-ci]'
-          token: $RELEASE_TOKEN
+          token: ${{ env.RELEASE_TOKEN }}
