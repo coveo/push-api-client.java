@@ -5,8 +5,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 
-// TODO: LENS-851 - Make public
-class StreamService {
+public class StreamService {
   private final StreamEnabledSource source;
   private final PlatformClient platformClient;
   private StreamServiceInternal service;
@@ -62,7 +61,7 @@ class StreamService {
    * </pre>
    *
    * <p>
-   * For more code samples, visit <a href="TODO: LENS-840">Stream data to your catalog source</a>
+   * For more code samples, @see `samples/StreamDocuments.java`
    *
    * @param document The documentBuilder to add to your source
    * @throws InterruptedException
