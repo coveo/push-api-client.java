@@ -5,8 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.http.HttpResponse;
 
-// TODO: LENS-851 - Make public when ready
-class CatalogSource implements StreamEnabledSource {
+public class CatalogSource implements StreamEnabledSource {
   private final String apiKey;
   private final ApiUrl urlExtractor;
 
