@@ -17,7 +17,7 @@ jobs:
       run: echo "The PR labels are ${{ join(github.event.pull_request.labels.*.name) }}"
 
     - name: Label condition
-      run: echo "The labels contain "snapshot" - ${{ contains(github.event.pull_request.labels.*.name, format('autorelease{0} snapshot', ':'))}}"
+      run: "${{ contains(github.event.pull_request.labels.*.name, 'autorelease: snapshot')}}"
 
   Lint:
     runs-on: ubuntu-latest
