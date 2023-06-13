@@ -1,9 +1,14 @@
 {
   "enabled": true,
-  "extends": [":semanticPrefixFixDepsChoreOthers", "schedule:earlyMondays"],
+  "extends": [
+    ":semanticPrefixFixDepsChoreOthers",
+    "schedule:earlyMondays"
+  ],
   "packageRules": [
     {
-      "matchPackagePatterns": ["*"],
+      "matchPackagePatterns": [
+        "*"
+      ],
       "groupName": "all dependencies",
       "groupSlug": "all"
     }
