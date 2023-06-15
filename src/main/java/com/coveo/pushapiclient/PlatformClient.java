@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class PlatformClient {
   private final String apiKey;
   private final String organizationId;
-  private final HttpClient httpClient;
+  private final ApiCore api;
   private final PlatformUrl platformUrl;
 
   /**
@@ -40,7 +40,7 @@ public class PlatformClient {
   public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.httpClient = HttpClient.newHttpClient();
+    this.api = new ApiCore();
     this.platformUrl = platformUrl;
   }
 
@@ -55,7 +55,7 @@ public class PlatformClient {
   public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.httpClient = httpClient;
+    this.api = new ApiCore(httpClient);
     this.platformUrl = new PlatformUrlBuilder().build();
   }
 
@@ -71,7 +71,7 @@ public class PlatformClient {
   public PlatformClient(String apiKey, String organizationId, Environment environment) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.httpClient = HttpClient.newHttpClient();
+    this.api = new ApiCore();
     this.platformUrl = new PlatformUrlBuilder().withEnvironment(environment).build();
   }
 
@@ -121,14 +121,9 @@ public class PlatformClient {
               }
             });
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .POST(HttpRequest.BodyPublishers.ofString(json))
-            .uri(URI.create(this.getBaseSourceURL()))
-            .build();
+    URI uri = URI.create(this.getBaseSourceURL());
 
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers, HttpRequest.BodyPublishers.ofString(json));
   }
 
   /**
@@ -151,14 +146,7 @@ public class PlatformClient {
 
     String json = new Gson().toJson(securityIdentityModel);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .PUT(HttpRequest.BodyPublishers.ofString(json))
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(json));
   }
 
   /**
@@ -181,14 +169,7 @@ public class PlatformClient {
 
     String json = new Gson().toJson(securityIdentityAlias);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .PUT(HttpRequest.BodyPublishers.ofString(json))
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(json));
   }
 
   /**
@@ -210,14 +191,7 @@ public class PlatformClient {
 
     String json = new Gson().toJson(securityIdentityToDelete);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .method("DELETE", HttpRequest.BodyPublishers.ofString(json))
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.delete(uri, headers, HttpRequest.BodyPublishers.ofString(json));
   }
 
   /**
@@ -235,6 +209,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBaseProviderURL(securityProviderId)
@@ -242,9 +217,7 @@ public class PlatformClient {
                     "/permissions/olderthan?queueDelay=%s%s",
                     batchDelete.getQueueDelay(), appendOrderingId(batchDelete.getOrderingId())));
 
-    HttpRequest request = HttpRequest.newBuilder().headers(headers).DELETE().uri(uri).build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.delete(uri, headers);
   }
 
   /**
@@ -275,6 +248,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBaseProviderURL(securityProviderId)
@@ -282,14 +256,7 @@ public class PlatformClient {
                     "/permissions/batch?fileId=%s%s",
                     batchConfig.getFileId(), appendOrderingId(batchConfig.getOrderingId())));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .PUT(HttpRequest.BodyPublishers.noBody())
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.noBody());
   }
 
   /**
@@ -309,6 +276,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBasePushURL()
@@ -316,14 +284,7 @@ public class PlatformClient {
                     "/sources/%s/documents?documentId=%s&compressionType=%s",
                     sourceId, documentId, compressionType.toString()));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .PUT(HttpRequest.BodyPublishers.ofString(documentJSON))
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(documentJSON));
   }
 
   /**
@@ -342,6 +303,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBasePushURL()
@@ -349,27 +311,17 @@ public class PlatformClient {
                     "/sources/%s/documents?documentId=%s&deleteChildren=%s",
                     sourceId, documentId, deleteChildren));
 
-    HttpRequest request = HttpRequest.newBuilder().headers(headers).DELETE().uri(uri).build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.delete(uri, headers);
   }
 
   public HttpResponse<String> openStream(String sourceId) throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
-    // TODO: LENS-875: standardize string manipulation
+
     URI uri =
         URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/open", sourceId));
 
-    // TODO: LENS-876: reduce code duplication
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   public HttpResponse<String> closeStream(String sourceId, String streamId)
@@ -381,33 +333,20 @@ public class PlatformClient {
             this.getBasePushURL()
                 + String.format("/sources/%s/stream/%s/close", sourceId, streamId));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   public HttpResponse<String> requireStreamChunk(String sourceId, String streamId)
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBasePushURL()
                 + String.format("/sources/%s/stream/%s/chunk", sourceId, streamId));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   /**
@@ -420,16 +359,10 @@ public class PlatformClient {
   public HttpResponse<String> createFileContainer() throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri = URI.create(this.getBasePushURL() + "/files");
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   /**
@@ -445,19 +378,13 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBasePushURL()
                 + String.format("/sources/%s/status?statusType=%s", sourceId, status.toString()));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   /**
@@ -477,16 +404,10 @@ public class PlatformClient {
         fileContainer.requiredHeaders.entrySet().stream()
             .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
             .toArray(String[]::new);
+
     URI uri = URI.create(fileContainer.uploadUri);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .PUT(HttpRequest.BodyPublishers.ofString(batchUpdateJson))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(batchUpdateJson));
   }
 
   /**
@@ -509,14 +430,7 @@ public class PlatformClient {
                 + String.format(
                     "/sources/%s/documents/batch?fileId=%s", sourceId, fileContainer.fileId));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .PUT(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(""));
   }
 
   /**
@@ -533,16 +447,10 @@ public class PlatformClient {
       FileContainer fileContainer, byte[] fileAsBytes) throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAes256Header(), this.getContentTypeApplicationOctetStreamHeader());
+
     URI uri = URI.create(fileContainer.uploadUri);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .PUT(HttpRequest.BodyPublishers.ofByteArray(fileAsBytes))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofByteArray(fileAsBytes));
   }
 
   private String getBaseSourceURL() {
