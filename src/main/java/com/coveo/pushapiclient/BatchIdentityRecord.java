@@ -2,7 +2,9 @@ package com.coveo.pushapiclient;
 
 import com.google.gson.JsonObject;
 
-/** See [BatchIdentityBody](https://docs.coveo.com/en/139#batchidentitybody) */
+/**
+ * @see <a href="https://docs.coveo.com/en/139#batchidentitybody">BatchIdentityBody]</a>
+ */
 public class BatchIdentityRecord {
 
   private JsonObject[] members;

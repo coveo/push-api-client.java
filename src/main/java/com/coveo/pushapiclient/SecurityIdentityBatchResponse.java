@@ -3,8 +3,9 @@ package com.coveo.pushapiclient;
 import java.net.http.HttpResponse;
 
 /**
- * Used for the responses when pushing batches of Security Identities. See [Manage Batches of
- * Security Identities](https://docs.coveo.com/en/55)
+ * Used for the responses when pushing batches of Security Identities.
+ *
+ * @see <a href="https://docs.coveo.com/en/55">Manage Batches of Security Identities</a>
  */
 public class SecurityIdentityBatchResponse {
 

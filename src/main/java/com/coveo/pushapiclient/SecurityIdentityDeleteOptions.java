@@ -2,7 +2,9 @@ package com.coveo.pushapiclient;
 
 import java.util.Objects;
 
-/** See [Disabling Old Security Identities](https://docs.coveo.com/en/33) */
+/**
+ * @see <a href="https://docs.coveo.com/en/33">Disabling Old Security Identities</a>
+ */
 public class SecurityIdentityDeleteOptions {
 
   private final Integer queueDelay;
