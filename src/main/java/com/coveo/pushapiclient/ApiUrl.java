@@ -10,8 +10,10 @@ import java.util.regex.Pattern;
 
 /**
  * Private util class to extract dynamic parts from a API URL Handles extraction of identifiers and
- * platform URL from a source URL. @See https://docs.coveo.com/en/1546#push-api-url
- * https://docs.coveo.com/en/3295#stream-api-url
+ * platform URL from a source URL.
+ *
+ * @see <a href="https://docs.coveo.com/en/1546#push-api-url">Push API url</a>
+ * @see <a href="https://docs.coveo.com/en/3295#stream-api-url">Stream API url</a>
  */
 class ApiUrl {
   private final String organizationId;

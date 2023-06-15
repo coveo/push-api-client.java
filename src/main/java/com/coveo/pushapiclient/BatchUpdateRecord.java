@@ -3,7 +3,9 @@ package com.coveo.pushapiclient;
 import com.google.gson.JsonObject;
 import java.util.Arrays;
 
-/** See [BatchDocumentBody](https://docs.coveo.com/en/75/#batchdocumentbody) */
+/**
+ * @see <a href="https://docs.coveo.com/en/75/#batchdocumentbody">BatchDocumentBody</a>
+ */
 public class BatchUpdateRecord {
 
   private final JsonObject[] addOrUpdate;

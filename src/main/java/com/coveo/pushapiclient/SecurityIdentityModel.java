@@ -1,6 +1,8 @@
 package com.coveo.pushapiclient;
 
-/** See [Security Identity Models](https://docs.coveo.com/en/139) */
+/**
+ * @see <a href="https://docs.coveo.com/en/139">Security Identity Models</a>
+ */
 public class SecurityIdentityModel extends SecurityIdentityModelBase {
   public final IdentityModel[] members;
 

@@ -2,7 +2,9 @@ package com.coveo.pushapiclient;
 
 import java.util.Objects;
 
-/** See [Disabling a Single Security Identity](https://docs.coveo.com/en/84) */
+/**
+ * @see <a href="https://docs.coveo.com/en/84">Disabling a Single Security Identity</a>
+ */
 public class SecurityIdentityDelete {
 
   private final IdentityModel identity;

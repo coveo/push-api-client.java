@@ -4,7 +4,9 @@ import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Objects;
 
-/** See [Manage Batches of Items in a Push Source](https://docs.coveo.com/en/90) */
+/**
+ * @see <a href="https://docs.coveo.com/en/90">Manage Batches of Items in a Push Source</a>
+ */
 public class BatchUpdate {
 
   private final List<DocumentBuilder> addOrUpdate;
