@@ -2,7 +2,9 @@ package com.coveo.pushapiclient;
 
 import java.util.Objects;
 
-/** See [Manage Batches of Security Identities](https://docs.coveo.com/en/55). */
+/**
+ * @see <a href="https://docs.coveo.com/en/55">Manage Batches of Security Identities</a>
+ */
 public class SecurityIdentityBatchConfig {
 
   private final String fileId;

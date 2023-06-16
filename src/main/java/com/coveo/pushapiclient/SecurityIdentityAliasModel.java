@@ -1,6 +1,8 @@
 package com.coveo.pushapiclient;
 
-/** See [User Alias Definition Examples](https://docs.coveo.com/en/46). */
+/**
+ * @see <a href="https://docs.coveo.com/en/46">User Alias Definition Examples</a>
+ */
 public class SecurityIdentityAliasModel extends SecurityIdentityModelBase {
   public final AliasMapping[] mappings;
 

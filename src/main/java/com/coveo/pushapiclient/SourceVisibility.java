@@ -2,7 +2,7 @@ package com.coveo.pushapiclient;
 
 /**
  * SourceVisibility controls the content security option that should be applied to the items in a
- * source. See https://docs.coveo.com/en/1779/index-content/content-security
+ * source. <a href="https://docs.coveo.com/en/1779/">Content Security</a>
  */
 public enum SourceVisibility {
   /** Items can be accessed by the source owner only. */

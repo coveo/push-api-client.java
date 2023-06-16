@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.util.List;
 
-/** See [Manage Batches of Security Identities](https://docs.coveo.com/en/55) */
+/**
+ * @see <a href="https://docs.coveo.com/en/55">Manage Batches of Security Identities</a>
+ */
 public class BatchIdentity {
 
   private List<SecurityIdentityModel> members;
