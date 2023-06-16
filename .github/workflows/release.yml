@@ -43,6 +43,7 @@ jobs:
         with:
           release-type: maven
           package-name: release-please-action
+          release-as: 2.3.0
           default-branch: main
           pull-request-title-pattern: 'chore${scope}: release${component} ${version} [skip-ci]'
           token: ${{ env.RELEASE_TOKEN }}
