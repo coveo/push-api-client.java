@@ -11,7 +11,7 @@ public class PlatformUrl {
   /**
    * @param environment The environment platform of your organization
    * @param region The physical center of your organization
-   * @see https://docs.coveo.com/en/2976
+   * @see <a href="https://docs.coveo.com/en/2976">Deployment regions and strategies</a>
    */
   public PlatformUrl(Environment environment, Region region) {
     this.environment = environment;

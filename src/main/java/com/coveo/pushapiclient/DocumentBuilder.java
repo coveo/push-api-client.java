@@ -29,8 +29,10 @@ public class DocumentBuilder {
   private final Document document;
 
   /**
-   * @param uri the URI of the document. See {@link Document#uri}
-   * @param title the title of the document. See {@link Document#title}
+   * @param uri the URI of the document.
+   * @see {@link Document#uri}
+   * @param title the title of the document.
+   * @see {@link Document#title}
    */
   public DocumentBuilder(String uri, String title) {
     this.document = new Document();
@@ -43,8 +45,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the data of the document. See {@link Document#data}
+   * Set the data of the document.
    *
+   * @see {@link Document#data}
    * @param data
    * @return
    */
@@ -54,8 +57,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the date of the document. See {@link Document#date}
+   * Set the date of the document.
    *
+   * @see {@link Document#date}
    * @param date
    * @return
    */
@@ -66,8 +70,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the date of the document. See {@link Document#date}
+   * Set the date of the document.
    *
+   * @see {@link Document#date}
    * @param date
    * @return
    */
@@ -78,8 +83,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the date of the document. See {@link Document#date}
+   * Set the date of the document.
    *
+   * @see {@link Document#date}
    * @param date
    * @return
    */
@@ -90,8 +96,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the date of the document. See {@link Document#date}
+   * Set the date of the document.
    *
+   * @see {@link Document#date}
    * @param date
    * @return
    */
@@ -101,8 +108,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the modified date of the document. See {@link Document#modifiedDate}
+   * Set the modified date of the document.
    *
+   * @see {@link Document#modifiedDate}
    * @param date
    * @return
    */
@@ -113,8 +121,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the modified date of the document. See {@link Document#modifiedDate}
+   * Set the modified date of the document.
    *
+   * @see {@link Document#modifiedDate}
    * @param date
    * @return
    */
@@ -125,8 +134,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the modified date of the document. See {@link Document#modifiedDate}
+   * Set the modified date of the document.
    *
+   * @see {@link Document#modifiedDate}
    * @param date
    * @return
    */
@@ -136,8 +146,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the modified date of the document. See {@link Document#modifiedDate}
+   * Set the modified date of the document.
    *
+   * @see {@link Document#modifiedDate}
    * @param date
    * @return
    */
@@ -148,8 +159,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the permanentID of the document. See {@link Document#permanentId}
+   * Set the permanentID of the document.
    *
+   * @see {@link Document#permanentId}
    * @param permanentId
    * @return
    */
@@ -159,9 +171,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the base64 encoded, compressed binary data of the document. See {@link
-   * Document#compressedBinaryData}
+   * Set the base64 encoded, compressed binary data of the document.
    *
+   * @see {@link Document#compressedBinaryData}
    * @param compressedBinaryData
    * @return
    */
@@ -171,9 +183,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the file container file ID for the compressed binary data of the document. See {@link
-   * Document#compressedBinaryDataFileId}
+   * Set the file container file ID for the compressed binary data of the document.
    *
+   * @see {@link Document#compressedBinaryDataFileId}
    * @param compressedBinaryDataFileId
    * @return
    */
@@ -183,8 +195,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the file extension on the document. See {@link Document#fileExtension}
+   * Set the file extension on the document.
    *
+   * @see {@link Document#fileExtension}
    * @param fileExtension
    * @return
    */
@@ -195,8 +208,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the parentID on the document. See {@link Document#parentId}
+   * Set the parentID on the document.
    *
+   * @see {@link Document#parentId}
    * @param parentID
    * @return
    */
@@ -206,8 +220,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the clickableURI on the document. See {@link Document#clickableUri}
+   * Set the clickableURI on the document.
    *
+   * @see {@link Document#clickableUri}
    * @param clickableUri
    * @return
    */
@@ -217,8 +232,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the author on the document. See {@link Document#author}
+   * Set the author on the document.
    *
+   * @see {@link Document#author}
    * @param author
    * @return
    */
@@ -228,8 +244,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Add a single metadata key and value pair on the document. See {@link Document#metadata}
+   * Add a single metadata key and value pair on the document.
    *
+   * @see {@link Document#metadata}
    * @param key
    * @param metadataValue
    * @return
@@ -240,8 +257,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Add a single metadata key and value pair on the document. See {@link Document#metadata}
+   * Add a single metadata key and value pair on the document.
    *
+   * @see {@link Document#metadata}
    * @param key
    * @param metadataValue
    * @return
@@ -252,8 +270,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Add a single metadata key and value pair on the document. See {@link Document#metadata}
+   * Add a single metadata key and value pair on the document.
    *
+   * @see {@link Document#metadata}
    * @param key
    * @param metadataValue
    * @return
@@ -264,8 +283,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Add a single metadata key and value pair on the document. See {@link Document#metadata}
+   * Add a single metadata key and value pair on the document.
    *
+   * @see {@link Document#metadata}
    * @param key
    * @param metadataValue
    * @return
@@ -276,8 +296,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set metadata on the document. See {@link Document#metadata}
+   * Set metadata on the document.
    *
+   * @see {@link Document#metadata}
    * @param metadata
    * @return
    */
@@ -287,8 +308,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set allowed identities on the document. See {@link Document#permissions}
+   * Set allowed identities on the document.
    *
+   * @see {@link Document#permissions}
    * @param allowedPermissions
    * @return
    */
@@ -298,8 +320,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set denied identities on the document. See {@link Document#permissions}
+   * Set denied identities on the document.
    *
+   * @see {@link Document#permissions}
    * @param deniedPermissions
    * @return
    */
@@ -309,8 +332,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set allowAnonymous for permissions on the document. See {@link Document#permissions}
+   * Set allowAnonymous for permissions on the document.
    *
+   * @see {@link Document#permissions}
    * @param allowAnonymous
    * @return
    */
@@ -320,8 +344,9 @@ public class DocumentBuilder {
   }
 
   /**
-   * Set the fully built out DocumentPermissions array. See {@Link Document#permissions}
+   * Set the fully built out DocumentPermissions array.
    *
+   * @see {@Link Document#permissions}
    * @param documentPermissions
    * @return
    */
@@ -383,7 +408,8 @@ public class DocumentBuilder {
     if (reservedKeynames.contains(key)) {
       throw new RuntimeException(
           String.format(
-              "Cannot use %s as a metadata key: It is a reserved keynames. See https://docs.coveo.com/en/78/index-content/push-api-reference#json-document-reserved-key-names",
+              "Cannot use %s as a metadata key: It is a reserved keynames. See"
+                  + " https://docs.coveo.com/en/78/index-content/push-api-reference#json-document-reserved-key-names",
               key));
     }
   }

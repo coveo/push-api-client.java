@@ -39,7 +39,8 @@ public class PushSource implements PushEnabledSource {
    * @param name
    * @param name The name of the source to create
    * @param sourceVisibility The security option that should be applied to the content of the
-   *     source. See [Content Security](https://docs.coveo.com/en/1779).
+   *     source.
+   * @see <a href="https://docs.coveo.com/en/1779">Content Security</a>
    * @return
    * @throws IOException
    * @throws InterruptedException
@@ -132,10 +133,10 @@ public class PushSource implements PushEnabledSource {
   }
 
   /**
-   * Create or update a security identity. See [Adding a Single Security
-   * Identity](https://docs.coveo.com/en/167) and [Security Identity
-   * Models](https://docs.coveo.com/en/139).
+   * Create or update a security identity.
    *
+   * @see <a href="https://docs.coveo.com/en/167">Adding a Single Security Identity</a>
+   * @see <a href="https://docs.coveo.com/en/139">Security Identity Models</a>
    * @param securityProviderId
    * @param securityIdentityModel
    * @return
@@ -150,10 +151,10 @@ public class PushSource implements PushEnabledSource {
   }
 
   /**
-   * Create or update a security identity alias. See [Adding a Single
-   * Alias](https://docs.coveo.com/en/142) and [User Alias Definition
-   * Examples](https://docs.coveo.com/en/46).
+   * Create or update a security identity alias.
    *
+   * @see <a href="https://docs.coveo.com/en/142">Adding a Single Alias</a>
+   * @see <a href="https://docs.coveo.com/en/46">User Alias Definition Examples</a>
    * @param securityProviderId
    * @param securityIdentityAliasModel
    * @return
@@ -168,9 +169,9 @@ public class PushSource implements PushEnabledSource {
   }
 
   /**
-   * Delete a security identity. See [Disabling a Single Security
-   * Identity](https://docs.coveo.com/en/84).
+   * Delete a security identity.
    *
+   * @see <a href="https://docs.coveo.com/en/84">Disabling a Single Security Identity</a>
    * @param securityProviderId
    * @param securityIdentityDelete
    * @return
@@ -184,9 +185,9 @@ public class PushSource implements PushEnabledSource {
   }
 
   /**
-   * Update the status of a Push source. See [Updating the Status of a Push
-   * Source](https://docs.coveo.com/en/35).
+   * Update the status of a Push source.
    *
+   * @see <a href="https://docs.coveo.com/en/35">Updating the Status of a Push Source</a>
    * @param status
    * @return
    * @throws IOException
@@ -198,9 +199,9 @@ public class PushSource implements PushEnabledSource {
   }
 
   /**
-   * Delete old security identities. See [Disabling Old Security
-   * Identities](https://docs.coveo.com/en/33).
+   * Delete old security identities.
    *
+   * @see <a href="https://docs.coveo.com/en/33">Disabling Old Security Identities</a>
    * @param securityProviderId
    * @param batchDelete
    * @return
@@ -214,9 +215,9 @@ public class PushSource implements PushEnabledSource {
   }
 
   /**
-   * Manage batches of security identities. See [Manage Batches of Security
-   * Identities](https://docs.coveo.com/en/55).
+   * Manage batches of security identities.
    *
+   * @see <a href="https://docs.coveo.com/en/55">Manage Batches of Security Identities</a>
    * @param securityProviderId
    * @param batchConfig
    * @return
@@ -230,9 +231,9 @@ public class PushSource implements PushEnabledSource {
   }
 
   /**
-   * Manages pushing batches of Security Identities to a File Container, then into Coveo. See
-   * [Manage Batches of Security Identities](https://docs.coveo.com/en/55)
+   * Manages pushing batches of Security Identities to a File Container, then into Coveo.
    *
+   * @see <a href="https://docs.coveo.com/en/55">Manage Batches of Security Identities</a>
    * @param securityProviderId
    * @param batchIdentity
    * @return
@@ -260,9 +261,9 @@ public class PushSource implements PushEnabledSource {
   }
 
   /**
-   * Adds or updates an individual item in a push source. See [Adding a Single Item in a Push
-   * Source](https://docs.coveo.com/en/133).
+   * Adds or updates an individual item in a push source.
    *
+   * @see <a href="https://docs.coveo.com/en/133">Adding a Single Item in a Push Source</a>
    * @param docBuilder
    * @return
    * @throws IOException
@@ -280,8 +281,9 @@ public class PushSource implements PushEnabledSource {
 
   /**
    * Deletes a specific item from a Push source. Optionally, the child items of that item can also
-   * be deleted. See [Deleting an Item in a Push Source](https://docs.coveo.com/en/171).
+   * be deleted.
    *
+   * @see <a href="https://docs.coveo.com/en/171">Deleting an Item in a Push Source</a>
    * @param documentId
    * @param deleteChildren
    * @return

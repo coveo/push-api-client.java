@@ -22,7 +22,8 @@ public class PlatformClient {
    * Construct a PlatformClient
    *
    * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    */
   public PlatformClient(String apiKey, String organizationId) {
@@ -33,7 +34,8 @@ public class PlatformClient {
    * Construct a PlatformClient
    *
    * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param platformUrl The PlatformUrl.
    */
@@ -48,7 +50,8 @@ public class PlatformClient {
    * Construct a PlatformClient
    *
    * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param httpClient The HttpClient.
    */
@@ -63,7 +66,8 @@ public class PlatformClient {
    * @deprecated Please now use PlatformUrl to define your Platform environment
    * @see PlatformUrl Construct a PlatformUrl
    * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param environment The Environment to be used.
    */
@@ -98,7 +102,8 @@ public class PlatformClient {
    * @param name The name of the source to create
    * @param sourceType The type of the source to create
    * @param sourceVisibility The security option that should be applied to the content of the
-   *     source. See [Content Security](https://docs.coveo.com/en/1779).
+   *     source.
+   * @see <a href="https://docs.coveo.com/en/1779">Content Security</a>
    * @return
    * @throws IOException
    * @throws InterruptedException
@@ -127,10 +132,10 @@ public class PlatformClient {
   }
 
   /**
-   * Create or update a security identity. See [Adding a Single Security
-   * Identity](https://docs.coveo.com/en/167) and [Security Identity
-   * Models](https://docs.coveo.com/en/139).
+   * Create or update a security identity.
    *
+   * @see <a href="https://docs.coveo.com/en/167">Adding a Single Security Identity</a>
+   * @see <a href="https://docs.coveo.com/en/139">Security Identity Models</a>.
    * @param securityProviderId
    * @param securityIdentityModel
    * @return
@@ -150,10 +155,10 @@ public class PlatformClient {
   }
 
   /**
-   * Create or update a security identity alias. See [Adding a Single
-   * Alias](https://docs.coveo.com/en/142) and [User Alias Definition
-   * Examples](https://docs.coveo.com/en/46).
+   * Create or update a security identity alias.
    *
+   * @see <a href="https://docs.coveo.com/en/142">Adding a Single Alias</a>
+   * @see <a href="https://docs.coveo.com/en/46">User Alias Definition Examples</a>
    * @param securityProviderId
    * @param securityIdentityAlias
    * @return
@@ -173,9 +178,9 @@ public class PlatformClient {
   }
 
   /**
-   * Delete a security identity. See [Disabling a Single Security
-   * Identity](https://docs.coveo.com/en/84).
+   * Delete a security identity.
    *
+   * @see <a href="https://docs.coveo.com/en/84">Disabling a Single Security Identity</a>
    * @param securityProviderId
    * @param securityIdentityToDelete
    * @return
@@ -195,9 +200,9 @@ public class PlatformClient {
   }
 
   /**
-   * Delete old security identities. See [Disabling Old Security
-   * Identities](https://docs.coveo.com/en/33).
+   * Delete old security identities.
    *
+   * @see <a href="https://docs.coveo.com/en/33">Disabling Old Security Identities</a>
    * @param securityProviderId
    * @param batchDelete
    * @return
@@ -234,9 +239,9 @@ public class PlatformClient {
   }
 
   /**
-   * Manage batches of security identities. See [Manage Batches of Security
-   * Identities](https://docs.coveo.com/en/55).
+   * Manage batches of security identities.
    *
+   * @see <a href="https://docs.coveo.com/en/55">Manage Batches of Security Identities</a>
    * @param securityProviderId
    * @param batchConfig
    * @return
@@ -260,9 +265,9 @@ public class PlatformClient {
   }
 
   /**
-   * Adds or updates an individual item in a push source. See [Adding a Single Item in a Push
-   * Source](https://docs.coveo.com/en/133).
+   * Adds or updates an individual item in a push source.
    *
+   * @see <a href="https://docs.coveo.com/en/133">Adding a Single Item in a Push Source</a>
    * @param sourceId
    * @param documentJSON
    * @param documentId
@@ -289,8 +294,9 @@ public class PlatformClient {
 
   /**
    * Deletes a specific item from a Push source. Optionally, the child items of that item can also
-   * be deleted. See [Deleting an Item in a Push Source](https://docs.coveo.com/en/171).
+   * be deleted.
    *
+   * @see <a href="https://docs.coveo.com/en/171">Deleting an Item in a Push Source</a>
    * @param sourceId
    * @param documentId
    * @param deleteChildren
@@ -350,8 +356,9 @@ public class PlatformClient {
   }
 
   /**
-   * Create a file container. See [Creating a File Container](https://docs.coveo.com/en/43).
+   * Create a file container.
    *
+   * @see <a href="https://docs.coveo.com/en/43">Creating a File Container</a>
    * @return
    * @throws IOException
    * @throws InterruptedException
@@ -366,9 +373,9 @@ public class PlatformClient {
   }
 
   /**
-   * Update the status of a Push source. See [Updating the Status of a Push
-   * Source](https://docs.coveo.com/en/35).
+   * Update the status of a Push source.
    *
+   * @see <a href="https://docs.coveo.com/en/35">Updating the Status of a Push Source</a>
    * @param status
    * @return
    * @throws IOException
@@ -388,9 +395,11 @@ public class PlatformClient {
   }
 
   /**
-   * Upload content update into a file container. See [Upload the Content Update into the File
-   * Container](https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-2-upload-the-content-update-into-the-file-container).
+   * Upload content update into a file container.
    *
+   * @see <a
+   *     href="https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-2-upload-the-content-update-into-the-file-container">Upload
+   *     the Content Update into the File Container</a>
    * @param fileContainer
    * @param batchUpdateJson
    * @return
@@ -411,9 +420,11 @@ public class PlatformClient {
   }
 
   /**
-   * Push a file container into a push source. See [Push the File Container into a Push
-   * Source](https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-3-push-the-file-container-into-a-push-source).
+   * Push a file container into a push source.
    *
+   * @see <a
+   *     href="https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-3-push-the-file-container-into-a-push-source">Push
+   *     the File Container into a Push Source</a>
    * @param sourceId
    * @param fileContainer
    * @return
@@ -434,9 +445,11 @@ public class PlatformClient {
   }
 
   /**
-   * Push a binary to a File Container. See [Upload the Item Data Into the File
-   * Container](https://docs.coveo.com/en/69#step-2-upload-the-item-data-into-the-file-container)
+   * Push a binary to a File Container.
    *
+   * @see <a
+   *     href="https://docs.coveo.com/en/69#step-2-upload-the-item-data-into-the-file-container">Upload
+   *     the Item Data Into the File Container</a>
    * @param fileContainer
    * @param fileAsBytes
    * @return
