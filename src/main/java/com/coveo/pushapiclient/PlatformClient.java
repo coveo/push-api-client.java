@@ -434,6 +434,29 @@ public class PlatformClient {
   }
 
   /**
+   * Push a file container into a stream source. See [Push the File Container into a Stream
+   * Source](https://docs.coveo.com/en/l62e0540/coveo-for-commerce/how-to-update-your-catalog#step-3-send-the-file-container-to-update-your-catalog).
+   *
+   * @param sourceId
+   * @param fileContainer
+   * @return
+   * @throws IOException
+   * @throws InterruptedException
+   */
+  public HttpResponse<String> pushFileContainerContentToStreamSource(
+      String sourceId, FileContainer fileContainer) throws IOException, InterruptedException {
+    String[] headers =
+        this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+    URI uri =
+        URI.create(
+            this.getBasePushURL()
+                + String.format(
+                    "/sources/%s/stream/update?fileId=%s", sourceId, fileContainer.fileId));
+
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(""));
+  }
+
+  /**
    * Push a binary to a File Container. See [Upload the Item Data Into the File
    * Container](https://docs.coveo.com/en/69#step-2-upload-the-item-data-into-the-file-container)
    *

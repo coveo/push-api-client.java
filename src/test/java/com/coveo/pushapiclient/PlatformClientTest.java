@@ -388,6 +388,25 @@ public class PlatformClientTest {
   }
 
   @Test
+  public void testPushFileContainerContentToStream() throws IOException, InterruptedException {
+    client.pushFileContainerContentToStreamSource("my_source", fileContainer());
+    verify(httpClient)
+        .send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+
+    assertEquals("PUT", argument.getValue().method());
+    assertTrue(
+        argument.getValue().uri().getPath().contains("the_org_id/sources/my_source/stream/update"));
+    assertTrue(
+        argument
+            .getValue()
+            .uri()
+            .getQuery()
+            .contains(String.format("fileId=%s", fileContainer().fileId)));
+    assertApplicationJsonHeader();
+    assertAuthorizationHeader();
+  }
+
+  @Test
   public void testOpenStream() throws IOException, InterruptedException {
     client.openStream("my_source");
     verify(httpClient)
