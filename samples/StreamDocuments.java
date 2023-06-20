@@ -11,7 +11,10 @@ public class StreamDocuments {
         PlatformUrl platformUrl = new PlatformUrlBuilder().withEnvironment(Environment.PRODUCTION).withRegion(Region.US).build();
         CatalogSource catalogSource = CatalogSource.fromPlatformUrl("my_api_key","my_org_id","my_source_id", platformUrl);
 
+        // Using the Stream Service will act as a source rebuild, therefore any currently indexed items not contained in the payload will be deleted.
         StreamService streamService = new StreamService(catalogSource);
+        // To perform full document updates, use the PushService instead.
+        // For more info, visit: https://docs.coveo.com/en/l62e0540/coveo-for-commerce/how-to-update-your-catalog#full-document-updates
 
         DocumentBuilder document1 = new DocumentBuilder("https://my.document.uri", "My document title")
                 .withData("these words will be searchable")
