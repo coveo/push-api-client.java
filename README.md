@@ -4,14 +4,50 @@ A Coveo Push API Client in Java
 
 ## Installation
 
+### Step 1: Prerequisites
+The Coveo `push-api-client.java` package is stored on Github packages. You will then need a personal access token (classic) with at least `read:packages` scope to install this dependency.
+
+More info, visit [Authenticating to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-to-github-packages)
+
+### Step 2: Update `settings.xml`
+You can install this GitHub Package with Apache Maven by editing your `~/.m2/settings.xml`:
+
+#### The repository to the package
+Add a definition to the Github Package
+
+```xml
+<repository>
+  <id>github</id>
+  <url>https://maven.pkg.github.com/coveo/push-api-client.java</url>
+  <snapshots>
+    <enabled>true</enabled>
+  </snapshots>
+</repository>
+```
+
+#### Your GitHub personal access token
+Your personal access token required to install packages from Github Packages
+
+```xml
+<servers>
+  <server>
+    <id>github</id>
+    <username>USERNAME</username>
+    <password>TOKEN</password>
+  </server>
+</servers>
+```
+
+### Step 3: Add Coveo dependency to project
 Using Maven:
 
-```
-<dependency>
-  <groupId>com.coveo</groupId>
-  <artifactId>push-api-client.java</artifactId>
-  <version>2.2.0</version>
-</dependency>
+
+Add Coveo dependency to your maven project. Instructions on how to do that available in this [URL](https://github.com/coveo/push-api-client.java/packages/1884180).
+
+### Step 4: Install
+Run via command line
+```bash
+mvn install
 ```
 
 ## Usage
