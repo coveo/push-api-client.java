@@ -15,14 +15,15 @@ import java.util.stream.Stream;
 public class PlatformClient {
   private final String apiKey;
   private final String organizationId;
-  private final HttpClient httpClient;
+  private final ApiCore api;
   private final PlatformUrl platformUrl;
 
   /**
    * Construct a PlatformClient
    *
    * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    */
   public PlatformClient(String apiKey, String organizationId) {
@@ -33,14 +34,15 @@ public class PlatformClient {
    * Construct a PlatformClient
    *
    * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param platformUrl The PlatformUrl.
    */
   public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.httpClient = HttpClient.newHttpClient();
+    this.api = new ApiCore();
     this.platformUrl = platformUrl;
   }
 
@@ -48,14 +50,15 @@ public class PlatformClient {
    * Construct a PlatformClient
    *
    * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param httpClient The HttpClient.
    */
   public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.httpClient = httpClient;
+    this.api = new ApiCore(httpClient);
     this.platformUrl = new PlatformUrlBuilder().build();
   }
 
@@ -63,7 +66,8 @@ public class PlatformClient {
    * @deprecated Please now use PlatformUrl to define your Platform environment
    * @see PlatformUrl Construct a PlatformUrl
    * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization. See [Manage API Keys](https://docs.coveo.com/en/1718).
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param environment The Environment to be used.
    */
@@ -71,7 +75,7 @@ public class PlatformClient {
   public PlatformClient(String apiKey, String organizationId, Environment environment) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.httpClient = HttpClient.newHttpClient();
+    this.api = new ApiCore();
     this.platformUrl = new PlatformUrlBuilder().withEnvironment(environment).build();
   }
 
@@ -98,7 +102,8 @@ public class PlatformClient {
    * @param name The name of the source to create
    * @param sourceType The type of the source to create
    * @param sourceVisibility The security option that should be applied to the content of the
-   *     source. See [Content Security](https://docs.coveo.com/en/1779).
+   *     source.
+   * @see <a href="https://docs.coveo.com/en/1779">Content Security</a>
    * @return
    * @throws IOException
    * @throws InterruptedException
@@ -121,21 +126,16 @@ public class PlatformClient {
               }
             });
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .POST(HttpRequest.BodyPublishers.ofString(json))
-            .uri(URI.create(this.getBaseSourceURL()))
-            .build();
+    URI uri = URI.create(this.getBaseSourceURL());
 
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers, HttpRequest.BodyPublishers.ofString(json));
   }
 
   /**
-   * Create or update a security identity. See [Adding a Single Security
-   * Identity](https://docs.coveo.com/en/167) and [Security Identity
-   * Models](https://docs.coveo.com/en/139).
+   * Create or update a security identity.
    *
+   * @see <a href="https://docs.coveo.com/en/167">Adding a Single Security Identity</a>
+   * @see <a href="https://docs.coveo.com/en/139">Security Identity Models</a>.
    * @param securityProviderId
    * @param securityIdentityModel
    * @return
@@ -151,21 +151,14 @@ public class PlatformClient {
 
     String json = new Gson().toJson(securityIdentityModel);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .PUT(HttpRequest.BodyPublishers.ofString(json))
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(json));
   }
 
   /**
-   * Create or update a security identity alias. See [Adding a Single
-   * Alias](https://docs.coveo.com/en/142) and [User Alias Definition
-   * Examples](https://docs.coveo.com/en/46).
+   * Create or update a security identity alias.
    *
+   * @see <a href="https://docs.coveo.com/en/142">Adding a Single Alias</a>
+   * @see <a href="https://docs.coveo.com/en/46">User Alias Definition Examples</a>
    * @param securityProviderId
    * @param securityIdentityAlias
    * @return
@@ -181,20 +174,13 @@ public class PlatformClient {
 
     String json = new Gson().toJson(securityIdentityAlias);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .PUT(HttpRequest.BodyPublishers.ofString(json))
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(json));
   }
 
   /**
-   * Delete a security identity. See [Disabling a Single Security
-   * Identity](https://docs.coveo.com/en/84).
+   * Delete a security identity.
    *
+   * @see <a href="https://docs.coveo.com/en/84">Disabling a Single Security Identity</a>
    * @param securityProviderId
    * @param securityIdentityToDelete
    * @return
@@ -210,20 +196,13 @@ public class PlatformClient {
 
     String json = new Gson().toJson(securityIdentityToDelete);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .method("DELETE", HttpRequest.BodyPublishers.ofString(json))
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.delete(uri, headers, HttpRequest.BodyPublishers.ofString(json));
   }
 
   /**
-   * Delete old security identities. See [Disabling Old Security
-   * Identities](https://docs.coveo.com/en/33).
+   * Delete old security identities.
    *
+   * @see <a href="https://docs.coveo.com/en/33">Disabling Old Security Identities</a>
    * @param securityProviderId
    * @param batchDelete
    * @return
@@ -242,9 +221,7 @@ public class PlatformClient {
                     "/permissions/olderthan?queueDelay=%s%s",
                     batchDelete.getQueueDelay(), appendOrderingId(batchDelete.getOrderingId())));
 
-    HttpRequest request = HttpRequest.newBuilder().headers(headers).DELETE().uri(uri).build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.delete(uri, headers);
   }
 
   /**
@@ -261,9 +238,9 @@ public class PlatformClient {
   }
 
   /**
-   * Manage batches of security identities. See [Manage Batches of Security
-   * Identities](https://docs.coveo.com/en/55).
+   * Manage batches of security identities.
    *
+   * @see <a href="https://docs.coveo.com/en/55">Manage Batches of Security Identities</a>
    * @param securityProviderId
    * @param batchConfig
    * @return
@@ -282,20 +259,13 @@ public class PlatformClient {
                     "/permissions/batch?fileId=%s%s",
                     batchConfig.getFileId(), appendOrderingId(batchConfig.getOrderingId())));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .PUT(HttpRequest.BodyPublishers.noBody())
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.noBody());
   }
 
   /**
-   * Adds or updates an individual item in a push source. See [Adding a Single Item in a Push
-   * Source](https://docs.coveo.com/en/133).
+   * Adds or updates an individual item in a push source.
    *
+   * @see <a href="https://docs.coveo.com/en/133">Adding a Single Item in a Push Source</a>
    * @param sourceId
    * @param documentJSON
    * @param documentId
@@ -316,20 +286,14 @@ public class PlatformClient {
                     "/sources/%s/documents?documentId=%s&compressionType=%s",
                     sourceId, documentId, compressionType.toString()));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .PUT(HttpRequest.BodyPublishers.ofString(documentJSON))
-            .uri(uri)
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(documentJSON));
   }
 
   /**
    * Deletes a specific item from a Push source. Optionally, the child items of that item can also
-   * be deleted. See [Deleting an Item in a Push Source](https://docs.coveo.com/en/171).
+   * be deleted.
    *
+   * @see <a href="https://docs.coveo.com/en/171">Deleting an Item in a Push Source</a>
    * @param sourceId
    * @param documentId
    * @param deleteChildren
@@ -349,27 +313,17 @@ public class PlatformClient {
                     "/sources/%s/documents?documentId=%s&deleteChildren=%s",
                     sourceId, documentId, deleteChildren));
 
-    HttpRequest request = HttpRequest.newBuilder().headers(headers).DELETE().uri(uri).build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.delete(uri, headers);
   }
 
   public HttpResponse<String> openStream(String sourceId) throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
-    // TODO: LENS-875: standardize string manipulation
+
     URI uri =
         URI.create(this.getBasePushURL() + String.format("/sources/%s/stream/open", sourceId));
 
-    // TODO: LENS-876: reduce code duplication
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   public HttpResponse<String> closeStream(String sourceId, String streamId)
@@ -381,14 +335,7 @@ public class PlatformClient {
             this.getBasePushURL()
                 + String.format("/sources/%s/stream/%s/close", sourceId, streamId));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   public HttpResponse<String> requireStreamChunk(String sourceId, String streamId)
@@ -400,19 +347,13 @@ public class PlatformClient {
             this.getBasePushURL()
                 + String.format("/sources/%s/stream/%s/chunk", sourceId, streamId));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   /**
-   * Create a file container. See [Creating a File Container](https://docs.coveo.com/en/43).
+   * Create a file container.
    *
+   * @see <a href="https://docs.coveo.com/en/43">Creating a File Container</a>
    * @return
    * @throws IOException
    * @throws InterruptedException
@@ -420,22 +361,16 @@ public class PlatformClient {
   public HttpResponse<String> createFileContainer() throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri = URI.create(this.getBasePushURL() + "/files");
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   /**
-   * Update the status of a Push source. See [Updating the Status of a Push
-   * Source](https://docs.coveo.com/en/35).
+   * Update the status of a Push source.
    *
+   * @see <a href="https://docs.coveo.com/en/35">Updating the Status of a Push Source</a>
    * @param status
    * @return
    * @throws IOException
@@ -450,20 +385,15 @@ public class PlatformClient {
             this.getBasePushURL()
                 + String.format("/sources/%s/status?statusType=%s", sourceId, status.toString()));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .POST(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.post(uri, headers);
   }
 
   /**
-   * Upload content update into a file container. See [Upload the Content Update into the File
-   * Container](https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-2-upload-the-content-update-into-the-file-container).
+   * Upload content update into a file container.
    *
+   * @see <a
+   *     href="https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-2-upload-the-content-update-into-the-file-container">Upload
+   *     the Content Update into the File Container</a>
    * @param fileContainer
    * @param batchUpdateJson
    * @return
@@ -477,22 +407,18 @@ public class PlatformClient {
         fileContainer.requiredHeaders.entrySet().stream()
             .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
             .toArray(String[]::new);
+
     URI uri = URI.create(fileContainer.uploadUri);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .PUT(HttpRequest.BodyPublishers.ofString(batchUpdateJson))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(batchUpdateJson));
   }
 
   /**
-   * Push a file container into a push source. See [Push the File Container into a Push
-   * Source](https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-3-push-the-file-container-into-a-push-source).
+   * Push a file container into a push source.
    *
+   * @see <a
+   *     href="https://docs.coveo.com/en/90/index-content/manage-batches-of-items-in-a-push-source#step-3-push-the-file-container-into-a-push-source">Push
+   *     the File Container into a Push Source</a>
    * @param sourceId
    * @param fileContainer
    * @return
@@ -509,20 +435,15 @@ public class PlatformClient {
                 + String.format(
                     "/sources/%s/documents/batch?fileId=%s", sourceId, fileContainer.fileId));
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .PUT(HttpRequest.BodyPublishers.ofString(""))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofString(""));
   }
 
   /**
-   * Push a binary to a File Container. See [Upload the Item Data Into the File
-   * Container](https://docs.coveo.com/en/69#step-2-upload-the-item-data-into-the-file-container)
+   * Push a binary to a File Container.
    *
+   * @see <a
+   *     href="https://docs.coveo.com/en/69#step-2-upload-the-item-data-into-the-file-container">Upload
+   *     the Item Data Into the File Container</a>
    * @param fileContainer
    * @param fileAsBytes
    * @return
@@ -533,16 +454,10 @@ public class PlatformClient {
       FileContainer fileContainer, byte[] fileAsBytes) throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAes256Header(), this.getContentTypeApplicationOctetStreamHeader());
+
     URI uri = URI.create(fileContainer.uploadUri);
 
-    HttpRequest request =
-        HttpRequest.newBuilder()
-            .headers(headers)
-            .uri(uri)
-            .PUT(HttpRequest.BodyPublishers.ofByteArray(fileAsBytes))
-            .build();
-
-    return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    return this.api.put(uri, headers, HttpRequest.BodyPublishers.ofByteArray(fileAsBytes));
   }
 
   private String getBaseSourceURL() {

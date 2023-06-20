@@ -1,14 +1,10 @@
 package com.coveo.pushapiclient;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /** Represents a queue for uploading documents using a specified upload strategy */
 class DocumentUploadQueue {
-  private static final Logger logger = LogManager.getLogger(DocumentUploadQueue.class);
   private final UploadStrategy uploader;
   private final int maxQueueSize = 5 * 1024 * 1024;
   private ArrayList<DocumentBuilder> documentToAddList;
@@ -38,8 +34,7 @@ class DocumentUploadQueue {
     }
     BatchUpdate batch = this.getBatch();
     // TODO: LENS-871: support concurrent requests
-    HttpResponse<String> response = this.uploader.apply(batch);
-    logger.debug("Sending document batch: ", response.statusCode(), response.body());
+    this.uploader.apply(batch);
     this.size = 0;
     this.documentToAddList.clear();
     this.documentToDeleteList.clear();
@@ -63,7 +58,6 @@ class DocumentUploadQueue {
       this.flush();
     }
     documentToAddList.add(document);
-    logger.info("Adding document to batch: ", document.getDocument().uri);
     this.size += sizeOfDoc;
   }
 
@@ -85,7 +79,6 @@ class DocumentUploadQueue {
       this.flush();
     }
     documentToDeleteList.add(document);
-    logger.info("Adding document to batch: ", document.documentId);
     this.size += sizeOfDoc;
   }
 

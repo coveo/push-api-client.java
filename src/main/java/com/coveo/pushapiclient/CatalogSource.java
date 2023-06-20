@@ -15,7 +15,8 @@ public class CatalogSource implements StreamEnabledSource {
    * @param platformClient
    * @param name The name of the source to create
    * @param sourceVisibility The security option that should be applied to the content of the
-   *     source. See [Content Security](https://docs.coveo.com/en/1779).
+   *     source.
+   * @see <a href="https://docs.coveo.com/en/1779">Content Security</a>
    * @return
    * @throws IOException
    * @throws InterruptedException
