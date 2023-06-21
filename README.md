@@ -5,7 +5,7 @@ A Coveo Push API Client in Java
 ## Installation
 
 ### Step 1: Prerequisites
-The Coveo `push-api-client.java` package is stored on Github packages. You will then need a personal access token (classic) with at least `read:packages` scope to install this dependency.
+The Coveo `push-api-client.java` package is stored on Github packages. You will need a personal access token (classic) with at least `read:packages` scope to install this dependency.
 
 More info, visit [Authenticating to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-to-github-packages)
 
