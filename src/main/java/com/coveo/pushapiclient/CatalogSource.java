@@ -5,7 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.http.HttpResponse;
 
-public class CatalogSource implements StreamEnabledSource {
+public class CatalogSource implements StreamEnabledSource, PushEnabledSource {
   private final String apiKey;
   private final ApiUrl urlExtractor;
 
