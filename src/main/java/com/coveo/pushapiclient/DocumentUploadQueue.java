@@ -34,15 +34,24 @@ class DocumentUploadQueue {
    */
   public void flush() throws IOException, InterruptedException {
     if (this.isEmpty()) {
+      logger.debug("Empty batch. Skipping upload");
       return;
     }
-    BatchUpdate batch = this.getBatch();
     // TODO: LENS-871: support concurrent requests
-    HttpResponse<String> response = this.uploader.apply(batch);
-    logger.debug("Sending document batch: ", response.statusCode(), response.body());
+    this.applyStrategy();
+
     this.size = 0;
     this.documentToAddList.clear();
     this.documentToDeleteList.clear();
+  }
+
+  private void applyStrategy() throws IOException, InterruptedException {
+    BatchUpdate batch = this.getBatch();
+    logger.info("Uploading document batch");
+    HttpResponse<String> response = this.uploader.apply(batch);
+    if (response != null && !response.body().isEmpty()) {
+      logger.info("Document batch upload response: " + response.body());
+    }
   }
 
   /**
@@ -63,7 +72,7 @@ class DocumentUploadQueue {
       this.flush();
     }
     documentToAddList.add(document);
-    logger.info("Adding document to batch: ", document.getDocument().uri);
+    logger.info("Adding document to batch: " + document.getDocument().uri);
     this.size += sizeOfDoc;
   }
 
@@ -85,7 +94,7 @@ class DocumentUploadQueue {
       this.flush();
     }
     documentToDeleteList.add(document);
-    logger.info("Adding document to batch: ", document.documentId);
+    logger.info("Adding document to batch: " + document.documentId);
     this.size += sizeOfDoc;
   }
 

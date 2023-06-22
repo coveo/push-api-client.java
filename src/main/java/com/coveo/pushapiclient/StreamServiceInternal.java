@@ -4,9 +4,12 @@ import com.coveo.pushapiclient.exceptions.NoOpenStreamException;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** For internal use only. Made to easily test the service without having to use PowerMock */
 class StreamServiceInternal {
+  private static final Logger logger = LogManager.getLogger(StreamServiceInternal.class);
   private final StreamEnabledSource source;
   private final PlatformClient platformClient;
   private String streamId;
@@ -35,10 +38,12 @@ class StreamServiceInternal {
     }
     queue.flush();
     String sourceId = this.getSourceId();
+    logger.info("Closing open stream " + this.streamId);
     return this.platformClient.closeStream(sourceId, this.streamId);
   }
 
   private String getStreamId() throws IOException, InterruptedException {
+    logger.info("Opening new stream");
     String sourceId = this.getSourceId();
     HttpResponse<String> response = this.platformClient.openStream(sourceId);
     StreamResponse streamResponse = new Gson().fromJson(response.body(), StreamResponse.class);
