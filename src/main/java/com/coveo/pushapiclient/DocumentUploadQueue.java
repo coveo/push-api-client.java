@@ -38,20 +38,13 @@ class DocumentUploadQueue {
       return;
     }
     // TODO: LENS-871: support concurrent requests
-    this.applyStrategy();
+    BatchUpdate batch = this.getBatch();
+    logger.info("Uploading document batch");
+    this.uploader.apply(batch);
 
     this.size = 0;
     this.documentToAddList.clear();
     this.documentToDeleteList.clear();
-  }
-
-  private void applyStrategy() throws IOException, InterruptedException {
-    BatchUpdate batch = this.getBatch();
-    logger.info("Uploading document batch");
-    HttpResponse<String> response = this.uploader.apply(batch);
-    if (response != null && !response.body().isEmpty()) {
-      logger.info("Document batch upload response: " + response.body());
-    }
   }
 
   /**
