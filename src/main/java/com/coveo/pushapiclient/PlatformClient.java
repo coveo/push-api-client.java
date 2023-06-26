@@ -215,6 +215,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBaseProviderURL(securityProviderId)
@@ -253,6 +254,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBaseProviderURL(securityProviderId)
@@ -280,6 +282,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBasePushURL()
@@ -307,6 +310,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBasePushURL()
@@ -343,6 +347,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBasePushURL()
@@ -381,6 +386,7 @@ public class PlatformClient {
       throws IOException, InterruptedException {
     String[] headers =
         this.getHeaders(this.getAuthorizationHeader(), this.getContentTypeApplicationJSONHeader());
+
     URI uri =
         URI.create(
             this.getBasePushURL()
