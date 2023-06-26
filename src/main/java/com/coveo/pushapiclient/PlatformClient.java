@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
 
 /** PlatformClient handles network requests to the Coveo platform */
 public class PlatformClient {
@@ -58,7 +59,7 @@ public class PlatformClient {
   public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.api = new ApiCore(httpClient);
+    this.api = new ApiCore(httpClient, LogManager.getLogger(ApiCore.class));
     this.platformUrl = new PlatformUrlBuilder().build();
   }
 

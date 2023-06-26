@@ -4,6 +4,8 @@ import com.coveo.pushapiclient.exceptions.NoOpenStreamException;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class StreamService {
   private final StreamEnabledSource source;
@@ -27,11 +29,13 @@ public class StreamService {
     String organizationId = source.getOrganizationId();
     PlatformUrl platformUrl = source.getPlatformUrl();
     UploadStrategy uploader = this.getUploadStrategy();
+    Logger logger = LogManager.getLogger(StreamService.class);
 
     this.source = source;
     this.queue = new DocumentUploadQueue(uploader);
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
-    this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient);
+
+    this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient, logger);
   }
 
   /**
