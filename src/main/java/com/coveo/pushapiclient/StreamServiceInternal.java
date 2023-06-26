@@ -37,8 +37,7 @@ class StreamServiceInternal {
       throws IOException, InterruptedException, NoOpenStreamException {
     if (this.streamId == null) {
       throw new NoOpenStreamException(
-          "No open stream detected. A stream will automatically be opened once you start adding"
-              + " documents.");
+          "No open stream detected. A stream will automatically be opened once you start adding documents.");
     }
     queue.flush();
     String sourceId = this.getSourceId();
