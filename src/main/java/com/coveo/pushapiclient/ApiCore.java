@@ -12,14 +12,16 @@ import org.apache.logging.log4j.Logger;
 // TODO: LENS-934 - Support throttling
 class ApiCore {
   private final HttpClient httpClient;
-  private static final Logger logger = LogManager.getLogger(ApiCore.class);
+  private final Logger logger;
 
   public ApiCore() {
     this.httpClient = HttpClient.newHttpClient();
+    this.logger = LogManager.getLogger(ApiCore.class);
   }
 
-  public ApiCore(HttpClient httpClient) {
+  public ApiCore(HttpClient httpClient, Logger logger) {
     this.httpClient = httpClient;
+    this.logger = logger;
   }
 
   public HttpResponse<String> post(URI uri, String[] headers)
@@ -29,7 +31,7 @@ class ApiCore {
 
   public HttpResponse<String> post(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
-    logger.debug("POST " + uri);
+    this.logger.debug("POST " + uri);
     HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).POST(body).build();
     HttpResponse<String> response =
         this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -39,7 +41,7 @@ class ApiCore {
 
   public HttpResponse<String> put(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
-    logger.debug("PUT " + uri);
+    this.logger.debug("PUT " + uri);
     HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).PUT(body).build();
     HttpResponse<String> response =
         this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -49,7 +51,7 @@ class ApiCore {
 
   public HttpResponse<String> delete(URI uri, String[] headers)
       throws IOException, InterruptedException {
-    logger.debug("DELETE " + uri);
+    this.logger.debug("DELETE " + uri);
     HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).DELETE().build();
     HttpResponse<String> response =
         this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -59,7 +61,7 @@ class ApiCore {
 
   public HttpResponse<String> delete(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
-    logger.debug("DELETE " + uri);
+    this.logger.debug("DELETE " + uri);
     HttpRequest request =
         HttpRequest.newBuilder().headers(headers).uri(uri).method("DELETE", body).build();
     HttpResponse<String> response =
@@ -78,11 +80,11 @@ class ApiCore {
     String responseMessage = method + " response: " + response.body();
 
     if (status < 200 || status >= 300) {
-      logger.error(statusMessage);
-      logger.error(responseMessage);
+      this.logger.error(statusMessage);
+      this.logger.error(responseMessage);
     } else {
-      logger.debug(statusMessage);
-      logger.debug(responseMessage);
+      this.logger.debug(statusMessage);
+      this.logger.debug(responseMessage);
     }
   }
 }
