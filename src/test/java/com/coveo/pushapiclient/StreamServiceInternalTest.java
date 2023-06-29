@@ -1,5 +1,6 @@
 package com.coveo.pushapiclient;
 
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.coveo.pushapiclient.exceptions.NoOpenStreamException;
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import org.apache.logging.log4j.core.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +22,8 @@ public class StreamServiceInternalTest {
   @Mock private DocumentUploadQueue queue;
 
   @Mock private PlatformClient platformClient;
+
+  @Mock private Logger logger;
 
   @InjectMocks private StreamServiceInternal service;
 
@@ -85,5 +89,15 @@ public class StreamServiceInternalTest {
   public void givenNoOpenStream_whenClose_thenShouldThrow()
       throws IOException, InterruptedException, NoOpenStreamException {
     service.close();
+  }
+
+  @Test
+  public void testShouldLogInfo() throws IOException, InterruptedException, NoOpenStreamException {
+    service.add(documentA);
+    service.add(documentB);
+    verify(logger, times(1)).info("Opening new stream");
+
+    service.close();
+    verify(logger, times(1)).info(contains("Closing open stream"));
   }
 }

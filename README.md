@@ -81,6 +81,31 @@ public class PushOneDocument {
 
 ```
 
+## Logging
+When pushing multiple documents into your source using a service (e.g. `PushService`, `StreamService`), make sure to configure a **logger** to be able to see what happens.
+to do so .. in your `resources` folder.
+
+### Log4j2 XML Configuration Example
+To log execution output into the console, use the below `log4j2.xml` configuration:
+```xml
+<!-- log4j2.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="ConsoleAppender" />
+        </Root>
+    </Loggers>
+</Configuration>
+```
+
+See [Log4j2 configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html) for more details.
+
 ## Local Setup to Contribute
 
 ### Formatting
