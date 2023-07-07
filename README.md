@@ -1,6 +1,6 @@
 # Push API Client
 
-A [Coveo Push API ](https://docs.coveo.com/en/12/api-reference/push-api) client library for Java.
+A [Coveo Push API](https://docs.coveo.com/en/12/api-reference/push-api) client library for Java.
 
 ## Prerequisites
 
@@ -12,17 +12,17 @@ For details, see [Authenticating to GitHub Packages](https://docs.github.com/en/
 ## Installation
 
 ### Step 1: Update `settings.xml`
-You can install this GitHub Package with [Apache Maven by](https://maven.apache.org/) editing the `~/.m2/settings.xml` file:
+You can install this GitHub Package with [Apache Maven](https://maven.apache.org/) by editing the `~/.m2/settings.xml` file:
 
 1. Add a repository definition to the GitHub Package.
 
     ```xml
     <repository>
-    <id>github</id>
-    <url>https://maven.pkg.github.com/coveo/push-api-client.java</url>
-    <snapshots>
-        <enabled>true</enabled>
-    </snapshots>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/coveo/push-api-client.java</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
     </repository>
     ```
 
