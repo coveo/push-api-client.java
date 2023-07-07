@@ -4,7 +4,7 @@ A [Coveo Push API](https://docs.coveo.com/en/12/api-reference/push-api) client l
 
 ## Prerequisites
 
-The Coveo `push-api-client.java` package is stored on GitHub packages. 
+The Coveo `push-api-client.java` package is stored on GitHub packages.
 You will need a personal access token (classic) with at least `read:packages` scope to install this dependency.
 
 For details, see [Authenticating to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-to-github-packages)
@@ -12,31 +12,32 @@ For details, see [Authenticating to GitHub Packages](https://docs.github.com/en/
 ## Installation
 
 ### Step 1: Update `settings.xml`
+
 You can install this GitHub Package with [Apache Maven](https://maven.apache.org/) by editing the `~/.m2/settings.xml` file:
 
 1. Add a repository definition to the GitHub Package.
 
-    ```xml
-    <repository>
-        <id>github</id>
-        <url>https://maven.pkg.github.com/coveo/push-api-client.java</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-    ```
+   ```xml
+   <repository>
+       <id>github</id>
+       <url>https://maven.pkg.github.com/coveo/push-api-client.java</url>
+       <snapshots>
+           <enabled>true</enabled>
+       </snapshots>
+   </repository>
+   ```
 
 1. Add your GitHub personal access token to install packages from GitHub Packages.
 
-    ```xml
-    <servers>
-    <server>
-        <id>github</id>
-        <username>USERNAME</username>
-        <password>TOKEN</password>
-    </server>
-    </servers>
-    ```
+   ```xml
+   <servers>
+   <server>
+       <id>github</id>
+       <username>USERNAME</username>
+       <password>TOKEN</password>
+   </server>
+   </servers>
+   ```
 
 ### Step 2: Add a Coveo dependency to project
 
@@ -96,25 +97,25 @@ If you want to push multiple documents to your Coveo organization and use a serv
 1. Go to your project's root folder.
 
 1. Update the Apache Log4j2 configuration by editing the `log4j2.xml` file.
-    The following example will print the log execution to the console. 
+   The following example will print the log execution to the console.
 
-    ```xml
-    <?xml version="1.0" encoding="UTF-8"?>
-    <Configuration>
-        <Appenders>
-            <Console name="ConsoleAppender" target="SYSTEM_OUT">
-                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
-            </Console>
-        </Appenders>
-        <Loggers>
-            <Root level="debug">
-                <AppenderRef ref="ConsoleAppender" />
-            </Root>
-        </Loggers>
-    </Configuration>
-    ```
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <Configuration>
+       <Appenders>
+           <Console name="ConsoleAppender" target="SYSTEM_OUT">
+               <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+           </Console>
+       </Appenders>
+       <Loggers>
+           <Root level="debug">
+               <AppenderRef ref="ConsoleAppender" />
+           </Root>
+       </Loggers>
+   </Configuration>
+   ```
 
-    For more details, see [Log4j2 configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html).
+   For more details, see [Log4j2 configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html).
 
 ## Formatting the code before contributing
 
@@ -134,11 +135,11 @@ mvn spotless:apply
 
 1. Run the following commands:
 
-    1. `mvn -P release clean deploy`.
+   1. `mvn -P release clean deploy`.
 
-    1. `cd ./target`.
+   1. `cd ./target`.
 
-    1. `jar -cvf bundle.jar push-api-client.java-1.0.0-javadoc.jar push-api-client.java-1.0.0-javadoc.jar.asc push-api-client.java-1.0.0-sources.jar push-api-client.java-1.0.0-sources.jar.asc push-api-client.java-1.0.0.jar push-api-client.java-1.0.0.jar.asc push-api-client.java-1.0.0.pom push-api-client.java-1.0.0.pom.asc`
+   1. `jar -cvf bundle.jar push-api-client.java-1.0.0-javadoc.jar push-api-client.java-1.0.0-javadoc.jar.asc push-api-client.java-1.0.0-sources.jar push-api-client.java-1.0.0-sources.jar.asc push-api-client.java-1.0.0.jar push-api-client.java-1.0.0.jar.asc push-api-client.java-1.0.0.pom push-api-client.java-1.0.0.pom.asc`
 
 1. Log in to https://oss.sonatype.org/.
 
