@@ -92,7 +92,7 @@ public class PushOneDocument {
 
 ## Logging
 
-If you want to push multiple documents to your Coveo organization and use a service for that (e.g. `PushService`, `StreamService`), you need to configure a **logger** to be able to see what happens.
+If you want to push multiple documents to your Coveo organization and use a service for that (e.g. `PushService`, `StreamService`), you may find it useful to configure a **logger** to catch error and warning messages .
 
 1. Go to your project's root folder.
 
