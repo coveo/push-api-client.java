@@ -9,7 +9,7 @@
   "devDependencies": {
     "@actions/core": "^1.10.0",
     "@commitlint/config-conventional": "17.6.6",
-    "@octokit/auth-app": "^5.0.0"
+    "@octokit/auth-app": "^6.0.0"
   },
   "scripts": {
     "get-token": "node utils/get-token.mjs"
