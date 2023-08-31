@@ -37,13 +37,18 @@ class ApiCore {
   }
 
   public HttpResponse<String> callApiWithRetries(
-      URI uri, String[] headers, int timeMultiple)
-      throws Exception {
+      String method, URI uri, String[] headers, BodyPublisher body, int timeMultiple)
+      throws IOException, InterruptedException {
     long delayInMilliseconds = retryAfter * 1000L;
     int nbRetries = 0;
 
     while (true) {
-      HttpResponse<String> response = this.post(uri, headers);
+      this.logger.debug(method.toUpperCase() + " " + uri);
+      HttpRequest request =
+          HttpRequest.newBuilder().headers(headers).uri(uri).method(method, body).build();
+      HttpResponse<String> response =
+          this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+      this.logResponse(response);
       nbRetries++;
 
       if (response.statusCode() == 429 && nbRetries <= maxRetries) {
@@ -51,7 +56,8 @@ class ApiCore {
         delayInMilliseconds = delayInMilliseconds * timeMultiple;
       } else {
         if (response.statusCode() >= 400) {
-          throw new Exception("HTTP error " + response.statusCode() + " : " + response.body());
+          throw new InterruptedException(
+              "HTTP error " + response.statusCode() + " : " + response.body());
         }
         return response;
       }
@@ -66,9 +72,7 @@ class ApiCore {
   public HttpResponse<String> post(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
     this.logger.debug("POST " + uri);
-    HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).POST(body).build();
-    HttpResponse<String> response =
-        this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    HttpResponse<String> response = this.callApiWithRetries("post", uri, headers, body, 2);
     this.logResponse(response);
     return response;
   }
@@ -76,9 +80,7 @@ class ApiCore {
   public HttpResponse<String> put(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
     this.logger.debug("PUT " + uri);
-    HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).PUT(body).build();
-    HttpResponse<String> response =
-        this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    HttpResponse<String> response = this.callApiWithRetries("put", uri, headers, body, 2);
     this.logResponse(response);
     return response;
   }
@@ -86,9 +88,8 @@ class ApiCore {
   public HttpResponse<String> delete(URI uri, String[] headers)
       throws IOException, InterruptedException {
     this.logger.debug("DELETE " + uri);
-    HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).DELETE().build();
     HttpResponse<String> response =
-        this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        this.callApiWithRetries("delete", uri, headers, HttpRequest.BodyPublishers.ofString(""), 2);
     this.logResponse(response);
     return response;
   }
@@ -96,10 +97,7 @@ class ApiCore {
   public HttpResponse<String> delete(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
     this.logger.debug("DELETE " + uri);
-    HttpRequest request =
-        HttpRequest.newBuilder().headers(headers).uri(uri).method("DELETE", body).build();
-    HttpResponse<String> response =
-        this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    HttpResponse<String> response = this.callApiWithRetries("delete", uri, headers, body, 2);
     this.logResponse(response);
     return response;
   }
