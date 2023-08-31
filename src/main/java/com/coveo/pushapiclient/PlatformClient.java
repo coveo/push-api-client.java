@@ -18,6 +18,8 @@ public class PlatformClient {
   private final String organizationId;
   private final ApiCore api;
   private final PlatformUrl platformUrl;
+  private final int retryAfter;
+  private final int maxRetries;
 
   /**
    * Construct a PlatformClient
@@ -28,7 +30,19 @@ public class PlatformClient {
    * @param organizationId The Coveo Organization identifier.
    */
   public PlatformClient(String apiKey, String organizationId) {
-    this(apiKey, organizationId, new PlatformUrlBuilder().build());
+    this(apiKey, organizationId, new PlatformUrlBuilder().build(), 5000, 50);
+  }
+
+  /**
+   * Construct a PlatformClient
+   *
+   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
+   * @param organizationId The Coveo Organization identifier.
+   */
+  public PlatformClient(String apiKey, String organizationId, int retryAfter, int maxRetries) {
+    this(apiKey, organizationId, new PlatformUrlBuilder().build(), retryAfter, maxRetries);
   }
 
   /**
@@ -40,11 +54,18 @@ public class PlatformClient {
    * @param organizationId The Coveo Organization identifier.
    * @param platformUrl The PlatformUrl.
    */
-  public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
+  public PlatformClient(
+      String apiKey,
+      String organizationId,
+      PlatformUrl platformUrl,
+      int retryAfter,
+      int maxRetries) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
     this.api = new ApiCore();
     this.platformUrl = platformUrl;
+    this.retryAfter = retryAfter;
+    this.maxRetries = maxRetries;
   }
 
   /**
@@ -56,11 +77,14 @@ public class PlatformClient {
    * @param organizationId The Coveo Organization identifier.
    * @param httpClient The HttpClient.
    */
-  public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
+  public PlatformClient(
+      String apiKey, String organizationId, HttpClient httpClient, int retryAfter, int maxRetries) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.api = new ApiCore(httpClient, LogManager.getLogger(ApiCore.class));
+    this.api = new ApiCore(httpClient, LogManager.getLogger(ApiCore.class), retryAfter, maxRetries);
     this.platformUrl = new PlatformUrlBuilder().build();
+    this.retryAfter = retryAfter;
+    this.maxRetries = maxRetries;
   }
 
   /**
@@ -73,11 +97,18 @@ public class PlatformClient {
    * @param environment The Environment to be used.
    */
   @Deprecated
-  public PlatformClient(String apiKey, String organizationId, Environment environment) {
+  public PlatformClient(
+      String apiKey,
+      String organizationId,
+      Environment environment,
+      int retryAfter,
+      int maxRetries) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
     this.api = new ApiCore();
     this.platformUrl = new PlatformUrlBuilder().withEnvironment(environment).build();
+    this.retryAfter = retryAfter;
+    this.maxRetries = maxRetries;
   }
 
   /**

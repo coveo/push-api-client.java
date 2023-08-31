@@ -9,19 +9,53 @@ import java.net.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO: LENS-934 - Support throttling
 class ApiCore {
   private final HttpClient httpClient;
   private final Logger logger;
+  private final int retryAfter;
+  private final int maxRetries;
 
   public ApiCore() {
     this.httpClient = HttpClient.newHttpClient();
     this.logger = LogManager.getLogger(ApiCore.class);
+    this.retryAfter = 5000;
+    this.maxRetries = 50;
   }
 
   public ApiCore(HttpClient httpClient, Logger logger) {
     this.httpClient = httpClient;
     this.logger = logger;
+    this.retryAfter = 5000;
+    this.maxRetries = 50;
+  }
+
+  public ApiCore(HttpClient httpClient, Logger logger, int retryAfter, int maxRetries) {
+    this.httpClient = httpClient;
+    this.logger = logger;
+    this.retryAfter = retryAfter;
+    this.maxRetries = maxRetries;
+  }
+
+  public HttpResponse<String> callApiWithRetries(
+      URI uri, String[] headers, int timeMultiple)
+      throws Exception {
+    long delayInMilliseconds = retryAfter * 1000L;
+    int nbRetries = 0;
+
+    while (true) {
+      HttpResponse<String> response = this.post(uri, headers);
+      nbRetries++;
+
+      if (response.statusCode() == 429 && nbRetries <= maxRetries) {
+        Thread.sleep(delayInMilliseconds);
+        delayInMilliseconds = delayInMilliseconds * timeMultiple;
+      } else {
+        if (response.statusCode() >= 400) {
+          throw new Exception("HTTP error " + response.statusCode() + " : " + response.body());
+        }
+        return response;
+      }
+    }
   }
 
   public HttpResponse<String> post(URI uri, String[] headers)
