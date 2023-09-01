@@ -41,17 +41,15 @@ class ApiCore {
           this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
       this.logResponse(response);
 
-      if (response.statusCode() == 429 && nbRetries < this.options.getMaxRetries()) {
+      if (response != null
+          && response.statusCode() == 429
+          && nbRetries < this.options.getMaxRetries()) {
         nbRetries++;
         delayInMilliseconds =
             this.options.getRetryAfter()
                 + (this.options.getRetryAfter() * this.options.getTimeMultiple() * (nbRetries - 1));
         Thread.sleep(delayInMilliseconds);
       } else {
-        if (response.statusCode() >= 400) {
-          throw new InterruptedException(
-              "HTTP error " + response.statusCode() + " : " + response.body());
-        }
         return response;
       }
     }
@@ -85,7 +83,8 @@ class ApiCore {
 
   public HttpResponse<String> delete(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
-    HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).method("DELETE", body).build();
+    HttpRequest request =
+        HttpRequest.newBuilder().headers(headers).uri(uri).method("DELETE", body).build();
     HttpResponse<String> response = this.callApiWithRetries(request);
     return response;
   }

@@ -10,13 +10,17 @@ public class PushService {
   private PushServiceInternal service;
 
   public PushService(PushEnabledSource source) {
+    this(source, new BackoffOptionsBuilder().build());
+  }
+
+  public PushService(PushEnabledSource source, BackoffOptions options) {
     String apiKey = source.getApiKey();
     String organizationId = source.getOrganizationId();
     PlatformUrl platformUrl = source.getPlatformUrl();
     UploadStrategy uploader = this.getUploadStrategy();
     DocumentUploadQueue queue = new DocumentUploadQueue(uploader);
 
-    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
+    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
     this.service = new PushServiceInternal(queue);
     this.source = source;
   }

@@ -15,7 +15,18 @@ public class Source {
    * @param organizationId The Coveo Organization identifier.
    */
   public Source(String apiKey, String organizationId) {
-    this.platformClient = new PlatformClient(apiKey, organizationId);
+    this(apiKey, organizationId, new BackoffOptionsBuilder().build());
+  }
+
+  /**
+   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>.
+   * @param organizationId The Coveo Organization identifier.
+   * @param options The options for exponential backoff.
+   */
+  public Source(String apiKey, String organizationId, BackoffOptions options) {
+    this.platformClient = new PlatformClient(apiKey, organizationId, options);
   }
 
   /**
@@ -26,7 +37,20 @@ public class Source {
    * @param platformUrl
    */
   public Source(String apiKey, String organizationId, PlatformUrl platformUrl) {
-    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
+    this(apiKey, organizationId, platformUrl, new BackoffOptionsBuilder().build());
+  }
+
+  /**
+   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>.
+   * @param organizationId The Coveo Organization identifier.
+   * @param platformUrl
+   * @param options
+   */
+  public Source(
+      String apiKey, String organizationId, PlatformUrl platformUrl, BackoffOptions options) {
+    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
   }
 
   /**
