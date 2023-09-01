@@ -10,23 +10,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 class ApiCore {
+  public static final int DEFAULT_RETRY_AFTER = 5000;
+  public static final int DEFAULT_MAX_RETRIES = 50;
   private final HttpClient httpClient;
   private final Logger logger;
   private final int retryAfter;
   private final int maxRetries;
 
   public ApiCore() {
-    this.httpClient = HttpClient.newHttpClient();
-    this.logger = LogManager.getLogger(ApiCore.class);
-    this.retryAfter = 5000;
-    this.maxRetries = 50;
+    this(HttpClient.newHttpClient(), LogManager.getLogger(ApiCore.class));
   }
 
   public ApiCore(HttpClient httpClient, Logger logger) {
-    this.httpClient = httpClient;
-    this.logger = logger;
-    this.retryAfter = 5000;
-    this.maxRetries = 50;
+    this(httpClient, logger, DEFAULT_RETRY_AFTER, DEFAULT_MAX_RETRIES);
   }
 
   public ApiCore(HttpClient httpClient, Logger logger, int retryAfter, int maxRetries) {

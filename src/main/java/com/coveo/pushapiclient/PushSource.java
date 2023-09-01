@@ -125,11 +125,55 @@ public class PushSource implements PushEnabledSource {
     return new PushSource(apiKey, organizationId, sourceId, platformUrl);
   }
 
+  /**
+   * Create a Push source instance
+   *
+   * @param apiKey The API key used for all operations regarding your source.
+   *     <p>Ensure your API key has the required privileges for the operation you will be performing
+   *     *
+   *     <p>For more information about which privileges are required, see <a href=
+   *     "https://docs.coveo.com/en/1707#sources-domain">Privilege Reference.</a>
+   * @param organizationId The unique identifier of your organization.
+   *     <p>The Organization Id can be retrieved in the URL of your Coveo organization.
+   * @param sourceId The unique identifier of the target Push source.
+   *     <p>The Source Id can be retrieved when you edit your source in the <a href=
+   *     "https://docs.coveo.com/en/183/glossary/coveo-administration-console">Coveo Administration
+   *     Console</a>
+   * @param platformUrl The object containing additional information on the URL endpoint. You can
+   *     use the {@link PlatformUrl} when your organization is located in a non-default Coveo
+   *     environement and/or region. When not specified, the default platform URL values will be
+   *     used: {@link PlatformUrl#DEFAULT_ENVIRONMENT} and {@link PlatformUrl#DEFAULT_REGION}
+   * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
+   * @param maxRetries The maximum number of attempts to make for a request.
+   */
+  public static PushSource fromPlatformUrl(
+      String apiKey,
+      String organizationId,
+      String sourceId,
+      PlatformUrl platformUrl,
+      int retryAfter,
+      int maxRetries) {
+    return new PushSource(apiKey, organizationId, sourceId, platformUrl, retryAfter, maxRetries);
+  }
+
   private PushSource(
       String apiKey, String organizationId, String sourceId, PlatformUrl platformUrl) {
     this.apiKey = apiKey;
     this.urlExtractor = new ApiUrl(organizationId, sourceId, platformUrl);
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
+  }
+
+  private PushSource(
+      String apiKey,
+      String organizationId,
+      String sourceId,
+      PlatformUrl platformUrl,
+      int retryAfter,
+      int maxRetries) {
+    this.apiKey = apiKey;
+    this.urlExtractor = new ApiUrl(organizationId, sourceId, platformUrl);
+    this.platformClient =
+        new PlatformClient(apiKey, organizationId, platformUrl, retryAfter, maxRetries);
   }
 
   /**

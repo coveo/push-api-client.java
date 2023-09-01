@@ -14,12 +14,13 @@ import org.apache.logging.log4j.LogManager;
 
 /** PlatformClient handles network requests to the Coveo platform */
 public class PlatformClient {
+  public static final int DEFAULT_RETRY_AFTER = 5000;
+  public static final int DEFAULT_MAX_RETRIES = 50;
+
   private final String apiKey;
   private final String organizationId;
   private final ApiCore api;
   private final PlatformUrl platformUrl;
-  private final int retryAfter;
-  private final int maxRetries;
 
   /**
    * Construct a PlatformClient
@@ -30,7 +31,12 @@ public class PlatformClient {
    * @param organizationId The Coveo Organization identifier.
    */
   public PlatformClient(String apiKey, String organizationId) {
-    this(apiKey, organizationId, new PlatformUrlBuilder().build(), 5000, 50);
+    this(
+        apiKey,
+        organizationId,
+        new PlatformUrlBuilder().build(),
+        DEFAULT_RETRY_AFTER,
+        DEFAULT_MAX_RETRIES);
   }
 
   /**
@@ -40,6 +46,20 @@ public class PlatformClient {
    *     organization.
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
+   */
+  public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
+    this(apiKey, organizationId, platformUrl, DEFAULT_RETRY_AFTER, DEFAULT_MAX_RETRIES);
+  }
+
+  /**
+   * Construct a PlatformClient
+   *
+   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
+   * @param organizationId The Coveo Organization identifier.
+   * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
+   * @param maxRetries The maximum number of attempts to make for a request.
    */
   public PlatformClient(String apiKey, String organizationId, int retryAfter, int maxRetries) {
     this(apiKey, organizationId, new PlatformUrlBuilder().build(), retryAfter, maxRetries);
@@ -53,6 +73,8 @@ public class PlatformClient {
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param platformUrl The PlatformUrl.
+   * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
+   * @param maxRetries The maximum number of attempts to make for a request.
    */
   public PlatformClient(
       String apiKey,
@@ -64,8 +86,6 @@ public class PlatformClient {
     this.organizationId = organizationId;
     this.api = new ApiCore();
     this.platformUrl = platformUrl;
-    this.retryAfter = retryAfter;
-    this.maxRetries = maxRetries;
   }
 
   /**
@@ -77,14 +97,27 @@ public class PlatformClient {
    * @param organizationId The Coveo Organization identifier.
    * @param httpClient The HttpClient.
    */
+  public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
+    this(apiKey, organizationId, httpClient, DEFAULT_RETRY_AFTER, DEFAULT_MAX_RETRIES);
+  }
+
+  /**
+   * Construct a PlatformClient
+   *
+   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
+   * @param organizationId The Coveo Organization identifier.
+   * @param httpClient The HttpClient.
+   * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
+   * @param maxRetries The maximum number of attempts to make for a request.
+   */
   public PlatformClient(
       String apiKey, String organizationId, HttpClient httpClient, int retryAfter, int maxRetries) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
     this.api = new ApiCore(httpClient, LogManager.getLogger(ApiCore.class), retryAfter, maxRetries);
     this.platformUrl = new PlatformUrlBuilder().build();
-    this.retryAfter = retryAfter;
-    this.maxRetries = maxRetries;
   }
 
   /**
@@ -97,18 +130,11 @@ public class PlatformClient {
    * @param environment The Environment to be used.
    */
   @Deprecated
-  public PlatformClient(
-      String apiKey,
-      String organizationId,
-      Environment environment,
-      int retryAfter,
-      int maxRetries) {
+  public PlatformClient(String apiKey, String organizationId, Environment environment) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
     this.api = new ApiCore();
     this.platformUrl = new PlatformUrlBuilder().withEnvironment(environment).build();
-    this.retryAfter = retryAfter;
-    this.maxRetries = maxRetries;
   }
 
   /**
