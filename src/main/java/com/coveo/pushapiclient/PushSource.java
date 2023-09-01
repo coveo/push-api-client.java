@@ -143,17 +143,14 @@ public class PushSource implements PushEnabledSource {
    *     use the {@link PlatformUrl} when your organization is located in a non-default Coveo
    *     environement and/or region. When not specified, the default platform URL values will be
    *     used: {@link PlatformUrl#DEFAULT_ENVIRONMENT} and {@link PlatformUrl#DEFAULT_REGION}
-   * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
-   * @param maxRetries The maximum number of attempts to make for a request.
    */
   public static PushSource fromPlatformUrl(
       String apiKey,
       String organizationId,
       String sourceId,
       PlatformUrl platformUrl,
-      int retryAfter,
-      int maxRetries) {
-    return new PushSource(apiKey, organizationId, sourceId, platformUrl, retryAfter, maxRetries);
+      BackoffOptions options) {
+    return new PushSource(apiKey, organizationId, sourceId, platformUrl, options);
   }
 
   private PushSource(
@@ -168,12 +165,10 @@ public class PushSource implements PushEnabledSource {
       String organizationId,
       String sourceId,
       PlatformUrl platformUrl,
-      int retryAfter,
-      int maxRetries) {
+      BackoffOptions options) {
     this.apiKey = apiKey;
     this.urlExtractor = new ApiUrl(organizationId, sourceId, platformUrl);
-    this.platformClient =
-        new PlatformClient(apiKey, organizationId, platformUrl, retryAfter, maxRetries);
+    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
   }
 
   /**

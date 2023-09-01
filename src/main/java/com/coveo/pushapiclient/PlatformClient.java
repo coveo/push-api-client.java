@@ -14,9 +14,6 @@ import org.apache.logging.log4j.LogManager;
 
 /** PlatformClient handles network requests to the Coveo platform */
 public class PlatformClient {
-  public static final int DEFAULT_RETRY_AFTER = 5000;
-  public static final int DEFAULT_MAX_RETRIES = 50;
-
   private final String apiKey;
   private final String organizationId;
   private final ApiCore api;
@@ -35,8 +32,7 @@ public class PlatformClient {
         apiKey,
         organizationId,
         new PlatformUrlBuilder().build(),
-        DEFAULT_RETRY_AFTER,
-        DEFAULT_MAX_RETRIES);
+        new BackoffOptionsBuilder().build());
   }
 
   /**
@@ -48,7 +44,7 @@ public class PlatformClient {
    * @param organizationId The Coveo Organization identifier.
    */
   public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
-    this(apiKey, organizationId, platformUrl, DEFAULT_RETRY_AFTER, DEFAULT_MAX_RETRIES);
+    this(apiKey, organizationId, platformUrl, new BackoffOptionsBuilder().build());
   }
 
   /**
@@ -61,8 +57,8 @@ public class PlatformClient {
    * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
    * @param maxRetries The maximum number of attempts to make for a request.
    */
-  public PlatformClient(String apiKey, String organizationId, int retryAfter, int maxRetries) {
-    this(apiKey, organizationId, new PlatformUrlBuilder().build(), retryAfter, maxRetries);
+  public PlatformClient(String apiKey, String organizationId, BackoffOptions options) {
+    this(apiKey, organizationId, new PlatformUrlBuilder().build(), options);
   }
 
   /**
@@ -77,11 +73,7 @@ public class PlatformClient {
    * @param maxRetries The maximum number of attempts to make for a request.
    */
   public PlatformClient(
-      String apiKey,
-      String organizationId,
-      PlatformUrl platformUrl,
-      int retryAfter,
-      int maxRetries) {
+      String apiKey, String organizationId, PlatformUrl platformUrl, BackoffOptions options) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
     this.api = new ApiCore();
@@ -98,7 +90,7 @@ public class PlatformClient {
    * @param httpClient The HttpClient.
    */
   public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
-    this(apiKey, organizationId, httpClient, DEFAULT_RETRY_AFTER, DEFAULT_MAX_RETRIES);
+    this(apiKey, organizationId, httpClient, new BackoffOptionsBuilder().build());
   }
 
   /**
@@ -113,10 +105,10 @@ public class PlatformClient {
    * @param maxRetries The maximum number of attempts to make for a request.
    */
   public PlatformClient(
-      String apiKey, String organizationId, HttpClient httpClient, int retryAfter, int maxRetries) {
+      String apiKey, String organizationId, HttpClient httpClient, BackoffOptions options) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.api = new ApiCore(httpClient, LogManager.getLogger(ApiCore.class), retryAfter, maxRetries);
+    this.api = new ApiCore(httpClient, LogManager.getLogger(ApiCore.class), options);
     this.platformUrl = new PlatformUrlBuilder().build();
   }
 

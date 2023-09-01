@@ -10,46 +10,43 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 class ApiCore {
-  public static final int DEFAULT_RETRY_AFTER = 5000;
-  public static final int DEFAULT_MAX_RETRIES = 50;
   private final HttpClient httpClient;
   private final Logger logger;
-  private final int retryAfter;
-  private final int maxRetries;
+  private final BackoffOptions options;
 
   public ApiCore() {
     this(HttpClient.newHttpClient(), LogManager.getLogger(ApiCore.class));
   }
 
   public ApiCore(HttpClient httpClient, Logger logger) {
-    this(httpClient, logger, DEFAULT_RETRY_AFTER, DEFAULT_MAX_RETRIES);
+    this(httpClient, logger, new BackoffOptionsBuilder().build());
   }
 
-  public ApiCore(HttpClient httpClient, Logger logger, int retryAfter, int maxRetries) {
+  public ApiCore(HttpClient httpClient, Logger logger, BackoffOptions options) {
     this.httpClient = httpClient;
     this.logger = logger;
-    this.retryAfter = retryAfter;
-    this.maxRetries = maxRetries;
+    this.options = options;
   }
 
-  public HttpResponse<String> callApiWithRetries(
-      String method, URI uri, String[] headers, BodyPublisher body, int timeMultiple)
+  public HttpResponse<String> callApiWithRetries(HttpRequest request)
       throws IOException, InterruptedException {
-    long delayInMilliseconds = retryAfter * 1000L;
     int nbRetries = 0;
+    long delayInMilliseconds = 0;
 
     while (true) {
-      this.logger.debug(method.toUpperCase() + " " + uri);
-      HttpRequest request =
-          HttpRequest.newBuilder().headers(headers).uri(uri).method(method, body).build();
+      String uri = request.uri().toString();
+      String reqMethod = request.method();
+      this.logger.debug(reqMethod + " " + uri);
       HttpResponse<String> response =
           this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
       this.logResponse(response);
-      nbRetries++;
 
-      if (response.statusCode() == 429 && nbRetries <= maxRetries) {
+      if (response.statusCode() == 429 && nbRetries < this.options.getMaxRetries()) {
+        nbRetries++;
+        delayInMilliseconds =
+            this.options.getRetryAfter()
+                + (this.options.getRetryAfter() * this.options.getTimeMultiple() * (nbRetries - 1));
         Thread.sleep(delayInMilliseconds);
-        delayInMilliseconds = delayInMilliseconds * timeMultiple;
       } else {
         if (response.statusCode() >= 400) {
           throw new InterruptedException(
@@ -67,34 +64,29 @@ class ApiCore {
 
   public HttpResponse<String> post(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
-    this.logger.debug("POST " + uri);
-    HttpResponse<String> response = this.callApiWithRetries("post", uri, headers, body, 2);
-    this.logResponse(response);
+    HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).POST(body).build();
+    HttpResponse<String> response = this.callApiWithRetries(request);
     return response;
   }
 
   public HttpResponse<String> put(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
-    this.logger.debug("PUT " + uri);
-    HttpResponse<String> response = this.callApiWithRetries("put", uri, headers, body, 2);
-    this.logResponse(response);
+    HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).PUT(body).build();
+    HttpResponse<String> response = this.callApiWithRetries(request);
     return response;
   }
 
   public HttpResponse<String> delete(URI uri, String[] headers)
       throws IOException, InterruptedException {
-    this.logger.debug("DELETE " + uri);
-    HttpResponse<String> response =
-        this.callApiWithRetries("delete", uri, headers, HttpRequest.BodyPublishers.ofString(""), 2);
-    this.logResponse(response);
+    HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).DELETE().build();
+    HttpResponse<String> response = this.callApiWithRetries(request);
     return response;
   }
 
   public HttpResponse<String> delete(URI uri, String[] headers, BodyPublisher body)
       throws IOException, InterruptedException {
-    this.logger.debug("DELETE " + uri);
-    HttpResponse<String> response = this.callApiWithRetries("delete", uri, headers, body, 2);
-    this.logResponse(response);
+    HttpRequest request = HttpRequest.newBuilder().headers(headers).uri(uri).method("DELETE", body).build();
+    HttpResponse<String> response = this.callApiWithRetries(request);
     return response;
   }
 
