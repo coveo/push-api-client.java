@@ -34,7 +34,10 @@ public class Source {
    *     organization.
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>.
    * @param organizationId The Coveo Organization identifier.
-   * @param platformUrl
+   * @param platformUrl The object containing additional information on the URL endpoint. You can
+   *     use the {@link PlatformUrl} when your organization is located in a non-default Coveo
+   *     environement and/or region. When not specified, the default platform URL values will be
+   *     used: {@link PlatformUrl#DEFAULT_ENVIRONMENT} and {@link PlatformUrl#DEFAULT_REGION}
    */
   public Source(String apiKey, String organizationId, PlatformUrl platformUrl) {
     this(apiKey, organizationId, platformUrl, new BackoffOptionsBuilder().build());
@@ -45,8 +48,11 @@ public class Source {
    *     organization.
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>.
    * @param organizationId The Coveo Organization identifier.
-   * @param platformUrl
-   * @param options
+   * @param platformUrl The object containing additional information on the URL endpoint. You can
+   *     use the {@link PlatformUrl} when your organization is located in a non-default Coveo
+   *     environement and/or region. When not specified, the default platform URL values will be
+   *     used: {@link PlatformUrl#DEFAULT_ENVIRONMENT} and {@link PlatformUrl#DEFAULT_REGION}
+   * @param options The configuration options for exponential backoff
    */
   public Source(
       String apiKey, String organizationId, PlatformUrl platformUrl, BackoffOptions options) {

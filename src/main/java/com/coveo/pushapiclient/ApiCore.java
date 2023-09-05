@@ -44,7 +44,7 @@ class ApiCore {
       if (response != null
           && response.statusCode() == 429
           && nbRetries < this.options.getMaxRetries()) {
-            Thread.sleep(delayInMilliseconds);
+        Thread.sleep(delayInMilliseconds);
         nbRetries++;
         delayInMilliseconds *= this.options.getTimeMultiple();
       } else {

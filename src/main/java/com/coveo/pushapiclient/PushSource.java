@@ -143,6 +143,7 @@ public class PushSource implements PushEnabledSource {
    *     use the {@link PlatformUrl} when your organization is located in a non-default Coveo
    *     environement and/or region. When not specified, the default platform URL values will be
    *     used: {@link PlatformUrl#DEFAULT_ENVIRONMENT} and {@link PlatformUrl#DEFAULT_REGION}
+   *     * @param options The configuration options for exponential backoff
    */
   public static PushSource fromPlatformUrl(
       String apiKey,

@@ -37,7 +37,7 @@ public class StreamService {
    * full source rebuild. The {@StreamService} can also be used for an initial catalog upload.
    *
    * @param source The source to which you want to send your documents.
-   * @param options The options for exponential backoff.
+   * @param options The configuration options for exponential backoff
    */
   public StreamService(StreamEnabledSource source, BackoffOptions options) {
     String apiKey = source.getApiKey();

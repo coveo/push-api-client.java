@@ -54,8 +54,7 @@ public class PlatformClient {
    *     organization.
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
-   * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
-   * @param maxRetries The maximum number of attempts to make for a request.
+   * @param options The configuration options for exponential backoff
    */
   public PlatformClient(String apiKey, String organizationId, BackoffOptions options) {
     this(apiKey, organizationId, new PlatformUrlBuilder().build(), options);
@@ -69,8 +68,7 @@ public class PlatformClient {
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param platformUrl The PlatformUrl.
-   * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
-   * @param maxRetries The maximum number of attempts to make for a request.
+   * @param options The configuration options for exponential backoff
    */
   public PlatformClient(
       String apiKey, String organizationId, PlatformUrl platformUrl, BackoffOptions options) {
@@ -101,8 +99,7 @@ public class PlatformClient {
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param httpClient The HttpClient.
-   * @param retryAfter The amount of time, in milliseconds, to wait between request attempts.
-   * @param maxRetries The maximum number of attempts to make for a request.
+   * @param options The configuration options for exponential backoff
    */
   public PlatformClient(
       String apiKey, String organizationId, HttpClient httpClient, BackoffOptions options) {
