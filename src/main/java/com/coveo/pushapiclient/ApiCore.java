@@ -31,7 +31,7 @@ class ApiCore {
   public HttpResponse<String> callApiWithRetries(HttpRequest request)
       throws IOException, InterruptedException {
     int nbRetries = 0;
-    long delayInMilliseconds = 0;
+    long delayInMilliseconds = this.options.getRetryAfter();
 
     while (true) {
       String uri = request.uri().toString();
@@ -44,11 +44,9 @@ class ApiCore {
       if (response != null
           && response.statusCode() == 429
           && nbRetries < this.options.getMaxRetries()) {
+            Thread.sleep(delayInMilliseconds);
         nbRetries++;
-        delayInMilliseconds =
-            this.options.getRetryAfter()
-                + (this.options.getRetryAfter() * this.options.getTimeMultiple() * (nbRetries - 1));
-        Thread.sleep(delayInMilliseconds);
+        delayInMilliseconds *= this.options.getTimeMultiple();
       } else {
         return response;
       }
