@@ -10,9 +10,9 @@ public class BackoffOptions {
   private final int timeMultiple;
 
   public BackoffOptions(int retryAfter, int maxRetries, int timeMultiple) {
-    this.retryAfter = DEFAULT_RETRY_AFTER;
-    this.maxRetries = DEFAULT_MAX_RETRIES;
-    this.timeMultiple = DEFAULT_TIME_MULTIPLE;
+    this.retryAfter = retryAfter;
+    this.maxRetries = maxRetries;
+    this.timeMultiple = timeMultiple;
   }
 
   public int getRetryAfter() {
