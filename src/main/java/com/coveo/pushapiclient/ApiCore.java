@@ -1,11 +1,15 @@
 package com.coveo.pushapiclient;
 
+import io.github.resilience4j.core.IntervalFunction;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryConfig;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpResponse;
+import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,26 +34,36 @@ class ApiCore {
 
   public HttpResponse<String> callApiWithRetries(HttpRequest request)
       throws IOException, InterruptedException {
-    int nbRetries = 0;
-    long delayInMilliseconds = this.options.getRetryAfter();
+    IntervalFunction intervalFn =
+        IntervalFunction.ofExponentialRandomBackoff(
+            this.options.getRetryAfter(), this.options.getTimeMultiple());
 
-    while (true) {
-      String uri = request.uri().toString();
-      String reqMethod = request.method();
-      this.logger.debug(reqMethod + " " + uri);
+    RetryConfig retryConfig =
+        RetryConfig.<HttpResponse<String>>custom()
+            .maxAttempts(this.options.getMaxRetries())
+            .intervalFunction(intervalFn)
+            .retryOnResult(response -> response != null && response.statusCode() == 429)
+            .build();
+
+    Retry retry = Retry.of("platformRequest", retryConfig);
+
+    Function<HttpRequest, HttpResponse<String>> retryRequestFn =
+        Retry.decorateFunction(retry, req -> sendRequest(req));
+
+    return retryRequestFn.apply(request);
+  }
+
+  public HttpResponse<String> sendRequest(HttpRequest request) {
+    String uri = request.uri().toString();
+    String reqMethod = request.method();
+    this.logger.debug(reqMethod + " " + uri);
+    try {
       HttpResponse<String> response =
           this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
       this.logResponse(response);
-
-      if (response != null
-          && response.statusCode() == 429
-          && nbRetries < this.options.getMaxRetries()) {
-        Thread.sleep(delayInMilliseconds);
-        nbRetries++;
-        delayInMilliseconds *= this.options.getTimeMultiple();
-      } else {
-        return response;
-      }
+      return response;
+    } catch (IOException | InterruptedException e) {
+      throw new Error(e.getMessage());
     }
   }
 

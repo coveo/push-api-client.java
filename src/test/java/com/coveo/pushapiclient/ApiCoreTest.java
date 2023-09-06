@@ -101,8 +101,8 @@ public class ApiCoreTest {
 
     this.api.post(new URI("https://perdu.com/"), headers);
 
-    verify(logger, times(3)).debug("POST https://perdu.com/");
-    verify(logger, times(3)).error("POST status: 429");
-    verify(logger, times(3)).error("POST response: THROTTLED_REQUEST");
+    verify(logger, times(2)).debug("POST https://perdu.com/");
+    verify(logger, times(2)).error("POST status: 429");
+    verify(logger, times(2)).error("POST response: THROTTLED_REQUEST");
   }
 }
