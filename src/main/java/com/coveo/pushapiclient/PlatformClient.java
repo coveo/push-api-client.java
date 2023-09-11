@@ -54,7 +54,7 @@ public class PlatformClient {
    *     organization.
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
-   * @param options The configuration options for exponential backoff
+   * @param options The configuration options for exponential backoff.
    */
   public PlatformClient(String apiKey, String organizationId, BackoffOptions options) {
     this(apiKey, organizationId, new PlatformUrlBuilder().build(), options);
@@ -68,7 +68,7 @@ public class PlatformClient {
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param platformUrl The PlatformUrl.
-   * @param options The configuration options for exponential backoff
+   * @param options The configuration options for exponential backoff.
    */
   public PlatformClient(
       String apiKey, String organizationId, PlatformUrl platformUrl, BackoffOptions options) {
@@ -99,7 +99,7 @@ public class PlatformClient {
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param httpClient The HttpClient.
-   * @param options The configuration options for exponential backoff
+   * @param options The configuration options for exponential backoff.
    */
   public PlatformClient(
       String apiKey, String organizationId, HttpClient httpClient, BackoffOptions options) {

@@ -15,7 +15,7 @@ public class Source {
    * @param organizationId The Coveo Organization identifier.
    */
   public Source(String apiKey, String organizationId) {
-    this(apiKey, organizationId, new BackoffOptionsBuilder().build());
+    this.platformClient = new PlatformClient(apiKey, organizationId);
   }
 
   /**
@@ -23,40 +23,10 @@ public class Source {
    *     organization.
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>.
    * @param organizationId The Coveo Organization identifier.
-   * @param options The options for exponential backoff.
-   */
-  public Source(String apiKey, String organizationId, BackoffOptions options) {
-    this.platformClient = new PlatformClient(apiKey, organizationId, options);
-  }
-
-  /**
-   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization.
-   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>.
-   * @param organizationId The Coveo Organization identifier.
-   * @param platformUrl The object containing additional information on the URL endpoint. You can
-   *     use the {@link PlatformUrl} when your organization is located in a non-default Coveo
-   *     environement and/or region. When not specified, the default platform URL values will be
-   *     used: {@link PlatformUrl#DEFAULT_ENVIRONMENT} and {@link PlatformUrl#DEFAULT_REGION}
+   * @param platformUrl
    */
   public Source(String apiKey, String organizationId, PlatformUrl platformUrl) {
-    this(apiKey, organizationId, platformUrl, new BackoffOptionsBuilder().build());
-  }
-
-  /**
-   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
-   *     organization.
-   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>.
-   * @param organizationId The Coveo Organization identifier.
-   * @param platformUrl The object containing additional information on the URL endpoint. You can
-   *     use the {@link PlatformUrl} when your organization is located in a non-default Coveo
-   *     environement and/or region. When not specified, the default platform URL values will be
-   *     used: {@link PlatformUrl#DEFAULT_ENVIRONMENT} and {@link PlatformUrl#DEFAULT_REGION}
-   * @param options The configuration options for exponential backoff
-   */
-  public Source(
-      String apiKey, String organizationId, PlatformUrl platformUrl, BackoffOptions options) {
-    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
+    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
   }
 
   /**
