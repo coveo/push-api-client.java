@@ -1,6 +1,6 @@
 import com.coveo.pushapiclient.BackoffOptionsBuilder;
 import com.coveo.pushapiclient.DocumentBuilder;
-import com.coveo.pushapiclient.Source;
+import com.coveo.pushapiclient.PushSource;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
