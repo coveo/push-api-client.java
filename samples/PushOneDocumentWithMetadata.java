@@ -1,5 +1,7 @@
+import com.coveo.pushapiclient.BackoffOptions;
+import com.coveo.pushapiclient.BackoffOptionsBuilder;
 import com.coveo.pushapiclient.DocumentBuilder;
-import com.coveo.pushapiclient.Source;
+import com.coveo.pushapiclient.PushSource;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -7,7 +9,7 @@ import java.util.HashMap;
 
 public class PushOneDocumentWithMetadata {
     public static void main(String[] args) {
-        Source source = new Source("my_api_key", "my_org_id");
+        PushSource source = new PushSource("my_api_key", "my_org_id", new BackoffOptionsBuilder().withTimeMultiple(1).build());
         DocumentBuilder documentBuilder = new DocumentBuilder("https://my.document.uri", "My document title")
                 .withData("these words will be searchable")
                 .withAuthor("bob")

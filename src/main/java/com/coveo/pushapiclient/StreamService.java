@@ -25,6 +25,21 @@ public class StreamService {
    * @param source The source to which you want to send your documents.
    */
   public StreamService(StreamEnabledSource source) {
+    this(source, new BackoffOptionsBuilder().build());
+  }
+
+  /**
+   * Creates a service to stream your documents to the provided source by interacting with the
+   * Stream API.
+   *
+   * <p>To perform <a href="https://docs.coveo.com/en/l62e0540">full document updates</a>, use the
+   * {@PushService}, since pushing documents with the {@StreamService} is equivalent to triggering a
+   * full source rebuild. The {@StreamService} can also be used for an initial catalog upload.
+   *
+   * @param source The source to which you want to send your documents.
+   * @param options The configuration options for exponential backoff.
+   */
+  public StreamService(StreamEnabledSource source, BackoffOptions options) {
     String apiKey = source.getApiKey();
     String organizationId = source.getOrganizationId();
     PlatformUrl platformUrl = source.getPlatformUrl();
@@ -33,7 +48,7 @@ public class StreamService {
 
     this.source = source;
     this.queue = new DocumentUploadQueue(uploader);
-    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl);
+    this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
 
     this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient, logger);
   }

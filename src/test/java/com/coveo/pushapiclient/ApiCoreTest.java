@@ -25,6 +25,7 @@ public class ApiCoreTest {
   @Mock private HttpClient httpClient;
   @Mock private HttpRequest httpRequest;
   @Mock private Logger logger;
+  @Mock private BackoffOptions backoffOptions;
   @Mock private HttpResponse<String> httpResponse;
 
   @InjectMocks private ApiCore api;
@@ -46,12 +47,25 @@ public class ApiCoreTest {
     when(httpRequest.method()).thenReturn("DELETE");
   }
 
+  private void mockThrottledResponse() {
+    when(httpResponse.statusCode()).thenReturn(429);
+    when(httpResponse.body()).thenReturn("THROTTLED_REQUEST");
+    when(httpRequest.method()).thenReturn("POST");
+  }
+
+  private void mockBackoffOptions() {
+    when(backoffOptions.getMaxRetries()).thenReturn(2);
+    when(backoffOptions.getRetryAfter()).thenReturn(100);
+    when(backoffOptions.getTimeMultiple()).thenReturn(2);
+  }
+
   @Before
   public void setUp() throws Exception {
     closeable = MockitoAnnotations.openMocks(this);
 
     when(httpClient.send(any(HttpRequest.class), any(BodyHandler.class))).thenReturn(httpResponse);
     when(httpResponse.request()).thenReturn(httpRequest);
+    mockBackoffOptions();
   }
 
   @After
@@ -78,5 +92,17 @@ public class ApiCoreTest {
     verify(logger, times(1)).debug("DELETE https://perdu.com/");
     verify(logger, times(1)).error("DELETE status: 412");
     verify(logger, times(1)).error("DELETE response: BAD_REQUEST");
+  }
+
+  @Test
+  public void testShouldHandleBackoffOptions()
+      throws IOException, InterruptedException, URISyntaxException {
+    this.mockThrottledResponse();
+
+    this.api.post(new URI("https://perdu.com/"), headers);
+
+    verify(logger, times(2)).debug("POST https://perdu.com/");
+    verify(logger, times(2)).error("POST status: 429");
+    verify(logger, times(2)).error("POST response: THROTTLED_REQUEST");
   }
 }

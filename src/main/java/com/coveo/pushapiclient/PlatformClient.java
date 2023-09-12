@@ -28,7 +28,36 @@ public class PlatformClient {
    * @param organizationId The Coveo Organization identifier.
    */
   public PlatformClient(String apiKey, String organizationId) {
-    this(apiKey, organizationId, new PlatformUrlBuilder().build());
+    this(
+        apiKey,
+        organizationId,
+        new PlatformUrlBuilder().build(),
+        new BackoffOptionsBuilder().build());
+  }
+
+  /**
+   * Construct a PlatformClient
+   *
+   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
+   * @param organizationId The Coveo Organization identifier.
+   */
+  public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
+    this(apiKey, organizationId, platformUrl, new BackoffOptionsBuilder().build());
+  }
+
+  /**
+   * Construct a PlatformClient
+   *
+   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
+   * @param organizationId The Coveo Organization identifier.
+   * @param options The configuration options for exponential backoff.
+   */
+  public PlatformClient(String apiKey, String organizationId, BackoffOptions options) {
+    this(apiKey, organizationId, new PlatformUrlBuilder().build(), options);
   }
 
   /**
@@ -39,8 +68,10 @@ public class PlatformClient {
    * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
    * @param organizationId The Coveo Organization identifier.
    * @param platformUrl The PlatformUrl.
+   * @param options The configuration options for exponential backoff.
    */
-  public PlatformClient(String apiKey, String organizationId, PlatformUrl platformUrl) {
+  public PlatformClient(
+      String apiKey, String organizationId, PlatformUrl platformUrl, BackoffOptions options) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
     this.api = new ApiCore();
@@ -57,9 +88,24 @@ public class PlatformClient {
    * @param httpClient The HttpClient.
    */
   public PlatformClient(String apiKey, String organizationId, HttpClient httpClient) {
+    this(apiKey, organizationId, httpClient, new BackoffOptionsBuilder().build());
+  }
+
+  /**
+   * Construct a PlatformClient
+   *
+   * @param apiKey An apiKey capable of pushing documents and managing sources in a Coveo
+   *     organization.
+   * @see <a href="https://docs.coveo.com/en/1718">Manage API Keys</a>
+   * @param organizationId The Coveo Organization identifier.
+   * @param httpClient The HttpClient.
+   * @param options The configuration options for exponential backoff.
+   */
+  public PlatformClient(
+      String apiKey, String organizationId, HttpClient httpClient, BackoffOptions options) {
     this.apiKey = apiKey;
     this.organizationId = organizationId;
-    this.api = new ApiCore(httpClient, LogManager.getLogger(ApiCore.class));
+    this.api = new ApiCore(httpClient, LogManager.getLogger(ApiCore.class), options);
     this.platformUrl = new PlatformUrlBuilder().build();
   }
 
