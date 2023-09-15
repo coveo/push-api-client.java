@@ -18,7 +18,7 @@ public class BackoffOptionsBuilderTest {
   public void testWithDefaultValues() {
     BackoffOptions backoffOptions = backoffOptionsBuilder.build();
     assertEquals("Should return default retry after time", 5000, backoffOptions.getRetryAfter());
-    assertEquals("Should return default max retries", 50, backoffOptions.getMaxRetries());
+    assertEquals("Should return default max retries", 10, backoffOptions.getMaxRetries());
     assertEquals("Should return default time multiple", 2, backoffOptions.getTimeMultiple());
   }
 
