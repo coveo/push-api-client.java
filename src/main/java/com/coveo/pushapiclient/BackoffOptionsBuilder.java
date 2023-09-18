@@ -2,7 +2,7 @@ package com.coveo.pushapiclient;
 
 public class BackoffOptionsBuilder {
   public static final int DEFAULT_RETRY_AFTER = 5000;
-  public static final int DEFAULT_MAX_RETRIES = 50;
+  public static final int DEFAULT_MAX_RETRIES = 10;
   public static final int DEFAULT_TIME_MULTIPLE = 2;
 
   private int retryAfter = DEFAULT_RETRY_AFTER;

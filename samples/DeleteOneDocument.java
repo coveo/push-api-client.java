@@ -5,7 +5,8 @@ import java.net.http.HttpResponse;
 
 public class DeleteOneDocument {
     public static void main(String[] args) {
-        PushSource source = new PushSource("my_api_key", "my_org_id");
+        URL sourceUrl = new URL("https://api.cloud.coveo.com/push/v1/organizations/org_id/sources/source_id");
+        PushSource source = new PushSource("my_api_key", sourceUrl);
         String documentId = "https://my.document.uri";
         Boolean deleteChildren = true;
 
