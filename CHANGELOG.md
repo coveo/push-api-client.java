@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.3.1](https://github.com/coveo/push-api-client.java/compare/v2.3.0...v2.3.1) (2023-09-20)
+
+
+### Features
+
+* add exponential backoff to api core ([#102](https://github.com/coveo/push-api-client.java/issues/102)) ([172c936](https://github.com/coveo/push-api-client.java/commit/172c936101a56c6e9757a9e3f818ec38fbfb6cd3))
+* enable push on catalog source ([#82](https://github.com/coveo/push-api-client.java/issues/82)) ([aee3434](https://github.com/coveo/push-api-client.java/commit/aee34340e53c179963e8adfe25168071f6f435b4))
+* log HTTP calls ([#93](https://github.com/coveo/push-api-client.java/issues/93)) ([0cd3c60](https://github.com/coveo/push-api-client.java/commit/0cd3c60409d06a6b7438e233ec2c869530c4ecf5))
+
+
+### Bug Fixes
+
+* **deps:** update all dependencies j:cdx-227 ([#85](https://github.com/coveo/push-api-client.java/issues/85)) ([fd7372e](https://github.com/coveo/push-api-client.java/commit/fd7372e692eba59446c3c122c8e2f0c86c6fe319))
+
+
+### Documentation
+
+* add install instructions ([#92](https://github.com/coveo/push-api-client.java/issues/92)) ([8840df4](https://github.com/coveo/push-api-client.java/commit/8840df44dc6af6c83593c86066d609b78d5e3805))
+* improve retry configuration documentation ([#104](https://github.com/coveo/push-api-client.java/issues/104)) ([5c84117](https://github.com/coveo/push-api-client.java/commit/5c8411793ad5eae4f94af6ee55451c1749cffaca))
+* updates the readme: LENS-979 ([#96](https://github.com/coveo/push-api-client.java/issues/96)) ([c6259f8](https://github.com/coveo/push-api-client.java/commit/c6259f84dc1d61bb6ee290c95f81ecb6d949805a))
+
+
+### Miscellaneous Chores
+
+* release 2.3.1 ([cde6667](https://github.com/coveo/push-api-client.java/commit/cde66677d58a87782a2c0125ebf98cd24a7b19fe))
+
 ## [2.3.0](https://github.com/coveo/push-api-client.java/compare/v2.2.0...v2.3.0) (2023-06-20)
 
 
