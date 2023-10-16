@@ -585,7 +585,7 @@ public class PlatformClient {
       "Accept",
       "application/json",
       "User-Agent",
-      String.format("CoveoSDKJava/", version)
+      String.format("CoveoSDKJava/%s", version)
     };
   }
 
