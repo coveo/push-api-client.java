@@ -576,6 +576,7 @@ public class PlatformClient {
       Model model = reader.read(new FileReader("pom.xml"));
       version = model.getVersion();
     } catch (Exception e) {
+      version = "Not-Available";
     }
 
     return new String[] {
