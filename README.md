@@ -27,7 +27,7 @@ You can install this GitHub Package with [Apache Maven](https://maven.apache.org
    </repository>
    ```
 
-1. Add your GitHub personal access token to install packages from GitHub Packages.
+1. Add your GitHub personal access token with read:packages permission to install packages from GitHub Packages.
 
    ```xml
    <servers>
