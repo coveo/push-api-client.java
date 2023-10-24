@@ -2,6 +2,7 @@ package com.coveo.pushapiclient;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -11,6 +12,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 /** PlatformClient handles network requests to the Coveo platform */
 public class PlatformClient {
@@ -567,7 +570,23 @@ public class PlatformClient {
   }
 
   private String[] getContentTypeApplicationJSONHeader() {
-    return new String[] {"Content-Type", "application/json", "Accept", "application/json"};
+    MavenXpp3Reader reader = new MavenXpp3Reader();
+    String version = "";
+    try {
+      Model model = reader.read(new FileReader("pom.xml"));
+      version = model.getVersion();
+    } catch (Exception e) {
+      version = "Not-Available";
+    }
+
+    return new String[] {
+      "Content-Type",
+      "application/json",
+      "Accept",
+      "application/json",
+      "User-Agent",
+      String.format("CoveoSDKJava/%s", version)
+    };
   }
 
   private String[] getAes256Header() {
