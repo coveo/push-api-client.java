@@ -27,7 +27,7 @@ You can install this GitHub Package with [Apache Maven](https://maven.apache.org
    </repository>
    ```
 
-1. Add your GitHub personal access token to install packages from GitHub Packages.
+1. Add your GitHub personal access token with read:packages permission to install packages from GitHub Packages.
 
    ```xml
    <servers>
@@ -72,12 +72,12 @@ import java.net.http.HttpResponse;
 
 public class PushOneDocument {
     public static void main(String[] args) {
-        Source source = new Source("my_api_key", "my_org_id");
+        Source pushSource = new PushSource("my_api_key", "my_org_id");
         DocumentBuilder documentBuilder = new DocumentBuilder("https://my.document.uri", "My document title")
                 .withData("these words will be searchable");
 
         try {
-            HttpResponse<String> response = source.addOrUpdateDocument("my_source_id", documentBuilder);
+            HttpResponse<String> response = pushSource.addOrUpdateDocument("my_source_id", documentBuilder);
             System.out.println(String.format("Source creation status: %s", response.statusCode()));
             System.out.println(String.format("Source creation response: %s", response.body()));
         } catch (IOException e) {
@@ -89,6 +89,36 @@ public class PushOneDocument {
 }
 
 ```
+
+### Exponential backoff retry configuration
+
+By default, the SDK leverages an exponential backoff retry mechanism. Exponential backoff allows for the SDK to make multiple attempts to resolve throttled requests, increasing the amount of time to wait for each subsequent attempt. Outgoing requests will retry when a `429` status code is returned from the platform.
+
+The exponential backoff parameters are as follows:
+
+- `retryAfter` - The amount of time, in milliseconds, to wait between throttled request attempts.
+
+  Optional, will default to 5,000.
+
+- `maxRetries` - The maximum number of times to retry throttled requests.
+
+  Optional, will default to 10.
+
+- `timeMultiple` - The multiple by which to increase the wait time between each throttled request attempt.
+
+  Optional, will default to 2.
+
+You may configure the exponential backoff that will be applied to all outgoing requests. To do so, specify use the `BackoffOptionsBuilder` class to create a `BackoffOptions` object when creating either a `PushService`, `PushSource`, or `StreamService` object:
+
+```java
+PushSource pushSource = new PushSource("my_api_key", "my_org_id", new BackoffOptionsBuilder().withMaxRetries(5).withRetryAfter(10000).build());
+
+PushService pushService = new PushService(myPushEnabledSource, new BackoffOptionsBuilder().withMaxRetries(10).build());
+
+StreamService streamService = new StreamService(myStreamEnabledSource, new BackoffOptionsBuilder().withRetryAfter(2000).withTimeMultiple(3).build());
+```
+
+By default, requests will retry a maximum of 10 times, waiting 5 seconds after the first attempt, with a time multiple of 2 (which will equate to a maximum execution time of roughly 1.5 hours).
 
 ## Logging
 
