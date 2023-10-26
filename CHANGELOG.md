@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.2](https://github.com/coveo/push-api-client.java/compare/v2.3.1...v2.3.2) (2023-10-26)
+
+
+### Documentation
+
+* specify in readme that access token needs to have read:packages permission ([c99d06d](https://github.com/coveo/push-api-client.java/commit/c99d06d9e7d626c74a165df05eaf3aaeed703795))
+
 ## [2.3.1](https://github.com/coveo/push-api-client.java/compare/v2.3.0...v2.3.1) (2023-09-20)
 
 
