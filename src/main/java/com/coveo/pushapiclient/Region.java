@@ -4,7 +4,8 @@ package com.coveo.pushapiclient;
 public enum Region {
   US("us"),
   EU("eu"),
-  AU("au");
+  AU("au"),
+  CA("ca");
 
   private String value;
 
