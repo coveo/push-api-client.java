@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/coveo/push-api-client.java/compare/v2.3.2...v2.4.0) (2023-11-22)
+
+
+### Features
+
+* support canada region ([#113](https://github.com/coveo/push-api-client.java/issues/113)) ([57140be](https://github.com/coveo/push-api-client.java/commit/57140be06d76042cf66d110e78469b48158728a5))
+
 ## [2.3.2](https://github.com/coveo/push-api-client.java/compare/v2.3.1...v2.3.2) (2023-10-26)
 
 
