@@ -158,19 +158,35 @@ mvn spotless:apply
 ```
 
 ## Release
+<!-- TODO: fix automated release in Github Action -->
+### Create a release PR
+
+1. [Generate a JSON Web Token (JWT)](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app)
+2. Generate an access token with the following command. Ensure to substitute `<JSON_TOKEN>` and `<RELEASER_INSTALLATION_ID>` with the JWT token created in the preceding step and the respective releaser installation id.
+    ```
+    curl -i -X POST \
+        -H "Authorization: Bearer <JSON_TOKEN>" \
+        -H "Accept: application/vnd.github.v3+json" \
+        https://api.github.com/app/installations/<RELEASER_INSTALLATION_ID>/access_tokens \
+    ```
+3. Create a release Pull Request with the access token created in the previous step. This will create a PR with the appropriate version bump and the updated changelog.
+    ```
+    release-please release-pr \
+                --token=<ACCESS_TOKEN> \
+                --repo-url=coveo/push-api-client.java \
+                --release-type=maven \
+                --target-branch=main \
+    ```
+
+### Tag the commit
 
 1. Tag the commit according to the [semantic versioning](https://semver.org/).
+```
+git tag -a v0.0.0 <sha> -m "chore(main): release 0.0.0 (#123)"
+git push --tags
+```
 
-1. Bump version in `pom.xml`.
+2. Merge the PR
 
-1. Run the following commands:
-
-   1. `mvn -P release clean deploy`.
-
-   1. `cd ./target`.
-
-   1. `jar -cvf bundle.jar push-api-client.java-1.0.0-javadoc.jar push-api-client.java-1.0.0-javadoc.jar.asc push-api-client.java-1.0.0-sources.jar push-api-client.java-1.0.0-sources.jar.asc push-api-client.java-1.0.0.jar push-api-client.java-1.0.0.jar.asc push-api-client.java-1.0.0.pom push-api-client.java-1.0.0.pom.asc`
-
-1. Log in to https://oss.sonatype.org/.
-
-1. Upload the newly created `bundle.jar` file.
+### Create a release
+[Manually create a release](https://github.com/coveo/push-api-client.java/releases). This will trigger a package dpeloy deploy workflow action.
