@@ -191,7 +191,7 @@ public class StreamServiceInternalTest {
     service.addOrUpdate(documentA);
     verify(logger, times(1)).info("Creating new file container");
     service.close();
-    verify(logger, times(1)).info("Pushing to file container stream file-id");
+    verify(logger, times(1)).info("Pushing to file container file-id");
   }
 
   @Test(expected = UnsupportedOperationException.class)
