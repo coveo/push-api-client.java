@@ -11,7 +11,7 @@ public class StreamDocuments {
         PlatformUrl platformUrl = new PlatformUrlBuilder().withEnvironment(Environment.PRODUCTION).withRegion(Region.US).build();
         CatalogSource catalogSource = CatalogSource.fromPlatformUrl("my_api_key","my_org_id","my_source_id", platformUrl);
 
-        // Using the Update Stream Service will act as an incramental change to the index, therefore any currently indexed items not contained in the payload will remain.
+        // Using the Update Stream Service will act as an incremental change to the index, therefore any currently indexed items not contained in the payload will remain.
         UpdateStreamService updateStream = new UpdateStreamService(catalogSource);
         // To perform full index rebuild, use the StreamService instead.
 
