@@ -1,7 +1,6 @@
 package com.coveo.pushapiclient;
 
 import com.coveo.pushapiclient.exceptions.NoOpenFileContainerException;
-import com.coveo.pushapiclient.exceptions.NoOpenStreamException;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -11,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 public class UpdateStreamService {
 
   private final PlatformClient platformClient;
-  private final StreamServiceInternal streamServiceInternal;
+  private final UpdateStreamServiceInternal updateStreamServiceInternal;
 
   private FileContainer fileContainer;
 
@@ -45,13 +44,9 @@ public class UpdateStreamService {
     this.platformClient =
         new PlatformClient(
             source.getApiKey(), source.getOrganizationId(), source.getPlatformUrl(), options);
-    this.streamServiceInternal =
-        new StreamServiceInternal(
-            source,
-            new DocumentUploadQueue(this.getUploadStrategy()),
-            this.platformClient,
-            StreamOperationType.INCREMENTAL,
-            logger);
+    this.updateStreamServiceInternal =
+        new UpdateStreamServiceInternal(
+            source, new DocumentUploadQueue(this.getUploadStrategy()), this.platformClient, logger);
   }
 
   /**
@@ -87,7 +82,7 @@ public class UpdateStreamService {
    * @throws IOException If the creation of the file container or adding the document fails.
    */
   public void addOrUpdate(DocumentBuilder document) throws IOException, InterruptedException {
-    fileContainer = streamServiceInternal.addOrUpdate(document);
+    fileContainer = updateStreamServiceInternal.addOrUpdate(document);
   }
 
   /**
@@ -123,7 +118,7 @@ public class UpdateStreamService {
    * @throws IOException If the creation of the file container or adding the document fails.
    */
   public void delete(DeleteDocument document) throws IOException, InterruptedException {
-    fileContainer = streamServiceInternal.delete(document);
+    fileContainer = updateStreamServiceInternal.delete(document);
   }
 
   /**
@@ -141,13 +136,7 @@ public class UpdateStreamService {
    */
   public HttpResponse<String> close()
       throws IOException, InterruptedException, NoOpenFileContainerException {
-    try {
-      return streamServiceInternal.close();
-    } catch (NoOpenStreamException e) {
-      throw new IllegalStateException(
-          "The stream service should only ever open up a stream, so we should never encounter this scenario",
-          e);
-    }
+    return updateStreamServiceInternal.close();
   }
 
   private UploadStrategy getUploadStrategy() {

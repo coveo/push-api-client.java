@@ -1,6 +1,5 @@
 package com.coveo.pushapiclient;
 
-import com.coveo.pushapiclient.exceptions.NoOpenFileContainerException;
 import com.coveo.pushapiclient.exceptions.NoOpenStreamException;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -53,9 +52,7 @@ public class StreamService {
     this.queue = new DocumentUploadQueue(uploader);
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
 
-    this.service =
-        new StreamServiceInternal(
-            this.source, this.queue, this.platformClient, StreamOperationType.REBUILD, logger);
+    this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient, logger);
   }
 
   /**
@@ -111,13 +108,7 @@ public class StreamService {
    */
   public HttpResponse<String> close()
       throws IOException, InterruptedException, NoOpenStreamException {
-    try {
-      return this.service.close();
-    } catch (NoOpenFileContainerException e) {
-      throw new IllegalStateException(
-          "The stream service will only ever open up a stream, so we should never encounter this scenario",
-          e);
-    }
+    return this.service.close();
   }
 
   private UploadStrategy getUploadStrategy() {

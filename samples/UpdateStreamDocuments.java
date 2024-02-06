@@ -12,7 +12,7 @@ public class StreamDocuments {
         CatalogSource catalogSource = CatalogSource.fromPlatformUrl("my_api_key","my_org_id","my_source_id", platformUrl);
 
         // Using the Update Stream Service will act as an incramental change to the index, therefore any currently indexed items not contained in the payload will remain.
-        UpdateStreamService updateStreamService = new UpdateStreamService(catalogSource);
+        UpdateStreamService updateStream = new UpdateStreamService(catalogSource);
         // To perform full index rebuild, use the StreamService instead.
 
         DocumentBuilder document1 = new DocumentBuilder("https://my.document.uri", "My document title")
