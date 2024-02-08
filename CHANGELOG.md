@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.5.0](https://github.com/coveo/push-api-client.java/compare/v2.4.0...v2.5.0) (2024-02-08)
+
+
+### Features
+
+* **LENS-1390:** add support for incremental catalog updates in Java SDK ([#120](https://github.com/coveo/push-api-client.java/issues/120)) ([7d172ad](https://github.com/coveo/push-api-client.java/commit/7d172ad02541f939512e17f1b6d2b65afe47f42a))
+
+### Miscellaneous Chores
+
+* release 2.5.0 ([#124](https://github.com/coveo/push-api-client.java/issues/124)) ([89ad27d](https://github.com/coveo/push-api-client.java/commit/89ad27d6a8a94ce7817115b965e29459cbd8e647))
+
 ## [2.4.0](https://github.com/coveo/push-api-client.java/compare/v2.3.2...v2.4.0) (2023-11-22)
 
 
