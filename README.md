@@ -157,20 +157,56 @@ To enforce code style and formatting rules, run the Maven Spotless plugin:
 mvn spotless:apply
 ```
 
-## Release
+## Release Process
 
-1. Tag the commit according to the [semantic versioning](https://semver.org/).
+### Step 1 - Create a Release Pull Request
 
-1. Bump version in `pom.xml`.
+#### Step 1.a - Generate a JSON Web Token (JWT)
 
-1. Run the following commands:
+To initiate the release process, start by generating a JSON Web Token (JWT) using one of the provided scripts in [Generate a JSON Web Token (JWT)](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app). Ensure to specify the path where the `developer-experience-bot` private key is stored (can be found in password manager).
 
-   1. `mvn -P release clean deploy`.
+#### Step 1.b - Obtain an Access Token
 
-   1. `cd ./target`.
+Next, obtain an access token by executing the following command, replacing `<JSON_TOKEN>` and `<RELEASER_INSTALLATION_ID>` with the JWT token created in the previous step and the respective releaser installation id.
 
-   1. `jar -cvf bundle.jar push-api-client.java-1.0.0-javadoc.jar push-api-client.java-1.0.0-javadoc.jar.asc push-api-client.java-1.0.0-sources.jar push-api-client.java-1.0.0-sources.jar.asc push-api-client.java-1.0.0.jar push-api-client.java-1.0.0.jar.asc push-api-client.java-1.0.0.pom push-api-client.java-1.0.0.pom.asc`
+```bash
+curl -i -X POST \
+    -H "Authorization: Bearer <JSON_TOKEN>" \
+    -H "Accept: application/vnd.github.v3+json" \
+    https://api.github.com/app/installations/<RELEASER_INSTALLATION_ID>/access_tokens
+```
 
-1. Log in to https://oss.sonatype.org/.
+#### Step 1.c - Create a Release Pull Request
 
-1. Upload the newly created `bundle.jar` file.
+Using the access token generated in the previous step, create a release Pull Request. This PR will automatically include the appropriate version bump and update the changelog. Initially, run the command with the `--dry-run` flag to ensure the PR is created with the correct version.
+
+```bash
+release-please release-pr \
+            --token=<ACCESS_TOKEN> \
+            --repo-url=coveo/push-api-client.java \
+            --release-type=maven \
+            --target-branch=main \
+```
+
+In case the command creates a pull request with an incorrect tag, manually create a pull request and perform an empty commit as follows:
+
+```bash
+git commit --allow-empty -m "chore: release x.x.x" -m "Release-As: x.x.x"
+```
+
+This action will prompt `release-please` to bump to the desired version on the next run. Finally, merge the pull request and repeat Step 1.c.
+
+### Step 2 - Tag the Commit
+
+1. Tag the commit according to [semantic versioning](https://semver.org/) principles.
+
+```bash
+git tag -a vx.x.x <COMMIT_SHA> -m "chore(main): release x.x.x (#<PULL_REQUEST_NUMBER>)"
+git push --tags
+```
+
+2. Merge the Pull Request.
+
+### Step 3 - Manually Create a Release
+
+Lastly, manually create a release on the [GitHub repository](https://github.com/coveo/push-api-client.java/releases). This action will trigger the package deploy workflow action.
