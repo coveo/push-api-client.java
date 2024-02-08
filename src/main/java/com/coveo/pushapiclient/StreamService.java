@@ -18,9 +18,10 @@ public class StreamService {
    * Creates a service to stream your documents to the provided source by interacting with the
    * Stream API.
    *
-   * <p>To perform <a href="https://docs.coveo.com/en/l62e0540">full document updates</a>, use the
-   * {@PushService}, since pushing documents with the {@StreamService} is equivalent to triggering a
-   * full source rebuild. The {@StreamService} can also be used for an initial catalog upload.
+   * <p>To perform <a href="https://docs.coveo.com/en/l62e0540">full document updates or
+   * deletions</a>, use the {@UpdateStreamService}, since pushing documents with the
+   * {@StreamService} is equivalent to triggering a full source rebuild. The {@StreamService} can
+   * also be used for an initial catalog upload.
    *
    * @param source The source to which you want to send your documents.
    */
@@ -32,9 +33,10 @@ public class StreamService {
    * Creates a service to stream your documents to the provided source by interacting with the
    * Stream API.
    *
-   * <p>To perform <a href="https://docs.coveo.com/en/l62e0540">full document updates</a>, use the
-   * {@PushService}, since pushing documents with the {@StreamService} is equivalent to triggering a
-   * full source rebuild. The {@StreamService} can also be used for an initial catalog upload.
+   * <p>To perform <a href="https://docs.coveo.com/en/l62e0540">full document updates or
+   * deletions</a>, use the {@UpdateStreamService}, since pushing documents with the
+   * {@StreamService} is equivalent to triggering a full source rebuild. The {@StreamService} can
+   * also be used for an initial catalog upload.
    *
    * @param source The source to which you want to send your documents.
    * @param options The configuration options for exponential backoff.
@@ -54,33 +56,30 @@ public class StreamService {
   }
 
   /**
-   * Adds documents to the previously specified source.
-   * This function will open a stream before uploading documents into it.
+   * Adds documents to the previously specified source. This function will open a stream before
+   * uploading documents into it.
+   *
+   * <p>If called several times, the service will automatically batch documents and create new
+   * stream chunks whenever the data payload exceeds the <a
+   * href="https://docs.coveo.com/en/lb4a0344#stream-api-limits">batch size limit</a> set for the
+   * Stream API.
+   *
+   * <p>Once there are no more documents to add, it is important to call the {@link
+   * StreamService#close} function in order to send any buffered documents and close the open
+   * stream. Otherwise, changes will not be reflected in the index.
    *
    * <p>
-   * If called several times, the service will automatically batch documents and
-   * create new stream chunks whenever the data payload exceeds the
-   * <a href="https://docs.coveo.com/en/lb4a0344#stream-api-limits">batch size limit</a>
-   * set for the Stream API.
    *
-   * <p>
-   * Once there are no more documents to add, it is important to call the {@link StreamService#close} function
-   * in order to send any buffered documents and close the open stream.
-   * Otherwise, changes will not be reflected in the index.
-   *
-   * <p>
-   * <pre>
-   * {@code
+   * <pre>{@code
    * //...
    * StreamService service = new StreamService(source));
    * for (DocumentBuilder document : fictionalDocumentList) {
    *     service.add(document);
    * }
    * service.close(document);
-   * </pre>
+   * }</pre>
    *
-   * <p>
-   * For more code samples, @see `samples/StreamDocuments.java`
+   * <p>For more code samples, @see `samples/StreamDocuments.java`
    *
    * @param document The documentBuilder to add to your source
    * @throws InterruptedException
