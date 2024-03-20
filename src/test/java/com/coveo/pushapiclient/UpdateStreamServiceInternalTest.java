@@ -22,7 +22,7 @@ public class UpdateStreamServiceInternalTest {
   private static final String SOURCE_ID = "my-source-id";
   @Mock private StreamEnabledSource source;
   @Mock private PlatformClient platformClient;
-  @Mock private DocumentUploadQueue queue;
+  @Mock private StreamDocumentUploadQueue queue;
   @Mock private HttpResponse<String> httpResponse;
   @Mock private Logger logger;
 
@@ -32,6 +32,9 @@ public class UpdateStreamServiceInternalTest {
   private DocumentBuilder documentB;
   private DeleteDocument deleteDocumentA;
   private DeleteDocument deleteDocumentB;
+  private PartialUpdateDocument partialUpdateDocumentA;
+  private PartialUpdateDocument partialUpdateDocumentB;
+
   private AutoCloseable closeable;
 
   @Before
@@ -40,6 +43,8 @@ public class UpdateStreamServiceInternalTest {
     documentB = new DocumentBuilder("https://my.document.uri?ref=2", "My second document title");
     deleteDocumentA = new DeleteDocument("https://my.document.uri?ref=3");
     deleteDocumentB = new DeleteDocument("https://my.document.uri?ref=4");
+    partialUpdateDocumentA = new PartialUpdateDocument("https://my.document.uri?ref=5", PartialUpdateOperator.FIELDVALUEREPLACE, "fieldA", "valueA");
+    partialUpdateDocumentB = new PartialUpdateDocument("https://my.document.uri?ref=6", PartialUpdateOperator.FIELDVALUEREPLACE, "fieldB", "valueB");
 
     closeable = MockitoAnnotations.openMocks(this);
 
@@ -63,21 +68,33 @@ public class UpdateStreamServiceInternalTest {
   }
 
   @Test
-  public void addOrUpdateAndDeleteShouldAddDocumentsToQueue()
+  public void addOrUpdateAndPartialAndDeleteShouldAddDocumentsToQueue()
       throws IOException, InterruptedException {
     service.addOrUpdate(documentA);
     service.addOrUpdate(documentB);
     service.delete(deleteDocumentA);
+    service.addPartialUpdate(partialUpdateDocumentA);
+    service.addPartialUpdate(partialUpdateDocumentB);
 
     verify(queue, times(1)).add(documentA);
     verify(queue, times(1)).add(documentB);
     verify(queue, times(1)).add(deleteDocumentA);
+    verify(queue, times(1)).add(partialUpdateDocumentA);
+    verify(queue, times(1)).add(partialUpdateDocumentB);
   }
 
   @Test
   public void deleteShouldCreateFileContainer() throws IOException, InterruptedException {
     service.delete(deleteDocumentA);
     service.delete(deleteDocumentB);
+
+    verify(this.platformClient, times(1)).createFileContainer();
+  }
+
+  @Test
+  public void partialUpdateShouldCreateFileContainer() throws IOException, InterruptedException {
+    service.addPartialUpdate(partialUpdateDocumentA);
+    service.addPartialUpdate(partialUpdateDocumentB);
 
     verify(this.platformClient, times(1)).createFileContainer();
   }
