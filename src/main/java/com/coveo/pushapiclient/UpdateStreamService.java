@@ -46,7 +46,10 @@ public class UpdateStreamService {
             source.getApiKey(), source.getOrganizationId(), source.getPlatformUrl(), options);
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
-            source, new StreamDocumentUploadQueue(this.getUploadStrategy()), this.platformClient, logger);
+            source,
+            new StreamDocumentUploadQueue(this.getUploadStrategy()),
+            this.platformClient,
+            logger);
   }
 
   /**
@@ -86,11 +89,12 @@ public class UpdateStreamService {
   }
 
   /**
-   * Adds a document containing the specific field, and it's value to be updated. If there is no file container
-   * open to receive the documents, this function will open a file container before uploading
-   * the partial update details into it. More details on partial updates can be found in the
-   * <a href="https://docs.coveo.com/en/l62e0540/coveo-for-commerce/how-to-update-your-catalog#partial-item-updates">
-   *     Partial item updates</a> section.
+   * Adds a document containing the specific field, and it's value to be updated. If there is no
+   * file container open to receive the documents, this function will open a file container before
+   * uploading the partial update details into it. More details on partial updates can be found in
+   * the <a
+   * href="https://docs.coveo.com/en/l62e0540/coveo-for-commerce/how-to-update-your-catalog#partial-item-updates">
+   * Partial item updates</a> section.
    *
    * <p>If called several times, the service will automatically batch documents and create new
    * stream chunks whenever the data payload exceeds the <a
@@ -116,10 +120,11 @@ public class UpdateStreamService {
    *
    * @param document The partial update document to push to your file container
    * @throws InterruptedException If the creation of the file container or adding the document is
-   *      interrupted.
+   *     interrupted.
    * @throws IOException If the creation of the file container or adding the document fails.
    */
-  public void addPartialUpdate(PartialUpdateDocument document) throws IOException, InterruptedException {
+  public void addPartialUpdate(PartialUpdateDocument document)
+      throws IOException, InterruptedException {
     fileContainer = updateStreamServiceInternal.addPartialUpdate(document);
   }
 

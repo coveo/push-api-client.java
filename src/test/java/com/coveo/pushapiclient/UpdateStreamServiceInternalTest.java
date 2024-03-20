@@ -43,8 +43,18 @@ public class UpdateStreamServiceInternalTest {
     documentB = new DocumentBuilder("https://my.document.uri?ref=2", "My second document title");
     deleteDocumentA = new DeleteDocument("https://my.document.uri?ref=3");
     deleteDocumentB = new DeleteDocument("https://my.document.uri?ref=4");
-    partialUpdateDocumentA = new PartialUpdateDocument("https://my.document.uri?ref=5", PartialUpdateOperator.FIELDVALUEREPLACE, "fieldA", "valueA");
-    partialUpdateDocumentB = new PartialUpdateDocument("https://my.document.uri?ref=6", PartialUpdateOperator.FIELDVALUEREPLACE, "fieldB", "valueB");
+    partialUpdateDocumentA =
+        new PartialUpdateDocument(
+            "https://my.document.uri?ref=5",
+            PartialUpdateOperator.FIELDVALUEREPLACE,
+            "fieldA",
+            "valueA");
+    partialUpdateDocumentB =
+        new PartialUpdateDocument(
+            "https://my.document.uri?ref=6",
+            PartialUpdateOperator.FIELDVALUEREPLACE,
+            "fieldB",
+            "valueB");
 
     closeable = MockitoAnnotations.openMocks(this);
 

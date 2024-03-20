@@ -34,7 +34,8 @@ class UpdateStreamServiceInternal {
     return this.fileContainer;
   }
 
-  public FileContainer addPartialUpdate(PartialUpdateDocument document) throws IOException, InterruptedException {
+  public FileContainer addPartialUpdate(PartialUpdateDocument document)
+      throws IOException, InterruptedException {
     if (this.fileContainer == null) {
       this.fileContainer = this.createFileContainer();
     }

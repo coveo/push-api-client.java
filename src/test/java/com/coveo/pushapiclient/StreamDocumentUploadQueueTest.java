@@ -1,5 +1,14 @@
 package com.coveo.pushapiclient;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -8,16 +17,6 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 public class StreamDocumentUploadQueueTest {
 
@@ -56,7 +55,11 @@ public class StreamDocumentUploadQueueTest {
   }
 
   private PartialUpdateDocument generatePartialUpdateDocumentFromSize(int numBytes) {
-    return new PartialUpdateDocument("https://my.document.uri?ref=1", PartialUpdateOperator.FIELDVALUEREPLACE, "field", generateStringFromBytes(numBytes));
+    return new PartialUpdateDocument(
+        "https://my.document.uri?ref=1",
+        PartialUpdateOperator.FIELDVALUEREPLACE,
+        "field",
+        generateStringFromBytes(numBytes));
   }
 
   @Before
@@ -69,7 +72,12 @@ public class StreamDocumentUploadQueueTest {
 
     documentToDelete = new DeleteDocument("https://my.document.uri?ref=3");
 
-    partialUpdateDocument = new PartialUpdateDocument("https://my.document.uri?ref=4", PartialUpdateOperator.FIELDVALUEREPLACE, "field", "value");
+    partialUpdateDocument =
+        new PartialUpdateDocument(
+            "https://my.document.uri?ref=4",
+            PartialUpdateOperator.FIELDVALUEREPLACE,
+            "field",
+            "value");
 
     closeable = MockitoAnnotations.openMocks(this);
   }
@@ -136,7 +144,8 @@ public class StreamDocumentUploadQueueTest {
   public void testShouldAutomaticallyFlushAccumulatedDocuments()
       throws IOException, InterruptedException {
     DocumentBuilder firstBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
-    PartialUpdateDocument secondBulkyDocument = generatePartialUpdateDocumentFromSize(2 * oneMegaByte);
+    PartialUpdateDocument secondBulkyDocument =
+        generatePartialUpdateDocumentFromSize(2 * oneMegaByte);
     DocumentBuilder thirdBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
     ArrayList<DeleteDocument> emptyList = new ArrayList<>();
     StreamUpdate firstBatch =
@@ -174,7 +183,8 @@ public class StreamDocumentUploadQueueTest {
   public void testShouldManuallyFlushAccumulatedDocuments()
       throws IOException, InterruptedException {
     DocumentBuilder firstBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
-    PartialUpdateDocument secondBulkyDocument = generatePartialUpdateDocumentFromSize(2 * oneMegaByte);
+    PartialUpdateDocument secondBulkyDocument =
+        generatePartialUpdateDocumentFromSize(2 * oneMegaByte);
     DocumentBuilder thirdBulkyDocument = generateDocumentFromSize(2 * oneMegaByte);
     ArrayList<DeleteDocument> emptyList = new ArrayList<>();
     ArrayList<PartialUpdateDocument> partialEmptyList = new ArrayList<>();
@@ -199,7 +209,8 @@ public class StreamDocumentUploadQueueTest {
                 add(thirdBulkyDocument);
               }
             },
-            emptyList, partialEmptyList);
+            emptyList,
+            partialEmptyList);
 
     // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
     // the queue size will reach 6MB, which exceeds the maximum queue size
@@ -229,8 +240,7 @@ public class StreamDocumentUploadQueueTest {
     verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
   }
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
   @Test
   public void getBatchShouldThrowUnsupportedOperationException() {

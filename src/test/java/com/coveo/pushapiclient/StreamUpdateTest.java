@@ -1,15 +1,14 @@
 package com.coveo.pushapiclient;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
 
 public class StreamUpdateTest {
 
@@ -50,9 +49,14 @@ public class StreamUpdateTest {
     delList2.add(del2);
     delList2.add(del3);
 
-    PartialUpdateDocument partialUpdateDocument1 = new PartialUpdateDocument("123", PartialUpdateOperator.FIELDVALUEREPLACE, "field", "value");
-    PartialUpdateDocument partialUpdateDocument2 = new PartialUpdateDocument("456", PartialUpdateOperator.FIELDVALUEREPLACE, "field2", "value2");
-    PartialUpdateDocument partialUpdateDocument3 = new PartialUpdateDocument("789", PartialUpdateOperator.FIELDVALUEREPLACE, "field3", "value3");
+    PartialUpdateDocument partialUpdateDocument1 =
+        new PartialUpdateDocument("123", PartialUpdateOperator.FIELDVALUEREPLACE, "field", "value");
+    PartialUpdateDocument partialUpdateDocument2 =
+        new PartialUpdateDocument(
+            "456", PartialUpdateOperator.FIELDVALUEREPLACE, "field2", "value2");
+    PartialUpdateDocument partialUpdateDocument3 =
+        new PartialUpdateDocument(
+            "789", PartialUpdateOperator.FIELDVALUEREPLACE, "field3", "value3");
 
     List<PartialUpdateDocument> partialUpdateDocuments1 = new ArrayList<>();
     partialUpdateDocuments1.add(partialUpdateDocument1);
