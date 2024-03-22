@@ -35,10 +35,13 @@ public class PartialUpdateDocumentTest {
     assertEquals(value, document.value);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void shouldThrowExceptionWhenValueIsNull() {
+  public void shouldNotThrowExceptionWhenValueIsNull() {
     PartialUpdateDocument document =
         new PartialUpdateDocument("doc1", PartialUpdateOperator.FIELDVALUEREPLACE, "field1", null);
+    assertEquals("doc1", document.documentId);
+    assertEquals(PartialUpdateOperator.FIELDVALUEREPLACE, document.operator);
+    assertEquals("field1", document.field);
+    assertNull(document.value);
   }
 
   @Test
@@ -69,7 +72,6 @@ public class PartialUpdateDocumentTest {
     assertEquals(value, document.value);
 
     String[] value2 = {"value1", "value2"};
-    ;
     PartialUpdateDocument document2 =
         new PartialUpdateDocument("doc2", PartialUpdateOperator.DICTIONARYREMOVE, "field2", value2);
     assertEquals("doc2", document2.documentId);

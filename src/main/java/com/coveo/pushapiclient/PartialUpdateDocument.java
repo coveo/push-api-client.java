@@ -41,7 +41,6 @@ public class PartialUpdateDocument {
    */
   public PartialUpdateDocument(
       String documentId, PartialUpdateOperator operator, String field, Object value) {
-    if (value == null) throw new IllegalArgumentException("Value cannot be null");
     if (operator == null) throw new IllegalArgumentException("Operator cannot be null");
     if (field == null) throw new IllegalArgumentException("Field cannot be null");
     if (documentId == null) throw new IllegalArgumentException("DocumentId cannot be null");
