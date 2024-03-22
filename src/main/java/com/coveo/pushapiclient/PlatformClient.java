@@ -21,6 +21,7 @@ public class PlatformClient {
   private final String organizationId;
   private final ApiCore api;
   private final PlatformUrl platformUrl;
+  private UserAgent userAgent;
 
   /**
    * Construct a PlatformClient
@@ -571,12 +572,18 @@ public class PlatformClient {
 
   private String[] getContentTypeApplicationJSONHeader() {
     MavenXpp3Reader reader = new MavenXpp3Reader();
-    String version = "";
-    try {
-      Model model = reader.read(new FileReader("pom.xml"));
-      version = model.getVersion();
-    } catch (Exception e) {
-      version = "Not-Available";
+    String userAgentValue = "";
+    if (userAgent != null) {
+      userAgentValue = userAgent.toString();
+    } else {
+      String version = "";
+      try {
+        Model model = reader.read(new FileReader("pom.xml"));
+        version = model.getVersion();
+      } catch (Exception e) {
+        version = "Not-Available";
+      }
+      userAgentValue = String.format("CoveoSDKJava/%s", version);
     }
 
     return new String[] {
@@ -585,7 +592,7 @@ public class PlatformClient {
       "Accept",
       "application/json",
       "User-Agent",
-      String.format("CoveoSDKJava/%s", version)
+      userAgentValue
     };
   }
 
@@ -599,5 +606,13 @@ public class PlatformClient {
 
   private String toJSON(HashMap<String, Object> hashMap) {
     return new Gson().toJson(hashMap, new TypeToken<HashMap<String, Object>>() {}.getType());
+  }
+
+  public UserAgent getUserAgent() {
+    return userAgent;
+  }
+
+  public void setUserAgent(UserAgent userAgent) {
+    this.userAgent = userAgent;
   }
 }

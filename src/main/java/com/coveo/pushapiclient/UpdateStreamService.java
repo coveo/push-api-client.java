@@ -23,6 +23,21 @@ public class UpdateStreamService {
    * {@StreamService}
    *
    * @param source The source to which you want to send your documents.
+   * @param userAgent The user agent to use for the requests.
+   */
+  public UpdateStreamService(StreamEnabledSource source, UserAgent userAgent) {
+    this(source, new BackoffOptionsBuilder().build(), userAgent);
+  }
+
+  /**
+   * Creates a service to stream your documents to the provided source by interacting with the
+   * Stream API. This provides the ability to incrementally add, update, or delete documents via a
+   * stream.
+   *
+   * <p>To perform <a href="https://docs.coveo.com/en/lb4a0344">a full source rebuild</a>, use the
+   * {@StreamService}
+   *
+   * @param source The source to which you want to send your documents.
    */
   public UpdateStreamService(StreamEnabledSource source) {
     this(source, new BackoffOptionsBuilder().build());
@@ -40,10 +55,27 @@ public class UpdateStreamService {
    * @param options The configuration options for exponential backoff.
    */
   public UpdateStreamService(StreamEnabledSource source, BackoffOptions options) {
+    this(source, options, null);
+  }
+
+  /**
+   * Creates a service to stream your documents to the provided source by interacting with the
+   * Stream API. This provides the ability to incrementally add, update, or delete documents via a
+   * stream.
+   *
+   * <p>To perform <a href="https://docs.coveo.com/en/lb4a0344">a full source rebuild</a>, use the
+   * {@StreamService}
+   *
+   * @param source The source to which you want to send your documents.
+   * @param options The configuration options for exponential backoff.
+   * @param userAgent The user agent to use for the requests.
+   */
+  public UpdateStreamService(StreamEnabledSource source, BackoffOptions options, UserAgent userAgent) {
     Logger logger = LogManager.getLogger(UpdateStreamService.class);
     this.platformClient =
         new PlatformClient(
             source.getApiKey(), source.getOrganizationId(), source.getPlatformUrl(), options);
+    this.platformClient.setUserAgent(userAgent);
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
             source, new DocumentUploadQueue(this.getUploadStrategy()), this.platformClient, logger);
