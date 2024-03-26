@@ -7,6 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.google.gson.Gson;
+
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -14,6 +16,10 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -37,6 +43,11 @@ public class PlatformClientTest {
     assertTrue(
         this.argument.getValue().headers().map().get("Content-Type").contains("application/json"));
     assertTrue(this.argument.getValue().headers().map().get("Accept").contains("application/json"));
+  }
+
+  public void assertUserAgentHeader(String userAgentValue) {
+    assertTrue(
+            this.argument.getValue().headers().map().get("User-Agent").contains(userAgentValue));
   }
 
   public SecurityIdentityModel securityIdentityModel() {
@@ -471,5 +482,26 @@ public class PlatformClientTest {
             .contains(String.format("documentId=%s", document().uri)));
     assertApplicationJsonHeader();
     assertAuthorizationHeader();
+  }
+
+  @Test
+  public void testCorrectUserAgentHeader() throws IOException, InterruptedException {
+    client.setUserAgent(UserAgent.SAP_COMMERCE_CLOUD_V1);
+    client.createSource("the_name", SourceType.PUSH, SourceVisibility.SECURED);
+    verify(httpClient)
+            .send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+
+    assertUserAgentHeader(UserAgent.SAP_COMMERCE_CLOUD_V1.toString());
+  }
+
+  @Test
+  public void testDefaultUserAgentHeader() throws IOException, InterruptedException, XmlPullParserException {
+    client.createSource("the_name", SourceType.PUSH, SourceVisibility.SECURED);
+    verify(httpClient)
+            .send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+    MavenXpp3Reader reader = new MavenXpp3Reader();
+    Model model = reader.read(new FileReader("pom.xml"));
+    String version = model.getVersion();
+    assertUserAgentHeader(String.format("CoveoSDKJava/%s", version));
   }
 }
