@@ -8,11 +8,11 @@ import org.apache.logging.log4j.Logger;
 /** Represents a queue for uploading documents using a specified upload strategy */
 class DocumentUploadQueue {
   private static final Logger logger = LogManager.getLogger(DocumentUploadQueue.class);
-  private final UploadStrategy uploader;
-  private final int maxQueueSize = 5 * 1024 * 1024;
-  private ArrayList<DocumentBuilder> documentToAddList;
-  private ArrayList<DeleteDocument> documentToDeleteList;
-  private int size;
+  protected final UploadStrategy uploader;
+  protected final int maxQueueSize = 5 * 1024 * 1024;
+  protected ArrayList<DocumentBuilder> documentToAddList;
+  protected ArrayList<DeleteDocument> documentToDeleteList;
+  protected int size;
 
   /**
    * Constructs a new DocumentUploadQueue object with a default maximum queue size limit of 5MB.

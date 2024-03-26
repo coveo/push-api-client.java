@@ -11,12 +11,12 @@ class UpdateStreamServiceInternal {
   private final Logger logger;
   private final StreamEnabledSource source;
   private final PlatformClient platformClient;
-  private final DocumentUploadQueue queue;
+  private final StreamDocumentUploadQueue queue;
   private FileContainer fileContainer;
 
   public UpdateStreamServiceInternal(
       final StreamEnabledSource source,
-      final DocumentUploadQueue queue,
+      final StreamDocumentUploadQueue queue,
       final PlatformClient platformClient,
       final Logger logger) {
     this.source = source;
@@ -26,6 +26,15 @@ class UpdateStreamServiceInternal {
   }
 
   public FileContainer addOrUpdate(DocumentBuilder document)
+      throws IOException, InterruptedException {
+    if (this.fileContainer == null) {
+      this.fileContainer = this.createFileContainer();
+    }
+    queue.add(document);
+    return this.fileContainer;
+  }
+
+  public FileContainer addPartialUpdate(PartialUpdateDocument document)
       throws IOException, InterruptedException {
     if (this.fileContainer == null) {
       this.fileContainer = this.createFileContainer();
