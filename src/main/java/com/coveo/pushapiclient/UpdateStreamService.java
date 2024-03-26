@@ -78,7 +78,10 @@ public class UpdateStreamService {
     this.platformClient.setUserAgent(userAgent);
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
-            source, new DocumentUploadQueue(this.getUploadStrategy()), this.platformClient, logger);
+            source,
+            new StreamDocumentUploadQueue(this.getUploadStrategy()),
+            this.platformClient,
+            logger);
   }
 
   /**
@@ -115,6 +118,46 @@ public class UpdateStreamService {
    */
   public void addOrUpdate(DocumentBuilder document) throws IOException, InterruptedException {
     fileContainer = updateStreamServiceInternal.addOrUpdate(document);
+  }
+
+  /**
+   * Adds a document containing the specific field, and it's value to be updated. If there is no
+   * file container open to receive the documents, this function will open a file container before
+   * uploading the partial update details into it. More details on partial updates can be found in
+   * the <a
+   * href="https://docs.coveo.com/en/l62e0540/coveo-for-commerce/how-to-update-your-catalog#partial-item-updates">
+   * Partial item updates</a> section.
+   *
+   * <p>If called several times, the service will automatically batch documents and create new
+   * stream chunks whenever the data payload exceeds the <a
+   * href="https://docs.coveo.com/en/lb4a0344#stream-api-limits">batch size limit</a> set for the
+   * Stream API.
+   *
+   * <p>Once there are no more documents to add, it is important to call the {@link
+   * UpdateStreamService#close} function in order to send any buffered documents and push the file
+   * container. Otherwise, changes will not be reflected in the index.
+   *
+   * <p>
+   *
+   * <pre>{@code
+   * //...
+   * UpdateStreamService service = new UpdateStreamService(source));
+   * for (PartialUpdateDocument document : fictionalDocumentList) {
+   *     service.addPartialUpdate(document);
+   * }
+   * service.close(document);
+   * }</pre>
+   *
+   * <p>For more code samples, @see `samples/UpdateStreamDocuments.java`
+   *
+   * @param document The partial update document to push to your file container
+   * @throws InterruptedException If the creation of the file container or adding the document is
+   *     interrupted.
+   * @throws IOException If the creation of the file container or adding the document fails.
+   */
+  public void addPartialUpdate(PartialUpdateDocument document)
+      throws IOException, InterruptedException {
+    fileContainer = updateStreamServiceInternal.addPartialUpdate(document);
   }
 
   /**
@@ -172,8 +215,9 @@ public class UpdateStreamService {
   }
 
   private UploadStrategy getUploadStrategy() {
-    return (batchUpdate) -> {
-      String batchUpdateJson = new Gson().toJson(batchUpdate.marshal());
+    return (streamUpdate) -> {
+      String batchUpdateJson = new Gson().toJson(streamUpdate.marshal());
+      System.out.println(batchUpdateJson);
       return this.platformClient.uploadContentToFileContainer(fileContainer, batchUpdateJson);
     };
   }

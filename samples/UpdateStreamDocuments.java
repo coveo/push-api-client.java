@@ -34,6 +34,23 @@ public class StreamDocuments {
         DeleteDocument document3 = new DeleteDocument("https://my.document3.uri");
         updateStreamService.delete(document3);
 
+        PartialUpdateDocument document4 = new PartialUpdateDocument("https://my.document4.uri", PartialUpdateOperator.FIELD_VALUE_REPLACE, "title", "My new title");
+        updateStreamService.addPartialUpdate(document4);
+
+        PartialUpdateDocument document5 = new PartialUpdateDocument("https://my.document5.uri", PartialUpdateOperator.DICTIONARY_PUT, "dictionaryAttribute", new HashMap<>() {{
+            put("newkey", "newvalue");
+        }});
+        updateStreamService.addPartialUpdate(document5);
+
+        PartialUpdateDocument document6 = new PartialUpdateDocument("https://my.document6.uri", PartialUpdateOperator.ARRAY_APPEND, "arrayAttribute", new String[]{"newValue"});
+        updateStreamService.addPartialUpdate(document6);
+
+        PartialUpdateDocument document7 = new PartialUpdateDocument("https://my.document7.uri", PartialUpdateOperator.ARRAY_REMOVE, "arrayAttribute", new String[]{"oldValue"});
+        updateStreamService.addPartialUpdate(document7);
+
+        PartialUpdateDocument document8 = new PartialUpdateDocument("https://my.document8.uri", PartialUpdateOperator.DICIONARY_REMOVE, "dictionaryAttribute", "oldkey");
+        updateStreamService.addPartialUpdate(document8);
+
         updateStreamService.close();
     }
 }
