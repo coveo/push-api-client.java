@@ -8,7 +8,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@actions/core": "^1.10.0",
-    "@commitlint/config-conventional": "17.6.6",
+    "@commitlint/config-conventional": "17.8.1",
     "@octokit/auth-app": "^6.0.0"
   },
   "scripts": {
