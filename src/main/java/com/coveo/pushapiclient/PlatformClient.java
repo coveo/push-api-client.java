@@ -587,12 +587,7 @@ public class PlatformClient {
     }
 
     return new String[] {
-      "Content-Type",
-      "application/json",
-      "Accept",
-      "application/json",
-      "User-Agent",
-      userAgentValue
+      "Content-Type", "application/json", "Accept", "application/json", "User-Agent", userAgentValue
     };
   }
 

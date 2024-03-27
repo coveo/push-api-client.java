@@ -70,7 +70,8 @@ public class UpdateStreamService {
    * @param options The configuration options for exponential backoff.
    * @param userAgent The user agent to use for the requests.
    */
-  public UpdateStreamService(StreamEnabledSource source, BackoffOptions options, UserAgent userAgent) {
+  public UpdateStreamService(
+      StreamEnabledSource source, BackoffOptions options, UserAgent userAgent) {
     Logger logger = LogManager.getLogger(UpdateStreamService.class);
     this.platformClient =
         new PlatformClient(
