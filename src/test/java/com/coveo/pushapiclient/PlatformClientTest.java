@@ -482,13 +482,23 @@ public class PlatformClientTest {
   }
 
   @Test
-  public void testCorrectUserAgentHeader() throws IOException, InterruptedException {
-    client.setUserAgent(UserAgent.SAP_COMMERCE_CLOUD_V1);
+  public void testCorrectUserAgentHeader()
+      throws IOException, InterruptedException, XmlPullParserException {
+    String[] userAgents = {
+      "SAPCommerceCloud/v1", "SAPCommerceCloud/v2.1", "SAPCommerceCloud/v3.1.1"
+    };
+    String version = getVersionFromPom();
+    String defaultAgent = String.format("CoveoSDKJava/%s", version);
+    String[] userAgentsWithDefault = new String[userAgents.length + 1];
+    userAgentsWithDefault[0] = defaultAgent;
+    System.arraycopy(userAgents, 0, userAgentsWithDefault, 1, userAgents.length);
+
+    client.setUserAgents(userAgents);
     client.createSource("the_name", SourceType.PUSH, SourceVisibility.SECURED);
     verify(httpClient)
         .send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
 
-    assertUserAgentHeader(UserAgent.SAP_COMMERCE_CLOUD_V1.toString());
+    assertUserAgentHeader(String.join(" ", userAgentsWithDefault));
   }
 
   @Test
@@ -497,9 +507,24 @@ public class PlatformClientTest {
     client.createSource("the_name", SourceType.PUSH, SourceVisibility.SECURED);
     verify(httpClient)
         .send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+    String version = getVersionFromPom();
+    assertUserAgentHeader(String.format("CoveoSDKJava/%s", version));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInvalidHeaderValue() {
+    String[] userAgents = {
+      "SAPCommerceCloud/v1",
+      "SAPCommerceCloud/v2.1",
+      "SAPCommerceCloud/v3.1.1",
+      "invalidHeaderValue"
+    };
+    client.setUserAgents(userAgents);
+  }
+
+  private String getVersionFromPom() throws IOException, XmlPullParserException {
     MavenXpp3Reader reader = new MavenXpp3Reader();
     Model model = reader.read(new FileReader("pom.xml"));
-    String version = model.getVersion();
-    assertUserAgentHeader(String.format("CoveoSDKJava/%s", version));
+    return model.getVersion();
   }
 }

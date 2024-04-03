@@ -23,10 +23,10 @@ public class UpdateStreamService {
    * {@StreamService}
    *
    * @param source The source to which you want to send your documents.
-   * @param userAgent The user agent to use for the requests.
+   * @param userAgents The user agent to use for the requests.
    */
-  public UpdateStreamService(StreamEnabledSource source, UserAgent userAgent) {
-    this(source, new BackoffOptionsBuilder().build(), userAgent);
+  public UpdateStreamService(StreamEnabledSource source, String[] userAgents) {
+    this(source, new BackoffOptionsBuilder().build(), userAgents);
   }
 
   /**
@@ -68,15 +68,15 @@ public class UpdateStreamService {
    *
    * @param source The source to which you want to send your documents.
    * @param options The configuration options for exponential backoff.
-   * @param userAgent The user agent to use for the requests.
+   * @param userAgents The user agent to use for the requests.
    */
   public UpdateStreamService(
-      StreamEnabledSource source, BackoffOptions options, UserAgent userAgent) {
+      StreamEnabledSource source, BackoffOptions options, String[] userAgents) {
     Logger logger = LogManager.getLogger(UpdateStreamService.class);
     this.platformClient =
         new PlatformClient(
             source.getApiKey(), source.getOrganizationId(), source.getPlatformUrl(), options);
-    this.platformClient.setUserAgent(userAgent);
+    this.platformClient.setUserAgents(userAgents);
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
             source,
