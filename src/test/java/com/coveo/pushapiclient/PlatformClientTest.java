@@ -484,9 +484,7 @@ public class PlatformClientTest {
   @Test
   public void testCorrectUserAgentHeader()
       throws IOException, InterruptedException, XmlPullParserException {
-    String[] userAgents = {
-      "SAPCommerceCloud/v1", "SAPCommerceCloud/v2.1", "SAPCommerceCloud/v3.1.1"
-    };
+    String[] userAgents = {"MyAgent/v1", "MyAgent/v2.1", "MyAgent/v3.1.1"};
     String version = getVersionFromPom();
     String defaultAgent = String.format("CoveoSDKJava/%s", version);
     String[] userAgentsWithDefault = new String[userAgents.length + 1];
@@ -513,12 +511,13 @@ public class PlatformClientTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testInvalidHeaderValue() {
-    String[] userAgents = {
-      "SAPCommerceCloud/v1",
-      "SAPCommerceCloud/v2.1",
-      "SAPCommerceCloud/v3.1.1",
-      "invalidHeaderValue"
-    };
+    String[] userAgents = {"MyAgent/v1", "MyAgent/v2.1", "MyAgent/v3.1.1", "invalidHeaderValue"};
+    client.setUserAgents(userAgents);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInvalidSemanticVersionHeaderValue() {
+    String[] userAgents = {"MyAgent/v1.1.1.1"};
     client.setUserAgents(userAgents);
   }
 

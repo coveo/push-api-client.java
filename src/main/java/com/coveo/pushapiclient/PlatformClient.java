@@ -623,7 +623,7 @@ public class PlatformClient {
   }
 
   protected boolean validUserAgents(String[] userAgents) {
-    String pattern = "^.+/v(\\d+\\.?)+$";
+    String pattern = "^.+/v(\\d+(\\.\\d+){0,2})$";
     return Arrays.stream(userAgents).allMatch(agent -> agent.matches(pattern));
   }
 }
