@@ -21,6 +21,7 @@ public class PlatformClient {
   private final String organizationId;
   private final ApiCore api;
   private final PlatformUrl platformUrl;
+  private String[] userAgents;
 
   /**
    * Construct a PlatformClient
@@ -570,13 +571,12 @@ public class PlatformClient {
   }
 
   private String[] getContentTypeApplicationJSONHeader() {
-    MavenXpp3Reader reader = new MavenXpp3Reader();
-    String version = "";
-    try {
-      Model model = reader.read(new FileReader("pom.xml"));
-      version = model.getVersion();
-    } catch (Exception e) {
-      version = "Not-Available";
+    StringBuilder userAgentValue = new StringBuilder();
+    String sdkVersion = getSdkVersion();
+    userAgentValue.append(String.format("CoveoSDKJava/%s", sdkVersion));
+
+    if (userAgents != null && userAgents.length > 0) {
+      userAgentValue.append(" ").append(String.join(" ", userAgents));
     }
 
     return new String[] {
@@ -585,8 +585,18 @@ public class PlatformClient {
       "Accept",
       "application/json",
       "User-Agent",
-      String.format("CoveoSDKJava/%s", version)
+      userAgentValue.toString()
     };
+  }
+
+  private String getSdkVersion() {
+    MavenXpp3Reader reader = new MavenXpp3Reader();
+    try {
+      Model model = reader.read(new FileReader("pom.xml"));
+      return model.getVersion();
+    } catch (Exception e) {
+      return "Not-Available";
+    }
   }
 
   private String[] getAes256Header() {
@@ -599,5 +609,21 @@ public class PlatformClient {
 
   private String toJSON(HashMap<String, Object> hashMap) {
     return new Gson().toJson(hashMap, new TypeToken<HashMap<String, Object>>() {}.getType());
+  }
+
+  public String[] getUserAgents() {
+    return userAgents;
+  }
+
+  public void setUserAgents(String[] userAgents) {
+    if (!validUserAgents(userAgents)) {
+      throw new IllegalArgumentException("Invalid user agents");
+    }
+    this.userAgents = userAgents;
+  }
+
+  protected boolean validUserAgents(String[] userAgents) {
+    String pattern = "^.+/v(\\d+(\\.\\d+){0,2})$";
+    return Arrays.stream(userAgents).allMatch(agent -> agent.matches(pattern));
   }
 }

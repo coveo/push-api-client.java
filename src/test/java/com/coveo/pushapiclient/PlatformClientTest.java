@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.google.gson.Gson;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -14,6 +15,9 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -37,6 +41,10 @@ public class PlatformClientTest {
     assertTrue(
         this.argument.getValue().headers().map().get("Content-Type").contains("application/json"));
     assertTrue(this.argument.getValue().headers().map().get("Accept").contains("application/json"));
+  }
+
+  public void assertUserAgentHeader(String userAgentValue) {
+    assertTrue(this.argument.getValue().headers().map().get("User-Agent").contains(userAgentValue));
   }
 
   public SecurityIdentityModel securityIdentityModel() {
@@ -471,5 +479,51 @@ public class PlatformClientTest {
             .contains(String.format("documentId=%s", document().uri)));
     assertApplicationJsonHeader();
     assertAuthorizationHeader();
+  }
+
+  @Test
+  public void testCorrectUserAgentHeader()
+      throws IOException, InterruptedException, XmlPullParserException {
+    String[] userAgents = {"MyAgent/v1", "MyAgent/v2.1", "MyAgent/v3.1.1"};
+    String version = getVersionFromPom();
+    String defaultAgent = String.format("CoveoSDKJava/%s", version);
+    String[] userAgentsWithDefault = new String[userAgents.length + 1];
+    userAgentsWithDefault[0] = defaultAgent;
+    System.arraycopy(userAgents, 0, userAgentsWithDefault, 1, userAgents.length);
+
+    client.setUserAgents(userAgents);
+    client.createSource("the_name", SourceType.PUSH, SourceVisibility.SECURED);
+    verify(httpClient)
+        .send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+
+    assertUserAgentHeader(String.join(" ", userAgentsWithDefault));
+  }
+
+  @Test
+  public void testDefaultUserAgentHeader()
+      throws IOException, InterruptedException, XmlPullParserException {
+    client.createSource("the_name", SourceType.PUSH, SourceVisibility.SECURED);
+    verify(httpClient)
+        .send(argument.capture(), any(HttpResponse.BodyHandlers.ofString().getClass()));
+    String version = getVersionFromPom();
+    assertUserAgentHeader(String.format("CoveoSDKJava/%s", version));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInvalidHeaderValue() {
+    String[] userAgents = {"MyAgent/v1", "MyAgent/v2.1", "MyAgent/v3.1.1", "invalidHeaderValue"};
+    client.setUserAgents(userAgents);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInvalidSemanticVersionHeaderValue() {
+    String[] userAgents = {"MyAgent/v1.1.1.1"};
+    client.setUserAgents(userAgents);
+  }
+
+  private String getVersionFromPom() throws IOException, XmlPullParserException {
+    MavenXpp3Reader reader = new MavenXpp3Reader();
+    Model model = reader.read(new FileReader("pom.xml"));
+    return model.getVersion();
   }
 }

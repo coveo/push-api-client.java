@@ -24,6 +24,22 @@ public class StreamService {
    * also be used for an initial catalog upload.
    *
    * @param source The source to which you want to send your documents.
+   * @param userAgents The user agent to use for the requests.
+   */
+  public StreamService(StreamEnabledSource source, String[] userAgents) {
+    this(source, new BackoffOptionsBuilder().build(), userAgents);
+  }
+
+  /**
+   * Creates a service to stream your documents to the provided source by interacting with the
+   * Stream API.
+   *
+   * <p>To perform <a href="https://docs.coveo.com/en/l62e0540">full document updates or
+   * deletions</a>, use the {@UpdateStreamService}, since pushing documents with the
+   * {@StreamService} is equivalent to triggering a full source rebuild. The {@StreamService} can
+   * also be used for an initial catalog upload.
+   *
+   * @param source The source to which you want to send your documents.
    */
   public StreamService(StreamEnabledSource source) {
     this(source, new BackoffOptionsBuilder().build());
@@ -42,6 +58,23 @@ public class StreamService {
    * @param options The configuration options for exponential backoff.
    */
   public StreamService(StreamEnabledSource source, BackoffOptions options) {
+    this(source, options, null);
+  }
+
+  /**
+   * Creates a service to stream your documents to the provided source by interacting with the
+   * Stream API.
+   *
+   * <p>To perform <a href="https://docs.coveo.com/en/l62e0540">full document updates or
+   * deletions</a>, use the {@UpdateStreamService}, since pushing documents with the
+   * {@StreamService} is equivalent to triggering a full source rebuild. The {@StreamService} can
+   * also be used for an initial catalog upload.
+   *
+   * @param source The source to which you want to send your documents.
+   * @param options The configuration options for exponential backoff.
+   * @param userAgents The user agent to use for the requests.
+   */
+  public StreamService(StreamEnabledSource source, BackoffOptions options, String[] userAgents) {
     String apiKey = source.getApiKey();
     String organizationId = source.getOrganizationId();
     PlatformUrl platformUrl = source.getPlatformUrl();
@@ -51,7 +84,7 @@ public class StreamService {
     this.source = source;
     this.queue = new DocumentUploadQueue(uploader);
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
-
+    platformClient.setUserAgents(userAgents);
     this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient, logger);
   }
 
