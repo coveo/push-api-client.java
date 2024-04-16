@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.6.0](https://github.com/coveo/push-api-client.java/compare/v2.5.0...v2.6.0) (2024-04-16)
+
+
+### Features
+
+* **LENS-1466:** add support for partial updates in the UpdateStreamService ([#127](https://github.com/coveo/push-api-client.java/issues/127)) ([7725e54](https://github.com/coveo/push-api-client.java/commit/7725e543985a2bef8b2ea5ff4bf135e3f69eee32))
+* **LENS-1642:** support for SAP specific user-agent header ([#128](https://github.com/coveo/push-api-client.java/issues/128)) ([279a26b](https://github.com/coveo/push-api-client.java/commit/279a26bead907fb462ff194b96b84bf5c4f92cf3))
+
+
+### Documentation
+
+* update manual release process ([#126](https://github.com/coveo/push-api-client.java/issues/126)) ([a6dd522](https://github.com/coveo/push-api-client.java/commit/a6dd522acb62a168adde512bfe50f8199c7fb20c))
+
 ## [2.5.0](https://github.com/coveo/push-api-client.java/compare/v2.4.0...v2.5.0) (2024-02-08)
 
 
