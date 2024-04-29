@@ -218,7 +218,6 @@ public class UpdateStreamService {
   private UploadStrategy getUploadStrategy() {
     return (streamUpdate) -> {
       String batchUpdateJson = new Gson().toJson(streamUpdate.marshal());
-      System.out.println(batchUpdateJson);
       return this.platformClient.uploadContentToFileContainer(fileContainer, batchUpdateJson);
     };
   }
