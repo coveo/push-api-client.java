@@ -65,7 +65,7 @@ class DocumentUploadQueue {
     }
     documentToAddList.add(document);
     if (logger.isDebugEnabled()) {
-      logger.info("Adding document to batch: " + document.getDocument().uri);
+      logger.debug("Adding document to batch: " + document.getDocument().uri);
     }
     this.size += sizeOfDoc;
   }
