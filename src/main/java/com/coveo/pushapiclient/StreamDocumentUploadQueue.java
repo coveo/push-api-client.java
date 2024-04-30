@@ -56,7 +56,9 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
       this.flush();
     }
     documentToPartiallyUpdateList.add(document);
-    logger.info("Adding document to batch: " + document.documentId);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Adding document to batch: " + document.documentId);
+    }
     this.size += sizeOfDoc;
   }
 

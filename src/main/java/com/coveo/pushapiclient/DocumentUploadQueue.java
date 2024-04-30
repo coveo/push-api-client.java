@@ -64,7 +64,9 @@ class DocumentUploadQueue {
       this.flush();
     }
     documentToAddList.add(document);
-    logger.info("Adding document to batch: " + document.getDocument().uri);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Adding document to batch: " + document.getDocument().uri);
+    }
     this.size += sizeOfDoc;
   }
 
@@ -86,7 +88,9 @@ class DocumentUploadQueue {
       this.flush();
     }
     documentToDeleteList.add(document);
-    logger.info("Adding document to batch: " + document.documentId);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Adding document to batch: " + document.documentId);
+    }
     this.size += sizeOfDoc;
   }
 
