@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/coveo/push-api-client.java/compare/v2.6.0...v2.6.1) (2024-04-30)
+
+
+### Bug Fixes
+
+* **LENS-1799:** logging improvements ([#131](https://github.com/coveo/push-api-client.java/issues/131)) ([294d61b](https://github.com/coveo/push-api-client.java/commit/294d61bdd4e2d9debb50ea20383e77251544fb49))
+
 ## [2.6.0](https://github.com/coveo/push-api-client.java/compare/v2.5.0...v2.6.0) (2024-04-16)
 
 
