@@ -1,3 +1,5 @@
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/coveo/push-api-client.java/badge)](https://scorecard.dev/viewer/?uri=github.com/coveo/push-api-client.java)
+
 # Push API Client
 
 A [Coveo Push API](https://docs.coveo.com/en/12/api-reference/push-api) client library for Java.
