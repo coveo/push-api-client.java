@@ -19,6 +19,6 @@ jobs:
 
     - name: auto-approve
       id: auto-approve
-      uses: coveo/actions/auto-approve-action@main
+      uses: coveo-platform/actions/auto-approve-action@main
       with:
         github-token: "${{ secrets.GITHUB_TOKEN }}"
