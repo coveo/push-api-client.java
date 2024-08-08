@@ -2,10 +2,13 @@ package com.coveo.pushapiclient;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -372,10 +375,18 @@ public class DocumentBuilder {
   public JsonObject marshalJsonObject() {
     this.generatePermanentId();
 
-    JsonObject jsonDocument = new Gson().toJsonTree(this.document).getAsJsonObject();
+    Gson gson = new Gson();
+    JsonObject jsonDocument = gson.toJsonTree(this.document).getAsJsonObject();
     this.document.metadata.forEach(
         (key, value) -> {
-          jsonDocument.add(key, new Gson().toJsonTree(value));
+          if (value instanceof Collection) {
+            jsonDocument.add(
+                key, new JsonPrimitive(StringUtils.join(((Collection<?>) value).toArray(), ";")));
+          } else if (value instanceof Map) {
+            jsonDocument.add(key, new JsonPrimitive(gson.toJsonTree(value).toString()));
+          } else {
+            jsonDocument.add(key, gson.toJsonTree(value));
+          }
         });
     jsonDocument.remove("metadata");
 
