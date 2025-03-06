@@ -9,7 +9,7 @@ A [Coveo Push API](https://docs.coveo.com/en/12/api-reference/push-api) client l
 The Coveo `push-api-client.java` package is stored on GitHub packages.
 You will need a personal access token (classic) with at least `read:packages` scope to install this dependency.
 
-For details, see [Authenticating to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-to-github-packages)
+For details, see [Authenticating to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-to-github-packages).
 
 ## Installation
 
@@ -29,7 +29,7 @@ You can install this GitHub Package with [Apache Maven](https://maven.apache.org
    </repository>
    ```
 
-1. Add your GitHub personal access token with read:packages permission to install packages from GitHub Packages.
+2. Add your GitHub personal access token with `read:packages` permission to install packages from GitHub Packages.
 
    ```xml
    <servers>
@@ -41,21 +41,25 @@ You can install this GitHub Package with [Apache Maven](https://maven.apache.org
    </servers>
    ```
 
-### Step 2: Add a Coveo dependency to project
+Replace `USERNAME` with your GitHub username and `TOKEN` with your personal access token.
 
-Add a Coveo dependency to your Maven project by editing the `pom.xml` file.
+### Step 2: Add a Coveo Dependency to Your Project
+
+Add a Coveo dependency to your Maven project by editing the `pom.xml` file:
 
 ```xml
 <dependency>
   <groupId>com.coveo</groupId>
   <artifactId>push-api-client.java</artifactId>
-  <version>2.3.0</version>
+  <version>2.6.1</version> <!-- Replace with the version of your choice or the latest version -->
 </dependency>
 ```
 
-### Step 3: Install the project files
+Replace `2.6.1` with the version of your choice or the latest version.
 
-To install the updated project files, build the Maven project.
+### Step 3: Install the Project Files
+
+To install the updated project files, build the Maven project:
 
 ```bash
 mvn install
@@ -89,10 +93,9 @@ public class PushOneDocument {
         }
     }
 }
-
 ```
 
-### Exponential backoff retry configuration
+### Exponential Backoff Retry Configuration
 
 By default, the SDK leverages an exponential backoff retry mechanism. Exponential backoff allows for the SDK to make multiple attempts to resolve throttled requests, increasing the amount of time to wait for each subsequent attempt. Outgoing requests will retry when a `429` status code is returned from the platform.
 
@@ -110,7 +113,7 @@ The exponential backoff parameters are as follows:
 
   Optional, will default to 2.
 
-You may configure the exponential backoff that will be applied to all outgoing requests. To do so, specify use the `BackoffOptionsBuilder` class to create a `BackoffOptions` object when creating either a `PushService`, `PushSource`, or `StreamService` object:
+You may configure the exponential backoff that will be applied to all outgoing requests. To do so, use the `BackoffOptionsBuilder` class to create a `BackoffOptions` object when creating either a `PushService`, `PushSource`, or `StreamService` object:
 
 ```java
 PushSource pushSource = new PushSource("my_api_key", "my_org_id", new BackoffOptionsBuilder().withMaxRetries(5).withRetryAfter(10000).build());
@@ -127,9 +130,7 @@ By default, requests will retry a maximum of 10 times, waiting 5 seconds after t
 If you want to push multiple documents to your Coveo organization and use a service for that (e.g. `PushService`, `StreamService`), you may find it useful to configure a **logger** to catch error and warning messages.
 
 1. Go to your project's root folder.
-
-1. Update the Apache Log4j2 configuration by editing the `log4j2.xml` file.
-   The following example will print the log execution to the console.
+2. Update the Apache Log4j2 configuration by editing the `log4j2.xml` file. The following example will print the log execution to the console.
 
    ```xml
    <?xml version="1.0" encoding="UTF-8"?>
@@ -147,9 +148,9 @@ If you want to push multiple documents to your Coveo organization and use a serv
    </Configuration>
    ```
 
-   For more details, see [Log4j2 configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html).
+For more details, see [Log4j2 configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html).
 
-## Formatting the code before contributing
+## Formatting the Code Before Contributing
 
 This project uses [Google Java Format](https://github.com/google/google-java-format), so make sure your code is properly formatted before opening a pull request.
 
@@ -212,3 +213,7 @@ git push --tags
 ### Step 3 - Manually Create a Release
 
 Lastly, manually create a release on the [GitHub repository](https://github.com/coveo/push-api-client.java/releases). This action will trigger the package deploy workflow action.
+
+---
+
+Happy coding!
