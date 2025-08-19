@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.2](https://github.com/coveo/push-api-client.java/compare/v2.6.1...v2.6.2) (2025-08-19)
+
+
+### Bug Fixes
+
+* **deps:** update all dependencies j:cdx-227 ([#171](https://github.com/coveo/push-api-client.java/issues/171)) ([1fd3770](https://github.com/coveo/push-api-client.java/commit/1fd3770deef67b6fbd3586929838ea2de6cc45ab))
+
+
+### Documentation
+
+* **readme:** add info to code snippets ([#173](https://github.com/coveo/push-api-client.java/issues/173)) ([5c7afd4](https://github.com/coveo/push-api-client.java/commit/5c7afd45c8c8fd86b929798fe70565e2602484ab))
+
 ## [2.6.1](https://github.com/coveo/push-api-client.java/compare/v2.6.0...v2.6.1) (2024-04-30)
 
 
