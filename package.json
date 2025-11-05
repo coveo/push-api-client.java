@@ -8,8 +8,8 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@actions/core": "^1.10.0",
-    "@commitlint/config-conventional": "19.8.1",
-    "@octokit/auth-app": "^7.0.0"
+    "@commitlint/config-conventional": "20.0.0",
+    "@octokit/auth-app": "^8.0.0"
   },
   "scripts": {
     "get-token": "node utils/get-token.mjs"
