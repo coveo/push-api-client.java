@@ -10,15 +10,27 @@ public class PushService {
   private PushServiceInternal service;
 
   public PushService(PushEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build());
+    this(source, new BackoffOptionsBuilder().build(), DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
   }
 
   public PushService(PushEnabledSource source, BackoffOptions options) {
+    this(source, options, DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+  }
+
+  /**
+   * Creates a new PushService with configurable batch size.
+   *
+   * @param source The source to push documents to.
+   * @param options The configuration options for exponential backoff.
+   * @param maxQueueSize The maximum batch size in bytes before auto-flushing (default: 256MB, max: 256MB).
+   * @throws IllegalArgumentException if maxQueueSize exceeds 256MB.
+   */
+  public PushService(PushEnabledSource source, BackoffOptions options, int maxQueueSize) {
     String apiKey = source.getApiKey();
     String organizationId = source.getOrganizationId();
     PlatformUrl platformUrl = source.getPlatformUrl();
     UploadStrategy uploader = this.getUploadStrategy();
-    DocumentUploadQueue queue = new DocumentUploadQueue(uploader);
+    DocumentUploadQueue queue = new DocumentUploadQueue(uploader, maxQueueSize);
 
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
     this.service = new PushServiceInternal(queue);

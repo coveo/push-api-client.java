@@ -95,6 +95,29 @@ public class PushOneDocument {
 }
 ```
 
+## Configuration
+
+### Batch Size Configuration
+
+The SDK uses a default batch size of **256 MB** (matching the Coveo Stream API limit) before automatically creating a file container and pushing documents. You can configure this globally via system property or per-service via constructor.
+
+**Global Configuration (System Property):**
+```bash
+java -Dcoveo.push.batchSize=134217728 -jar your-app.jar  # 128 MB
+```
+
+**Per-Service Configuration:**
+```java
+// Configure UpdateStreamService with 128 MB batch size
+UpdateStreamService service = new UpdateStreamService(
+    catalogSource, 
+    backoffOptions, 
+    128 * 1024 * 1024  // 128 MB in bytes
+);
+```
+
+See **[CONFIGURATION.md](CONFIGURATION.md)** for complete configuration options, Docker/Kubernetes examples, and best practices.
+
 ### Exponential Backoff Retry Configuration
 
 By default, the SDK leverages an exponential backoff retry mechanism. Exponential backoff allows for the SDK to make multiple attempts to resolve throttled requests, increasing the amount of time to wait for each subsequent attempt. Outgoing requests will retry when a `429` status code is returned from the platform.

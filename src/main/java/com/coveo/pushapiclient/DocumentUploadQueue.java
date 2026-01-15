@@ -8,21 +8,87 @@ import org.apache.logging.log4j.Logger;
 /** Represents a queue for uploading documents using a specified upload strategy */
 class DocumentUploadQueue {
   private static final Logger logger = LogManager.getLogger(DocumentUploadQueue.class);
+  
+  /** Maximum allowed queue size based on Stream API limit (256 MB) */
+  protected static final int MAX_ALLOWED_QUEUE_SIZE = 256 * 1024 * 1024;
+  
+  /** Default queue size (256 MB to match API limit) */
+  protected static final int DEFAULT_QUEUE_SIZE = 256 * 1024 * 1024;
+  
+  /** System property name for configuring the default batch size */
+  public static final String BATCH_SIZE_PROPERTY = "coveo.push.batchSize";
+  
   protected final UploadStrategy uploader;
-  protected final int maxQueueSize = 5 * 1024 * 1024;
+  protected final int maxQueueSize;
   protected ArrayList<DocumentBuilder> documentToAddList;
   protected ArrayList<DeleteDocument> documentToDeleteList;
   protected int size;
+  
+  /**
+   * Gets the configured batch size from system properties, or returns the default if not set.
+   * 
+   * @return The configured batch size in bytes
+   * @throws IllegalArgumentException if the configured value exceeds 256MB or is invalid
+   */
+  public static int getConfiguredBatchSize() {
+    String propertyValue = System.getProperty(BATCH_SIZE_PROPERTY);
+    if (propertyValue == null || propertyValue.trim().isEmpty()) {
+      return DEFAULT_QUEUE_SIZE;
+    }
+    
+    try {
+      int configuredSize = Integer.parseInt(propertyValue.trim());
+      if (configuredSize > MAX_ALLOWED_QUEUE_SIZE) {
+        throw new IllegalArgumentException(
+            String.format("System property %s (%d bytes) exceeds the Stream API limit of %d bytes (256 MB)",
+                BATCH_SIZE_PROPERTY, configuredSize, MAX_ALLOWED_QUEUE_SIZE));
+      }
+      if (configuredSize <= 0) {
+        throw new IllegalArgumentException(
+            String.format("System property %s must be greater than 0, got: %d",
+                BATCH_SIZE_PROPERTY, configuredSize));
+      }
+      logger.info(String.format("Using configured batch size from system property %s: %d bytes (%.2f MB)",
+          BATCH_SIZE_PROPERTY, configuredSize, configuredSize / (1024.0 * 1024.0)));
+      return configuredSize;
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException(
+          String.format("Invalid value for system property %s: '%s'. Must be a valid integer.",
+              BATCH_SIZE_PROPERTY, propertyValue), e);
+    }
+  }
 
   /**
-   * Constructs a new DocumentUploadQueue object with a default maximum queue size limit of 5MB.
+   * Constructs a new DocumentUploadQueue object with the default maximum queue size limit of 256MB,
+   * or the value configured via system property "coveo.push.batchSize" if set.
    *
    * @param uploader The upload strategy to be used for document uploads.
+   * @throws IllegalArgumentException if the system property value exceeds 256MB or is invalid.
    */
   public DocumentUploadQueue(UploadStrategy uploader) {
+    this(uploader, getConfiguredBatchSize());
+  }
+  
+  /**
+   * Constructs a new DocumentUploadQueue object with a configurable maximum queue size limit.
+   *
+   * @param uploader The upload strategy to be used for document uploads.
+   * @param maxQueueSize The maximum queue size in bytes. Must not exceed 256MB (Stream API limit).
+   * @throws IllegalArgumentException if maxQueueSize exceeds the API limit of 256MB.
+   */
+  public DocumentUploadQueue(UploadStrategy uploader, int maxQueueSize) {
+    if (maxQueueSize > MAX_ALLOWED_QUEUE_SIZE) {
+      throw new IllegalArgumentException(
+          String.format("maxQueueSize (%d bytes) exceeds the Stream API limit of %d bytes (256 MB)",
+              maxQueueSize, MAX_ALLOWED_QUEUE_SIZE));
+    }
+    if (maxQueueSize <= 0) {
+      throw new IllegalArgumentException("maxQueueSize must be greater than 0");
+    }
     this.documentToAddList = new ArrayList<>();
     this.documentToDeleteList = new ArrayList<>();
     this.uploader = uploader;
+    this.maxQueueSize = maxQueueSize;
   }
 
   /**

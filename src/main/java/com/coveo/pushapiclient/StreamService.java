@@ -27,7 +27,7 @@ public class StreamService {
    * @param userAgents The user agent to use for the requests.
    */
   public StreamService(StreamEnabledSource source, String[] userAgents) {
-    this(source, new BackoffOptionsBuilder().build(), userAgents);
+    this(source, new BackoffOptionsBuilder().build(), userAgents, DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
   }
 
   /**
@@ -42,7 +42,7 @@ public class StreamService {
    * @param source The source to which you want to send your documents.
    */
   public StreamService(StreamEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build());
+    this(source, new BackoffOptionsBuilder().build(), null, DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
   }
 
   /**
@@ -58,7 +58,7 @@ public class StreamService {
    * @param options The configuration options for exponential backoff.
    */
   public StreamService(StreamEnabledSource source, BackoffOptions options) {
-    this(source, options, null);
+    this(source, options, null, DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
   }
 
   /**
@@ -73,8 +73,10 @@ public class StreamService {
    * @param source The source to which you want to send your documents.
    * @param options The configuration options for exponential backoff.
    * @param userAgents The user agent to use for the requests.
+   * @param maxQueueSize The maximum batch size in bytes before auto-flushing (default: 256MB, max: 256MB).
+   * @throws IllegalArgumentException if maxQueueSize exceeds 256MB.
    */
-  public StreamService(StreamEnabledSource source, BackoffOptions options, String[] userAgents) {
+  public StreamService(StreamEnabledSource source, BackoffOptions options, String[] userAgents, int maxQueueSize) {
     String apiKey = source.getApiKey();
     String organizationId = source.getOrganizationId();
     PlatformUrl platformUrl = source.getPlatformUrl();
@@ -82,7 +84,7 @@ public class StreamService {
     Logger logger = LogManager.getLogger(StreamService.class);
 
     this.source = source;
-    this.queue = new DocumentUploadQueue(uploader);
+    this.queue = new DocumentUploadQueue(uploader, maxQueueSize);
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
     platformClient.setUserAgents(userAgents);
     this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient, logger);

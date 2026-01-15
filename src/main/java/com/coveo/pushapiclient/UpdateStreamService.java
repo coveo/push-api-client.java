@@ -12,8 +12,6 @@ public class UpdateStreamService {
   private final PlatformClient platformClient;
   private final UpdateStreamServiceInternal updateStreamServiceInternal;
 
-  private FileContainer fileContainer;
-
   /**
    * Creates a service to stream your documents to the provided source by interacting with the
    * Stream API. This provides the ability to incrementally add, update, or delete documents via a
@@ -26,7 +24,7 @@ public class UpdateStreamService {
    * @param userAgents The user agent to use for the requests.
    */
   public UpdateStreamService(StreamEnabledSource source, String[] userAgents) {
-    this(source, new BackoffOptionsBuilder().build(), userAgents);
+    this(source, new BackoffOptionsBuilder().build(), userAgents, StreamDocumentUploadQueue.DEFAULT_QUEUE_SIZE);
   }
 
   /**
@@ -40,7 +38,7 @@ public class UpdateStreamService {
    * @param source The source to which you want to send your documents.
    */
   public UpdateStreamService(StreamEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build());
+    this(source, new BackoffOptionsBuilder().build(), null, StreamDocumentUploadQueue.DEFAULT_QUEUE_SIZE);
   }
 
   /**
@@ -55,7 +53,7 @@ public class UpdateStreamService {
    * @param options The configuration options for exponential backoff.
    */
   public UpdateStreamService(StreamEnabledSource source, BackoffOptions options) {
-    this(source, options, null);
+    this(source, options, null, StreamDocumentUploadQueue.DEFAULT_QUEUE_SIZE);
   }
 
   /**
@@ -69,9 +67,11 @@ public class UpdateStreamService {
    * @param source The source to which you want to send your documents.
    * @param options The configuration options for exponential backoff.
    * @param userAgents The user agent to use for the requests.
+   * @param maxQueueSize The maximum batch size in bytes before auto-flushing (default: 256MB, max: 256MB).
+   * @throws IllegalArgumentException if maxQueueSize exceeds 256MB.
    */
   public UpdateStreamService(
-      StreamEnabledSource source, BackoffOptions options, String[] userAgents) {
+      StreamEnabledSource source, BackoffOptions options, String[] userAgents, int maxQueueSize) {
     Logger logger = LogManager.getLogger(UpdateStreamService.class);
     this.platformClient =
         new PlatformClient(
@@ -80,7 +80,7 @@ public class UpdateStreamService {
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
             source,
-            new StreamDocumentUploadQueue(this.getUploadStrategy()),
+            new StreamDocumentUploadQueue(null, maxQueueSize),  // UploadStrategy no longer needed
             this.platformClient,
             logger);
   }
@@ -91,9 +91,10 @@ public class UpdateStreamService {
    * documents into it.
    *
    * <p>If called several times, the service will automatically batch documents and create new
-   * stream chunks whenever the data payload exceeds the <a
-   * href="https://docs.coveo.com/en/lb4a0344#stream-api-limits">batch size limit</a> set for the
-   * Stream API.
+   * file containers whenever the data payload exceeds the batch size limit (default: 256MB, configurable via constructor).
+   * Each batch is sent to its own file container and immediately pushed to the stream
+   * source, following the <a href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
+   * catalog stream API best practices</a>.
    *
    * <p>Once there are no more documents to add, it is important to call the {@link
    * UpdateStreamService#close} function in order to send any buffered documents and push the file
@@ -118,7 +119,7 @@ public class UpdateStreamService {
    * @throws IOException If the creation of the file container or adding the document fails.
    */
   public void addOrUpdate(DocumentBuilder document) throws IOException, InterruptedException {
-    fileContainer = updateStreamServiceInternal.addOrUpdate(document);
+    updateStreamServiceInternal.addOrUpdate(document);
   }
 
   /**
@@ -130,9 +131,10 @@ public class UpdateStreamService {
    * Partial item updates</a> section.
    *
    * <p>If called several times, the service will automatically batch documents and create new
-   * stream chunks whenever the data payload exceeds the <a
-   * href="https://docs.coveo.com/en/lb4a0344#stream-api-limits">batch size limit</a> set for the
-   * Stream API.
+   * file containers whenever the data payload exceeds the batch size limit (default: 256MB, configurable via constructor).
+   * Each batch is sent to its own file container and immediately pushed to the stream
+   * source, following the <a href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
+   * catalog stream API best practices</a>.
    *
    * <p>Once there are no more documents to add, it is important to call the {@link
    * UpdateStreamService#close} function in order to send any buffered documents and push the file
@@ -158,7 +160,7 @@ public class UpdateStreamService {
    */
   public void addPartialUpdate(PartialUpdateDocument document)
       throws IOException, InterruptedException {
-    fileContainer = updateStreamServiceInternal.addPartialUpdate(document);
+    updateStreamServiceInternal.addPartialUpdate(document);
   }
 
   /**
@@ -167,9 +169,10 @@ public class UpdateStreamService {
    * it.
    *
    * <p>If called several times, the service will automatically batch documents and create new
-   * stream chunks whenever the data payload exceeds the <a
-   * href="https://docs.coveo.com/en/lb4a0344#stream-api-limits">batch size limit</a> set for the
-   * Stream API.
+   * file containers whenever the data payload exceeds the batch size limit (default: 256MB, configurable via constructor).
+   * Each batch is sent to its own file container and immediately pushed to the stream
+   * source, following the <a href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
+   * catalog stream API best practices</a>.
    *
    * <p>Once there are no more documents to add, it is important to call the {@link
    * UpdateStreamService#close} function in order to send any buffered documents and push the file
@@ -194,7 +197,7 @@ public class UpdateStreamService {
    * @throws IOException If the creation of the file container or adding the document fails.
    */
   public void delete(DeleteDocument document) throws IOException, InterruptedException {
-    fileContainer = updateStreamServiceInternal.delete(document);
+    updateStreamServiceInternal.delete(document);
   }
 
   /**
@@ -213,12 +216,5 @@ public class UpdateStreamService {
   public HttpResponse<String> close()
       throws IOException, InterruptedException, NoOpenFileContainerException {
     return updateStreamServiceInternal.close();
-  }
-
-  private UploadStrategy getUploadStrategy() {
-    return (streamUpdate) -> {
-      String batchUpdateJson = new Gson().toJson(streamUpdate.marshal());
-      return this.platformClient.uploadContentToFileContainer(fileContainer, batchUpdateJson);
-    };
   }
 }
