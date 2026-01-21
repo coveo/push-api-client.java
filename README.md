@@ -111,7 +111,8 @@ java -Dcoveo.push.batchSize=134217728 -jar your-app.jar  # 128 MB
 // Configure UpdateStreamService with 128 MB batch size
 UpdateStreamService service = new UpdateStreamService(
     catalogSource, 
-    backoffOptions, 
+    backoffOptions,
+    null,  // userAgents (optional)
     128 * 1024 * 1024  // 128 MB in bytes
 );
 ```

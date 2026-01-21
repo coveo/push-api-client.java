@@ -62,6 +62,24 @@ public class UpdateStreamService {
    * stream.
    *
    * <p>To perform <a href="https://docs.coveo.com/en/lb4a0344">a full source rebuild</a>, use the
+   * {@link StreamService}.
+   *
+   * @param source The source to push to
+   * @param options The backoff parameters
+   * @param userAgents The user-agents to append to the "User-Agent" HTTP header when performing
+   *     requests against the Coveo Platform.
+   */
+  public UpdateStreamService(
+      StreamEnabledSource source, BackoffOptions options, String[] userAgents) {
+    this(source, options, userAgents, StreamDocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+  }
+
+  /**
+   * Creates a service to stream your documents to the provided source by interacting with the
+   * Stream API. This provides the ability to incrementally add, update, or delete documents via a
+   * stream.
+   *
+   * <p>To perform <a href="https://docs.coveo.com/en/lb4a0344">a full source rebuild</a>, use the
    * {@StreamService}
    *
    * @param source The source to which you want to send your documents.

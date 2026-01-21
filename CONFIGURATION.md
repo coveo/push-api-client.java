@@ -54,22 +54,24 @@ Pass the `maxQueueSize` parameter when creating service instances:
 ```java
 // UpdateStreamService with custom 128 MB batch size
 UpdateStreamService service = new UpdateStreamService(
-    platformClient,
-    sourceId,
+    catalogSource,
+    backoffOptions,
+    null,  // userAgents (optional)
     128 * 1024 * 1024  // 128 MB in bytes
 );
 
 // PushService with custom batch size
 PushService pushService = new PushService(
-    platformClient,
-    sourceId,
+    pushEnabledSource,
+    backoffOptions,
     128 * 1024 * 1024  // 128 MB
 );
 
 // StreamService with custom batch size
 StreamService streamService = new StreamService(
-    platformClient,
-    sourceId,
+    streamEnabledSource,
+    backoffOptions,
+    null,  // userAgents (optional)
     128 * 1024 * 1024  // 128 MB
 );
 ```
@@ -100,9 +102,9 @@ All batch size values are validated:
 System.setProperty("coveo.push.batchSize", "134217728"); // 128 MB
 
 // All services will use 128 MB by default
-UpdateStreamService updateService = new UpdateStreamService(platformClient, sourceId);
-PushService pushService = new PushService(platformClient, sourceId);
-StreamService streamService = new StreamService(platformClient, sourceId);
+UpdateStreamService updateService = new UpdateStreamService(catalogSource, backoffOptions);
+PushService pushService = new PushService(pushEnabledSource, backoffOptions);
+StreamService streamService = new StreamService(streamEnabledSource, backoffOptions);
 ```
 
 #### Example 2: Override Per Service
@@ -112,13 +114,13 @@ StreamService streamService = new StreamService(platformClient, sourceId);
 System.setProperty("coveo.push.batchSize", "134217728");
 
 // Update service uses global default (128 MB)
-UpdateStreamService updateService = new UpdateStreamService(platformClient, sourceId);
+UpdateStreamService updateService = new UpdateStreamService(catalogSource, backoffOptions);
 
 // Push service overrides with 64 MB
-PushService pushService = new PushService(platformClient, sourceId, 64 * 1024 * 1024);
+PushService pushService = new PushService(pushEnabledSource, backoffOptions, 64 * 1024 * 1024);
 
 // Stream service uses global default (128 MB)
-StreamService streamService = new StreamService(platformClient, sourceId);
+StreamService streamService = new StreamService(streamEnabledSource, backoffOptions);
 ```
 
 #### Example 3: Docker/Container Environment
@@ -202,7 +204,7 @@ System.setProperty("coveo.push.batchSize", "5242880"); // 5 MB
 **Option 2: Use new 256 MB default (recommended)**
 ```java
 // No configuration needed - automatic
-UpdateStreamService service = new UpdateStreamService(platformClient, sourceId);
+UpdateStreamService service = new UpdateStreamService(catalogSource, backoffOptions);
 ```
 
 **Option 3: Choose custom size**
