@@ -27,7 +27,7 @@ public class StreamService {
    * @param userAgents The user agent to use for the requests.
    */
   public StreamService(StreamEnabledSource source, String[] userAgents) {
-    this(source, new BackoffOptionsBuilder().build(), userAgents, DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+    this(source, new BackoffOptionsBuilder().build(), userAgents, DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -42,7 +42,7 @@ public class StreamService {
    * @param source The source to which you want to send your documents.
    */
   public StreamService(StreamEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build(), null, DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+    this(source, new BackoffOptionsBuilder().build(), null, DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -58,7 +58,24 @@ public class StreamService {
    * @param options The configuration options for exponential backoff.
    */
   public StreamService(StreamEnabledSource source, BackoffOptions options) {
-    this(source, options, null, DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+    this(source, options, null, DocumentUploadQueue.getConfiguredBatchSize());
+  }
+
+  /**
+   * Creates a service to stream your documents to the provided source by interacting with the
+   * Stream API.
+   *
+   * <p>To perform <a href="https://docs.coveo.com/en/l62e0540">full document updates or
+   * deletions</a>, use the {@UpdateStreamService}, since pushing documents with the
+   * {@StreamService} is equivalent to triggering a full source rebuild. The {@StreamService} can
+   * also be used for an initial catalog upload.
+   *
+   * @param source The source to which you want to send your documents.
+   * @param options The configuration options for exponential backoff.
+   * @param userAgents The user agent to use for the requests.
+   */
+  public StreamService(StreamEnabledSource source, BackoffOptions options, String[] userAgents) {
+    this(source, options, userAgents, DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**

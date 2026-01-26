@@ -54,6 +54,12 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
       logger.debug("Empty batch. Skipping upload");
       return;
     }
+    
+    if (this.uploader == null) {
+      throw new IllegalStateException(
+          "No upload strategy configured. For UpdateStreamService, use flushAndPush() instead.");
+    }
+    
     // TODO: LENS-871: support concurrent requests
     StreamUpdate stream = this.getStream();
     logger.info("Uploading document Stream");

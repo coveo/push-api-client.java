@@ -24,7 +24,7 @@ public class UpdateStreamService {
    * @param userAgents The user agent to use for the requests.
    */
   public UpdateStreamService(StreamEnabledSource source, String[] userAgents) {
-    this(source, new BackoffOptionsBuilder().build(), userAgents, StreamDocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+    this(source, new BackoffOptionsBuilder().build(), userAgents, DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -38,7 +38,7 @@ public class UpdateStreamService {
    * @param source The source to which you want to send your documents.
    */
   public UpdateStreamService(StreamEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build(), null, StreamDocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+    this(source, new BackoffOptionsBuilder().build(), null, DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -53,7 +53,7 @@ public class UpdateStreamService {
    * @param options The configuration options for exponential backoff.
    */
   public UpdateStreamService(StreamEnabledSource source, BackoffOptions options) {
-    this(source, options, null, StreamDocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+    this(source, options, null, DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -71,7 +71,7 @@ public class UpdateStreamService {
    */
   public UpdateStreamService(
       StreamEnabledSource source, BackoffOptions options, String[] userAgents) {
-    this(source, options, userAgents, StreamDocumentUploadQueue.DEFAULT_QUEUE_SIZE);
+    this(source, options, userAgents, DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
