@@ -94,7 +94,9 @@ public class UpdateStreamService {
     this.platformClient =
         new PlatformClient(
             source.getApiKey(), source.getOrganizationId(), source.getPlatformUrl(), options);
-    this.platformClient.setUserAgents(userAgents);
+    if (userAgents != null) {
+      this.platformClient.setUserAgents(userAgents);
+    }
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
             source,

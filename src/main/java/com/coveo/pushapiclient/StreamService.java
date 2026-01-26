@@ -103,7 +103,9 @@ public class StreamService {
     this.source = source;
     this.queue = new DocumentUploadQueue(uploader, maxQueueSize);
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
-    platformClient.setUserAgents(userAgents);
+    if (userAgents != null) {
+      platformClient.setUserAgents(userAgents);
+    }
     this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient, logger);
   }
 
