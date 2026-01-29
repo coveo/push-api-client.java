@@ -14,14 +14,6 @@ public class StreamDocuments {
         // Using the Update Stream Service will act as an incremental change to the index, therefore any currently indexed items not contained in the payload will remain.
         UpdateStreamService updateStream = new UpdateStreamService(catalogSource);
         // To perform full index rebuild, use the StreamService instead.
-        
-        // Note: The UpdateStreamService now handles file containers differently for catalog sources.
-        // Each batch (when the 256MB limit is exceeded or close() is called) will:
-        // 1. Create a new file container
-        // 2. Upload the batch content to that container
-        // 3. Immediately push the container to the stream source via the /update API
-        // This follows the catalog stream API best practices where each update operation uses its own file container.
-        // You can configure a smaller batch size if needed by using the constructor with maxQueueSize parameter.
 
         DocumentBuilder document1 = new DocumentBuilder("https://my.document.uri", "My document title")
                 .withData("these words will be searchable")

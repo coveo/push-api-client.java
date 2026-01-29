@@ -167,7 +167,7 @@ spec:
 - Maximum throughput is needed
 
 **Keep default (5 MB) when:**
-- You're unsure - it's a conservative default that works well
+- You're unsure
 - Memory is a concern
 - You want predictable, frequent pushes
 
