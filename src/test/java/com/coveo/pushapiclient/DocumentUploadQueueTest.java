@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class DocumentUploadQueueTest {
 
+  private static final int TEST_BATCH_SIZE = 5 * 1024 * 1024;
+
   @Mock private UploadStrategy uploadStrategy;
 
-  @InjectMocks private DocumentUploadQueue queue;
-
+  private DocumentUploadQueue queue;
   private AutoCloseable closeable;
   private DocumentBuilder documentToAdd;
   private DeleteDocument documentToDelete;
@@ -29,20 +29,14 @@ public class DocumentUploadQueueTest {
   private int oneMegaByte = 1 * 1024 * 1024;
 
   private String generateStringFromBytes(int numBytes) {
-    // Check if the number of bytes is valid
     if (numBytes <= 0) {
       return "";
     }
-
-    // Create a byte array with the specified length
     byte[] bytes = new byte[numBytes];
-
-    // Fill the byte array with a pattern of ASCII characters
-    byte pattern = 65; // ASCII value for 'A'
+    byte pattern = 65;
     for (int i = 0; i < numBytes; i++) {
       bytes[i] = pattern;
     }
-
     return new String(bytes);
   }
 
@@ -53,6 +47,10 @@ public class DocumentUploadQueueTest {
 
   @Before
   public void setup() {
+    closeable = MockitoAnnotations.openMocks(this);
+
+    queue = new DocumentUploadQueue(uploadStrategy, TEST_BATCH_SIZE);
+
     String twoMegaByteData = generateStringFromBytes(2 * oneMegaByte);
 
     documentToAdd =
@@ -60,8 +58,6 @@ public class DocumentUploadQueueTest {
             .withData(twoMegaByteData);
 
     documentToDelete = new DeleteDocument("https://my.document.uri?ref=3");
-
-    closeable = MockitoAnnotations.openMocks(this);
   }
 
   @After
