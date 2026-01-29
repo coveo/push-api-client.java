@@ -49,8 +49,12 @@ public class FileContainerRotationIntegrationTest {
     doReturn(new PlatformUrl(Environment.PRODUCTION, Region.US)).when(source).getPlatformUrl();
 
     doAnswer(invocation -> createContainerResponse()).when(platformClient).createFileContainer();
-    doReturn(createGenericResponse()).when(platformClient).uploadContentToFileContainer(any(), anyString());
-    doReturn(createGenericResponse()).when(platformClient).pushFileContainerContentToStreamSource(anyString(), any());
+    doReturn(createGenericResponse())
+        .when(platformClient)
+        .uploadContentToFileContainer(any(), anyString());
+    doReturn(createGenericResponse())
+        .when(platformClient)
+        .pushFileContainerContentToStreamSource(anyString(), any());
   }
 
   @Test
@@ -103,7 +107,8 @@ public class FileContainerRotationIntegrationTest {
     service.close();
 
     ArgumentCaptor<FileContainer> containerCaptor = ArgumentCaptor.forClass(FileContainer.class);
-    verify(platformClient, times(3)).pushFileContainerContentToStreamSource(anyString(), containerCaptor.capture());
+    verify(platformClient, times(3))
+        .pushFileContainerContentToStreamSource(anyString(), containerCaptor.capture());
 
     assertEquals("container-1", containerCaptor.getAllValues().get(0).fileId);
     assertEquals("container-2", containerCaptor.getAllValues().get(1).fileId);
@@ -138,7 +143,8 @@ public class FileContainerRotationIntegrationTest {
 
     int expectedContainers = 10;
     verify(platformClient, times(expectedContainers)).createFileContainer();
-    verify(platformClient, times(expectedContainers)).pushFileContainerContentToStreamSource(anyString(), any());
+    verify(platformClient, times(expectedContainers))
+        .pushFileContainerContentToStreamSource(anyString(), any());
   }
 
   @Test
@@ -146,20 +152,26 @@ public class FileContainerRotationIntegrationTest {
     Map<String, Integer> pushCountPerContainer = new HashMap<>();
     List<String> containerCreationOrder = new ArrayList<>();
 
-    doAnswer(invocation -> {
-      HttpResponse<String> response = createContainerResponse();
-      String fileId = "container-" + containerCounter.get();
-      containerCreationOrder.add(fileId);
-      pushCountPerContainer.put(fileId, 0);
-      return response;
-    }).when(platformClient).createFileContainer();
+    doAnswer(
+            invocation -> {
+              HttpResponse<String> response = createContainerResponse();
+              String fileId = "container-" + containerCounter.get();
+              containerCreationOrder.add(fileId);
+              pushCountPerContainer.put(fileId, 0);
+              return response;
+            })
+        .when(platformClient)
+        .createFileContainer();
 
-    doAnswer(invocation -> {
-      FileContainer container = invocation.getArgument(1);
-      int currentCount = pushCountPerContainer.getOrDefault(container.fileId, 0);
-      pushCountPerContainer.put(container.fileId, currentCount + 1);
-      return createGenericResponse();
-    }).when(platformClient).pushFileContainerContentToStreamSource(anyString(), any());
+    doAnswer(
+            invocation -> {
+              FileContainer container = invocation.getArgument(1);
+              int currentCount = pushCountPerContainer.getOrDefault(container.fileId, 0);
+              pushCountPerContainer.put(container.fileId, currentCount + 1);
+              return createGenericResponse();
+            })
+        .when(platformClient)
+        .pushFileContainerContentToStreamSource(anyString(), any());
 
     UpdateStreamServiceInternal service = createServiceWithSmallBatchSize();
 
@@ -170,7 +182,10 @@ public class FileContainerRotationIntegrationTest {
 
     for (Map.Entry<String, Integer> entry : pushCountPerContainer.entrySet()) {
       assertEquals(
-          "Container " + entry.getKey() + " should receive exactly 1 push, but received " + entry.getValue(),
+          "Container "
+              + entry.getKey()
+              + " should receive exactly 1 push, but received "
+              + entry.getValue(),
           Integer.valueOf(1),
           entry.getValue());
     }
@@ -180,7 +195,8 @@ public class FileContainerRotationIntegrationTest {
 
   private UpdateStreamServiceInternal createServiceWithSmallBatchSize() {
     StreamDocumentUploadQueue queue = new StreamDocumentUploadQueue(null, SMALL_BATCH_SIZE);
-    org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(getClass());
+    org.apache.logging.log4j.Logger logger =
+        org.apache.logging.log4j.LogManager.getLogger(getClass());
     return new UpdateStreamServiceInternal(source, queue, platformClient, logger);
   }
 
@@ -209,8 +225,10 @@ public class FileContainerRotationIntegrationTest {
   private HttpResponse<String> createContainerResponse() {
     HttpResponse<String> response = mock(HttpResponse.class);
     int id = containerCounter.incrementAndGet();
-    doReturn(String.format(
-            "{\"uploadUri\": \"https://upload.uri/container-%d\", \"fileId\": \"container-%d\"}", id, id))
+    doReturn(
+            String.format(
+                "{\"uploadUri\": \"https://upload.uri/container-%d\", \"fileId\": \"container-%d\"}",
+                id, id))
         .when(response)
         .body();
     return response;

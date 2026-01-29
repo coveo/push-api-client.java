@@ -54,28 +54,29 @@ class UpdateStreamServiceInternal {
   }
 
   /**
-   * Creates a new file container, uploads the content, and pushes it to the stream source.
-   * This method is called by the queue's flush operation to ensure each batch gets its own container.
-   * 
+   * Creates a new file container, uploads the content, and pushes it to the stream source. This
+   * method is called by the queue's flush operation to ensure each batch gets its own container.
+   *
    * @param streamUpdate The batch of documents to upload
    * @return The HTTP response from pushing the file container
    * @throws IOException If an I/O error occurs
    * @throws InterruptedException If the operation is interrupted
    */
-  public HttpResponse<String> createUploadAndPush(StreamUpdate streamUpdate) 
+  public HttpResponse<String> createUploadAndPush(StreamUpdate streamUpdate)
       throws IOException, InterruptedException {
     // Step 1: Create a new file container
     this.logger.info("Creating new file container");
     HttpResponse<String> createResponse = this.platformClient.createFileContainer();
     FileContainer container = new Gson().fromJson(createResponse.body(), FileContainer.class);
-    
+
     // Step 2: Upload content to the file container
     String batchUpdateJson = new Gson().toJson(streamUpdate.marshal());
     this.platformClient.uploadContentToFileContainer(container, batchUpdateJson);
-    
+
     // Step 3: Push the file container to the stream source
     this.logger.info("Pushing file container " + container.fileId + " to stream source");
-    return this.platformClient.pushFileContainerContentToStreamSource(this.getSourceId(), container);
+    return this.platformClient.pushFileContainerContentToStreamSource(
+        this.getSourceId(), container);
   }
 
   private String getSourceId() {

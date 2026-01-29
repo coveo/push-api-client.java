@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,20 +20,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Tests for container rotation and batching behavior in the stream update
- * workflow. Each batch that
- * exceeds the configured limit should trigger creation of a new file container,
- * upload, and
+ * Tests for container rotation and batching behavior in the stream update workflow. Each batch that
+ * exceeds the configured limit should trigger creation of a new file container, upload, and
  * immediate push.
  */
 public class StreamDocumentUploadQueueBatchingTest {
 
   private static final int SMALL_BATCH_SIZE = 5000;
 
-  @Mock
-  private UpdateStreamServiceInternal updateStreamService;
-  @Mock
-  private HttpResponse<String> httpResponse;
+  @Mock private UpdateStreamServiceInternal updateStreamService;
+  @Mock private HttpResponse<String> httpResponse;
 
   private StreamDocumentUploadQueue queue;
   private AutoCloseable closeable;
@@ -56,8 +51,10 @@ public class StreamDocumentUploadQueueBatchingTest {
   @Test
   public void addingDocumentsThatExceedBatchSizeShouldTriggerFlushAndPush()
       throws IOException, InterruptedException {
-    DocumentBuilder doc1 = new DocumentBuilder("https://doc.uri/1", "Doc 1").withData(generateData(3000));
-    DocumentBuilder doc2 = new DocumentBuilder("https://doc.uri/2", "Doc 2").withData(generateData(3000));
+    DocumentBuilder doc1 =
+        new DocumentBuilder("https://doc.uri/1", "Doc 1").withData(generateData(3000));
+    DocumentBuilder doc2 =
+        new DocumentBuilder("https://doc.uri/2", "Doc 2").withData(generateData(3000));
 
     queue.add(doc1);
     verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
@@ -82,9 +79,12 @@ public class StreamDocumentUploadQueueBatchingTest {
   @Test
   public void accumulatedDocumentsExceedingLimitShouldFlushPreviousBatch()
       throws IOException, InterruptedException {
-    DocumentBuilder doc1 = new DocumentBuilder("https://doc.uri/1", "Doc 1").withData(generateData(2000));
-    DocumentBuilder doc2 = new DocumentBuilder("https://doc.uri/2", "Doc 2").withData(generateData(2000));
-    DocumentBuilder doc3 = new DocumentBuilder("https://doc.uri/3", "Doc 3").withData(generateData(2000));
+    DocumentBuilder doc1 =
+        new DocumentBuilder("https://doc.uri/1", "Doc 1").withData(generateData(2000));
+    DocumentBuilder doc2 =
+        new DocumentBuilder("https://doc.uri/2", "Doc 2").withData(generateData(2000));
+    DocumentBuilder doc3 =
+        new DocumentBuilder("https://doc.uri/3", "Doc 3").withData(generateData(2000));
 
     queue.add(doc1);
     queue.add(doc2);
@@ -99,11 +99,16 @@ public class StreamDocumentUploadQueueBatchingTest {
   }
 
   @Test
-  public void multipleBatchesShouldCreateMultipleContainers() throws IOException, InterruptedException {
-    DocumentBuilder doc1 = new DocumentBuilder("https://doc.uri/1", "Doc 1").withData(generateData(3000));
-    DocumentBuilder doc2 = new DocumentBuilder("https://doc.uri/2", "Doc 2").withData(generateData(3000));
-    DocumentBuilder doc3 = new DocumentBuilder("https://doc.uri/3", "Doc 3").withData(generateData(3000));
-    DocumentBuilder doc4 = new DocumentBuilder("https://doc.uri/4", "Doc 4").withData(generateData(3000));
+  public void multipleBatchesShouldCreateMultipleContainers()
+      throws IOException, InterruptedException {
+    DocumentBuilder doc1 =
+        new DocumentBuilder("https://doc.uri/1", "Doc 1").withData(generateData(3000));
+    DocumentBuilder doc2 =
+        new DocumentBuilder("https://doc.uri/2", "Doc 2").withData(generateData(3000));
+    DocumentBuilder doc3 =
+        new DocumentBuilder("https://doc.uri/3", "Doc 3").withData(generateData(3000));
+    DocumentBuilder doc4 =
+        new DocumentBuilder("https://doc.uri/4", "Doc 4").withData(generateData(3000));
 
     queue.add(doc1);
     queue.add(doc2);
@@ -115,7 +120,8 @@ public class StreamDocumentUploadQueueBatchingTest {
 
   @Test
   public void flushAndPushShouldClearQueueAfterBatch() throws IOException, InterruptedException {
-    DocumentBuilder doc = new DocumentBuilder("https://doc.uri/1", "Doc").withData(generateData(10));
+    DocumentBuilder doc =
+        new DocumentBuilder("https://doc.uri/1", "Doc").withData(generateData(10));
     queue.add(doc);
     assertFalse(queue.isEmpty());
 
@@ -125,8 +131,10 @@ public class StreamDocumentUploadQueueBatchingTest {
   }
 
   @Test
-  public void flushAndPushShouldReturnResponseFromService() throws IOException, InterruptedException {
-    DocumentBuilder doc = new DocumentBuilder("https://doc.uri/1", "Doc").withData(generateData(10));
+  public void flushAndPushShouldReturnResponseFromService()
+      throws IOException, InterruptedException {
+    DocumentBuilder doc =
+        new DocumentBuilder("https://doc.uri/1", "Doc").withData(generateData(10));
     queue.add(doc);
 
     HttpResponse<String> response = queue.flushAndPush();
@@ -143,11 +151,13 @@ public class StreamDocumentUploadQueueBatchingTest {
   }
 
   @Test
-  public void flushAndPushShouldPassCorrectStreamUpdateToService() throws IOException, InterruptedException {
+  public void flushAndPushShouldPassCorrectStreamUpdateToService()
+      throws IOException, InterruptedException {
     DocumentBuilder doc = new DocumentBuilder("https://doc.uri/1", "Doc");
     DeleteDocument deleteDoc = new DeleteDocument("https://doc.uri/2");
-    PartialUpdateDocument partialDoc = new PartialUpdateDocument(
-        "https://doc.uri/3", PartialUpdateOperator.FIELDVALUEREPLACE, "field", "value");
+    PartialUpdateDocument partialDoc =
+        new PartialUpdateDocument(
+            "https://doc.uri/3", PartialUpdateOperator.FIELDVALUEREPLACE, "field", "value");
 
     queue.add(doc);
     queue.add(deleteDoc);
@@ -165,12 +175,14 @@ public class StreamDocumentUploadQueueBatchingTest {
   }
 
   @Test
-  public void deleteDocumentsTriggerFlushWhenExceedingLimit() throws IOException, InterruptedException {
+  public void deleteDocumentsTriggerFlushWhenExceedingLimit()
+      throws IOException, InterruptedException {
     queue = new StreamDocumentUploadQueue(null, 50);
     queue.setUpdateStreamService(updateStreamService);
 
     DeleteDocument deleteDoc1 = new DeleteDocument("https://doc.uri/1");
-    DeleteDocument deleteDoc2 = new DeleteDocument("https://doc.uri/with/very/long/path/that/exceeds");
+    DeleteDocument deleteDoc2 =
+        new DeleteDocument("https://doc.uri/with/very/long/path/that/exceeds");
 
     queue.add(deleteDoc1);
     verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
@@ -180,11 +192,17 @@ public class StreamDocumentUploadQueueBatchingTest {
   }
 
   @Test
-  public void partialUpdateDocumentsTriggerFlushWhenExceedingLimit() throws IOException, InterruptedException {
-    PartialUpdateDocument partialDoc1 = new PartialUpdateDocument("https://doc.uri/1",
-        PartialUpdateOperator.FIELDVALUEREPLACE, "f", "v");
-    PartialUpdateDocument partialDoc2 = new PartialUpdateDocument(
-        "https://doc.uri/2", PartialUpdateOperator.FIELDVALUEREPLACE, "field", generateData(SMALL_BATCH_SIZE));
+  public void partialUpdateDocumentsTriggerFlushWhenExceedingLimit()
+      throws IOException, InterruptedException {
+    PartialUpdateDocument partialDoc1 =
+        new PartialUpdateDocument(
+            "https://doc.uri/1", PartialUpdateOperator.FIELDVALUEREPLACE, "f", "v");
+    PartialUpdateDocument partialDoc2 =
+        new PartialUpdateDocument(
+            "https://doc.uri/2",
+            PartialUpdateOperator.FIELDVALUEREPLACE,
+            "field",
+            generateData(SMALL_BATCH_SIZE));
 
     queue.add(partialDoc1);
     verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
@@ -194,11 +212,17 @@ public class StreamDocumentUploadQueueBatchingTest {
   }
 
   @Test
-  public void mixedDocumentTypesShouldAccumulateAndFlushCorrectly() throws IOException, InterruptedException {
-    DocumentBuilder doc = new DocumentBuilder("https://doc.uri/1", "Doc").withData(generateData(1500));
+  public void mixedDocumentTypesShouldAccumulateAndFlushCorrectly()
+      throws IOException, InterruptedException {
+    DocumentBuilder doc =
+        new DocumentBuilder("https://doc.uri/1", "Doc").withData(generateData(1500));
     DeleteDocument deleteDoc = new DeleteDocument("https://doc.uri/2");
-    PartialUpdateDocument partialDoc = new PartialUpdateDocument(
-        "https://doc.uri/3", PartialUpdateOperator.FIELDVALUEREPLACE, "field", generateData(4000));
+    PartialUpdateDocument partialDoc =
+        new PartialUpdateDocument(
+            "https://doc.uri/3",
+            PartialUpdateOperator.FIELDVALUEREPLACE,
+            "field",
+            generateData(4000));
 
     queue.add(doc);
     queue.add(deleteDoc);
@@ -263,8 +287,7 @@ public class StreamDocumentUploadQueueBatchingTest {
   }
 
   private String generateData(int numBytes) {
-    if (numBytes <= 0)
-      return "";
+    if (numBytes <= 0) return "";
     byte[] bytes = new byte[numBytes];
     for (int i = 0; i < numBytes; i++) {
       bytes[i] = 65;

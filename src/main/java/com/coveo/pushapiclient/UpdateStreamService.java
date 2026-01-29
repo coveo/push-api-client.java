@@ -1,7 +1,6 @@
 package com.coveo.pushapiclient;
 
 import com.coveo.pushapiclient.exceptions.NoOpenFileContainerException;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +23,11 @@ public class UpdateStreamService {
    * @param userAgents The user agent to use for the requests.
    */
   public UpdateStreamService(StreamEnabledSource source, String[] userAgents) {
-    this(source, new BackoffOptionsBuilder().build(), userAgents, DocumentUploadQueue.getConfiguredBatchSize());
+    this(
+        source,
+        new BackoffOptionsBuilder().build(),
+        userAgents,
+        DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -38,7 +41,11 @@ public class UpdateStreamService {
    * @param source The source to which you want to send your documents.
    */
   public UpdateStreamService(StreamEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build(), null, DocumentUploadQueue.getConfiguredBatchSize());
+    this(
+        source,
+        new BackoffOptionsBuilder().build(),
+        null,
+        DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -83,6 +90,7 @@ public class UpdateStreamService {
    * {@StreamService}
    *
    * <p>Example batch sizes in bytes:
+   *
    * <ul>
    *   <li>5 MB (default): {@code 5 * 1024 * 1024} = {@code 5242880}
    *   <li>50 MB: {@code 50 * 1024 * 1024} = {@code 52428800}
@@ -108,7 +116,7 @@ public class UpdateStreamService {
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
             source,
-            new StreamDocumentUploadQueue(null, maxQueueSize),  // UploadStrategy no longer needed
+            new StreamDocumentUploadQueue(null, maxQueueSize), // UploadStrategy no longer needed
             this.platformClient,
             logger);
   }
@@ -118,10 +126,11 @@ public class UpdateStreamService {
    * open to receive the documents, this function will open a file container before uploading
    * documents into it.
    *
-   * <p>If called several times, the service will automatically batch documents and create new
-   * file containers whenever the data payload exceeds the batch size limit (default: 5MB, configurable via constructor).
-   * Each batch is sent to its own file container and immediately pushed to the stream
-   * source, following the <a href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
+   * <p>If called several times, the service will automatically batch documents and create new file
+   * containers whenever the data payload exceeds the batch size limit (default: 5MB, configurable
+   * via constructor). Each batch is sent to its own file container and immediately pushed to the
+   * stream source, following the <a
+   * href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
    * catalog stream API best practices</a>.
    *
    * <p>Once there are no more documents to add, it is important to call the {@link
@@ -158,10 +167,11 @@ public class UpdateStreamService {
    * href="https://docs.coveo.com/en/l62e0540/coveo-for-commerce/how-to-update-your-catalog#partial-item-updates">
    * Partial item updates</a> section.
    *
-   * <p>If called several times, the service will automatically batch documents and create new
-   * file containers whenever the data payload exceeds the batch size limit (default: 5MB, configurable via constructor).
-   * Each batch is sent to its own file container and immediately pushed to the stream
-   * source, following the <a href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
+   * <p>If called several times, the service will automatically batch documents and create new file
+   * containers whenever the data payload exceeds the batch size limit (default: 5MB, configurable
+   * via constructor). Each batch is sent to its own file container and immediately pushed to the
+   * stream source, following the <a
+   * href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
    * catalog stream API best practices</a>.
    *
    * <p>Once there are no more documents to add, it is important to call the {@link
@@ -196,10 +206,11 @@ public class UpdateStreamService {
    * receive the documents, this function will open a file container before uploading documents into
    * it.
    *
-   * <p>If called several times, the service will automatically batch documents and create new
-   * file containers whenever the data payload exceeds the batch size limit (default: 5MB, configurable via constructor).
-   * Each batch is sent to its own file container and immediately pushed to the stream
-   * source, following the <a href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
+   * <p>If called several times, the service will automatically batch documents and create new file
+   * containers whenever the data payload exceeds the batch size limit (default: 5MB, configurable
+   * via constructor). Each batch is sent to its own file container and immediately pushed to the
+   * stream source, following the <a
+   * href="https://docs.coveo.com/en/p4eb0129/coveo-for-commerce/full-catalog-data-updates#update-operations">
    * catalog stream API best practices</a>.
    *
    * <p>Once there are no more documents to add, it is important to call the {@link

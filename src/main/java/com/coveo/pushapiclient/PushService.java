@@ -21,6 +21,7 @@ public class PushService {
    * Creates a new PushService with configurable batch size.
    *
    * <p>Example batch sizes in bytes:
+   *
    * <ul>
    *   <li>5 MB (default): {@code 5 * 1024 * 1024} = {@code 5242880}
    *   <li>50 MB: {@code 50 * 1024 * 1024} = {@code 52428800}

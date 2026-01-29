@@ -13,7 +13,6 @@ import com.coveo.pushapiclient.exceptions.NoOpenFileContainerException;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.ArrayList;
 import org.apache.logging.log4j.core.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -140,7 +139,8 @@ public class UpdateStreamServiceInternalTest {
   @Test
   public void createUploadAndPushShouldCreateContainerUploadAndPush()
       throws IOException, InterruptedException {
-    StreamUpdate streamUpdate = new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    StreamUpdate streamUpdate =
+        new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
     service.createUploadAndPush(streamUpdate);
 
@@ -159,8 +159,10 @@ public class UpdateStreamServiceInternalTest {
 
     when(platformClient.createFileContainer()).thenReturn(response1).thenReturn(response2);
 
-    StreamUpdate streamUpdate1 = new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-    StreamUpdate streamUpdate2 = new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    StreamUpdate streamUpdate1 =
+        new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    StreamUpdate streamUpdate2 =
+        new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
     service.createUploadAndPush(streamUpdate1);
     service.createUploadAndPush(streamUpdate2);
@@ -178,14 +180,19 @@ public class UpdateStreamServiceInternalTest {
   @Test
   public void createUploadAndPushShouldPerformOperationsInCorrectOrder()
       throws IOException, InterruptedException {
-    StreamUpdate streamUpdate = new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    StreamUpdate streamUpdate =
+        new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
     service.createUploadAndPush(streamUpdate);
 
     org.mockito.InOrder inOrder = org.mockito.Mockito.inOrder(platformClient);
     inOrder.verify(platformClient).createFileContainer();
-    inOrder.verify(platformClient).uploadContentToFileContainer(any(FileContainer.class), any(String.class));
-    inOrder.verify(platformClient).pushFileContainerContentToStreamSource(eq(SOURCE_ID), any(FileContainer.class));
+    inOrder
+        .verify(platformClient)
+        .uploadContentToFileContainer(any(FileContainer.class), any(String.class));
+    inOrder
+        .verify(platformClient)
+        .pushFileContainerContentToStreamSource(eq(SOURCE_ID), any(FileContainer.class));
   }
 
   @Test

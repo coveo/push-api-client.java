@@ -16,7 +16,7 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     super(uploader);
     this.documentToPartiallyUpdateList = new ArrayList<>();
   }
-  
+
   /**
    * Constructs a new StreamDocumentUploadQueue object with a configurable maximum queue size limit.
    *
@@ -28,11 +28,11 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     super(uploader, maxQueueSize);
     this.documentToPartiallyUpdateList = new ArrayList<>();
   }
-  
+
   /**
-   * Sets the UpdateStreamServiceInternal reference for handling complete upload workflow.
-   * This is needed to support the new pattern where each flush creates its own file container.
-   * 
+   * Sets the UpdateStreamServiceInternal reference for handling complete upload workflow. This is
+   * needed to support the new pattern where each flush creates its own file container.
+   *
    * @param updateStreamService The service that handles create/upload/push operations
    */
   public void setUpdateStreamService(UpdateStreamServiceInternal updateStreamService) {
@@ -41,8 +41,8 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
   /**
    * Flushes the accumulated documents by applying the upload strategy.
-   * 
-   * Note: This method is deprecated for catalog stream updates. Use flushAndPush() instead,
+   *
+   * <p>Note: This method is deprecated for catalog stream updates. Use flushAndPush() instead,
    * which properly handles the create-upload-push workflow for each file container.
    *
    * @throws IOException If an I/O error occurs during the upload.
@@ -54,12 +54,12 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
       logger.debug("Empty batch. Skipping upload");
       return;
     }
-    
+
     if (this.uploader == null) {
       throw new IllegalStateException(
           "No upload strategy configured. For UpdateStreamService, use flushAndPush() instead.");
     }
-    
+
     // TODO: LENS-871: support concurrent requests
     StreamUpdate stream = this.getStream();
     logger.info("Uploading document Stream");
@@ -70,15 +70,13 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     this.documentToDeleteList.clear();
     this.documentToPartiallyUpdateList.clear();
   }
-  
+
   /**
-   * Flushes the accumulated documents and pushes them to the stream source.
-   * This method implements the proper workflow for catalog stream API updates:
-   * 1. Create a new file container
-   * 2. Upload content to the container
-   * 3. Push the container to the stream source
-   * 
-   * Each flush operation gets its own file container, as required by the catalog stream API.
+   * Flushes the accumulated documents and pushes them to the stream source. This method implements
+   * the proper workflow for catalog stream API updates: 1. Create a new file container 2. Upload
+   * content to the container 3. Push the container to the stream source
+   *
+   * <p>Each flush operation gets its own file container, as required by the catalog stream API.
    *
    * @return The HTTP response from the push operation
    * @throws IOException If an I/O error occurs during the upload.
@@ -122,7 +120,7 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
   /**
    * Adds the {@link PartialUpdateDocument} to the upload queue and flushes the queue if it exceeds
-   * the maximum content length. Each flush creates a new file container, uploads to it, and pushes 
+   * the maximum content length. Each flush creates a new file container, uploads to it, and pushes
    * it to the stream source.
    *
    * @param document The document to be deleted from the index.
@@ -144,11 +142,11 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     }
     this.size += sizeOfDoc;
   }
-  
+
   /**
    * Adds a {@link DocumentBuilder} to the upload queue and flushes the queue if it exceeds the
-   * maximum content length. Each flush creates a new file container, uploads to it, and pushes 
-   * it to the stream source.
+   * maximum content length. Each flush creates a new file container, uploads to it, and pushes it
+   * to the stream source.
    *
    * @param document The document to be added to the index.
    * @throws IOException If an I/O error occurs during the upload.
@@ -173,8 +171,8 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
   /**
    * Adds the {@link DeleteDocument} to the upload queue and flushes the queue if it exceeds the
-   * maximum content length. Each flush creates a new file container, uploads to it, and pushes 
-   * it to the stream source.
+   * maximum content length. Each flush creates a new file container, uploads to it, and pushes it
+   * to the stream source.
    *
    * @param document The document to be deleted from the index.
    * @throws IOException If an I/O error occurs during the upload.

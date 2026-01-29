@@ -27,7 +27,11 @@ public class StreamService {
    * @param userAgents The user agent to use for the requests.
    */
   public StreamService(StreamEnabledSource source, String[] userAgents) {
-    this(source, new BackoffOptionsBuilder().build(), userAgents, DocumentUploadQueue.getConfiguredBatchSize());
+    this(
+        source,
+        new BackoffOptionsBuilder().build(),
+        userAgents,
+        DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -42,7 +46,11 @@ public class StreamService {
    * @param source The source to which you want to send your documents.
    */
   public StreamService(StreamEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build(), null, DocumentUploadQueue.getConfiguredBatchSize());
+    this(
+        source,
+        new BackoffOptionsBuilder().build(),
+        null,
+        DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -88,6 +96,7 @@ public class StreamService {
    * also be used for an initial catalog upload.
    *
    * <p>Example batch sizes in bytes:
+   *
    * <ul>
    *   <li>5 MB (default): {@code 5 * 1024 * 1024} = {@code 5242880}
    *   <li>50 MB: {@code 50 * 1024 * 1024} = {@code 52428800}
