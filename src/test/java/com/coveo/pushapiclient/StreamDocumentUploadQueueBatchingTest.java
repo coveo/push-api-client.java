@@ -21,16 +21,20 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Tests for container rotation and batching behavior in the stream update workflow. Each batch that
- * exceeds the configured limit should trigger creation of a new file container, upload, and
+ * Tests for container rotation and batching behavior in the stream update
+ * workflow. Each batch that
+ * exceeds the configured limit should trigger creation of a new file container,
+ * upload, and
  * immediate push.
  */
 public class StreamDocumentUploadQueueBatchingTest {
 
   private static final int SMALL_BATCH_SIZE = 5000;
 
-  @Mock private UpdateStreamServiceInternal updateStreamService;
-  @Mock private HttpResponse<String> httpResponse;
+  @Mock
+  private UpdateStreamServiceInternal updateStreamService;
+  @Mock
+  private HttpResponse<String> httpResponse;
 
   private StreamDocumentUploadQueue queue;
   private AutoCloseable closeable;
@@ -142,9 +146,8 @@ public class StreamDocumentUploadQueueBatchingTest {
   public void flushAndPushShouldPassCorrectStreamUpdateToService() throws IOException, InterruptedException {
     DocumentBuilder doc = new DocumentBuilder("https://doc.uri/1", "Doc");
     DeleteDocument deleteDoc = new DeleteDocument("https://doc.uri/2");
-    PartialUpdateDocument partialDoc =
-        new PartialUpdateDocument(
-            "https://doc.uri/3", PartialUpdateOperator.FIELDVALUEREPLACE, "field", "value");
+    PartialUpdateDocument partialDoc = new PartialUpdateDocument(
+        "https://doc.uri/3", PartialUpdateOperator.FIELDVALUEREPLACE, "field", "value");
 
     queue.add(doc);
     queue.add(deleteDoc);
@@ -178,11 +181,10 @@ public class StreamDocumentUploadQueueBatchingTest {
 
   @Test
   public void partialUpdateDocumentsTriggerFlushWhenExceedingLimit() throws IOException, InterruptedException {
-    PartialUpdateDocument partialDoc1 =
-        new PartialUpdateDocument("https://doc.uri/1", PartialUpdateOperator.FIELDVALUEREPLACE, "f", "v");
-    PartialUpdateDocument partialDoc2 =
-        new PartialUpdateDocument(
-            "https://doc.uri/2", PartialUpdateOperator.FIELDVALUEREPLACE, "field", generateData(SMALL_BATCH_SIZE));
+    PartialUpdateDocument partialDoc1 = new PartialUpdateDocument("https://doc.uri/1",
+        PartialUpdateOperator.FIELDVALUEREPLACE, "f", "v");
+    PartialUpdateDocument partialDoc2 = new PartialUpdateDocument(
+        "https://doc.uri/2", PartialUpdateOperator.FIELDVALUEREPLACE, "field", generateData(SMALL_BATCH_SIZE));
 
     queue.add(partialDoc1);
     verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
@@ -195,9 +197,8 @@ public class StreamDocumentUploadQueueBatchingTest {
   public void mixedDocumentTypesShouldAccumulateAndFlushCorrectly() throws IOException, InterruptedException {
     DocumentBuilder doc = new DocumentBuilder("https://doc.uri/1", "Doc").withData(generateData(1500));
     DeleteDocument deleteDoc = new DeleteDocument("https://doc.uri/2");
-    PartialUpdateDocument partialDoc =
-        new PartialUpdateDocument(
-            "https://doc.uri/3", PartialUpdateOperator.FIELDVALUEREPLACE, "field", generateData(4000));
+    PartialUpdateDocument partialDoc = new PartialUpdateDocument(
+        "https://doc.uri/3", PartialUpdateOperator.FIELDVALUEREPLACE, "field", generateData(4000));
 
     queue.add(doc);
     queue.add(deleteDoc);
@@ -262,7 +263,8 @@ public class StreamDocumentUploadQueueBatchingTest {
   }
 
   private String generateData(int numBytes) {
-    if (numBytes <= 0) return "";
+    if (numBytes <= 0)
+      return "";
     byte[] bytes = new byte[numBytes];
     for (int i = 0; i < numBytes; i++) {
       bytes[i] = 65;
