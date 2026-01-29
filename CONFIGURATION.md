@@ -15,17 +15,20 @@ There are two ways to configure the batch size:
 Set the `coveo.push.batchSize` system property to configure the default batch size globally for all service instances:
 
 **Java Command Line:**
+
 ```bash
 java -Dcoveo.push.batchSize=134217728 -jar your-application.jar
 ```
 
 **Within Java Code:**
+
 ```java
 // Set before creating any service instances
 System.setProperty("coveo.push.batchSize", "134217728"); // 128 MB in bytes
 ```
 
 **Maven/Gradle Build:**
+
 ```xml
 <!-- pom.xml -->
 <properties>
@@ -41,6 +44,7 @@ test {
 ```
 
 **Example Values:**
+
 - `5242880` = 5 MB (default)
 - `268435456` = 256 MB (maximum)
 - `134217728` = 128 MB
@@ -124,106 +128,35 @@ PushService pushService = new PushService(pushEnabledSource, backoffOptions, 64 
 StreamService streamService = new StreamService(streamEnabledSource, backoffOptions);
 ```
 
-#### Example 3: Docker/Container Environment
-
-```yaml
-# docker-compose.yml
-services:
-  app:
-    image: your-app
-    environment:
-      - JAVA_OPTS=-Dcoveo.push.batchSize=134217728
-```
-
-#### Example 4: Kubernetes
-
-```yaml
-# deployment.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: coveo-pusher
-spec:
-  containers:
-  - name: app
-    image: your-app
-    env:
-    - name: JAVA_OPTS
-      value: "-Dcoveo.push.batchSize=134217728"
-```
-
 ### When to Adjust Batch Size
 
 **Use smaller batches (32-64 MB) when:**
+
 - Network bandwidth is limited
 - Memory is constrained
 - Processing many small documents
 - You want more frequent progress updates
 
 **Use larger batches (128-256 MB) when:**
+
 - Network bandwidth is high
 - Processing large documents or files
 - You want to minimize API calls
 - Maximum throughput is needed
 
 **Keep default (5 MB) when:**
+
 - You're unsure
 - Memory is a concern
 - You want predictable, frequent pushes
 
 ### Configuration Property Reference
 
-| Property Name | Description | Default Value | Valid Range |
-|--------------|-------------|---------------|-------------|
+| Property Name          | Description                 | Default Value    | Valid Range    |
+| ---------------------- | --------------------------- | ---------------- | -------------- |
 | `coveo.push.batchSize` | Default batch size in bytes | `5242880` (5 MB) | 1 to 268435456 |
 
-### Troubleshooting
-
-**Error: "exceeds the Stream API limit of 268435456 bytes"**
-- Your configured value is too large
-- Maximum allowed is 256 MB (268,435,456 bytes)
-- Reduce the configured value
-
-**Error: "Invalid value for system property"**
-- The value is not a valid integer
-- Use numeric bytes value (e.g., `134217728` not `128MB`)
-
-**Service uses default despite system property:**
-- Ensure property is set before creating service instances
-- Verify property name is exactly `coveo.push.batchSize`
-- Check that constructor isn't explicitly passing a value
-
-### Migration from Previous Versions
-
-Previous versions used a hardcoded 5 MB limit. If you're upgrading:
-
-**Option 1: Keep 5 MB behavior (not recommended)**
-```java
-System.setProperty("coveo.push.batchSize", "5242880"); // 5 MB
-```
-
-**Option 2: Use default 5 MB (recommended)**
-```java
-// No configuration needed - uses 5 MB default
-UpdateStreamService service = new UpdateStreamService(catalogSource, backoffOptions);
-```
-
-**Option 3: Use larger batch size for throughput**
-```java
-System.setProperty("coveo.push.batchSize", "67108864"); // 64 MB
-```
-
-See [UPGRADE_NOTES.md](UPGRADE_NOTES.md) for complete migration guidance.
-
 ## Additional Configuration
-
-### API Client Configuration
-
-See the main [README.md](README.md) for:
-- Platform client setup
-- Authentication configuration
-- API endpoint URLs
-- Retry and backoff options
 
 ### Environment Variables
 
