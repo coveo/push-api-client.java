@@ -65,111 +65,6 @@ To install the updated project files, build the Maven project:
 mvn install
 ```
 
-## Building from Source (Manual Build)
-
-If you want to build the library from source and share it with someone without publishing to Maven, follow these steps:
-
-### Prerequisites
-
-- Java 11 or higher
-- [Apache Maven](https://maven.apache.org/install.html) 3.6+
-
-### Step 1: Clone the Repository
-
-```bash
-git clone https://github.com/coveo/push-api-client.java.git
-cd push-api-client.java
-```
-
-### Step 2: Build the JAR
-
-```bash
-mvn clean package -DskipTests
-```
-
-This will generate the following files in the `target/` directory:
-
-- `push-api-client.java-<version>.jar` — The compiled library
-- `push-api-client.java-<version>-sources.jar` — Source code (for IDE integration)
-
-### Step 3: Install to Local Maven Repository (Optional)
-
-If you want to use the library in another local Maven project:
-
-```bash
-mvn clean install -DskipTests
-```
-
-This installs the JAR to your local `~/.m2/repository`, making it available to other projects on your machine.
-
-### Step 4: Share the JAR
-
-To share the built JAR with someone else:
-
-1. **Send the JAR file**: Share the `target/push-api-client.java-<version>.jar` file directly.
-
-2. **Recipient adds JAR to their project**:
-
-   **Option A — Install to their local Maven repository:**
-
-   ```bash
-   mvn install:install-file \
-     -Dfile=push-api-client.java-<version>.jar \
-     -DgroupId=com.coveo \
-     -DartifactId=push-api-client.java \
-     -Dversion=<version> \
-     -Dpackaging=jar
-   ```
-
-   Then add the dependency to their `pom.xml`:
-
-   ```xml
-   <dependency>
-     <groupId>com.coveo</groupId>
-     <artifactId>push-api-client.java</artifactId>
-     <version><version></version>
-   </dependency>
-   ```
-
-   **Option B — Use system scope (not recommended for production):**
-
-   ```xml
-   <dependency>
-     <groupId>com.coveo</groupId>
-     <artifactId>push-api-client.java</artifactId>
-     <version><version></version>
-     <scope>system</scope>
-     <systemPath>${project.basedir}/lib/push-api-client.java-<version>.jar</systemPath>
-   </dependency>
-   ```
-
-   **Option C — For Gradle projects:**
-
-   Place the JAR in a `libs/` folder and add:
-
-   ```groovy
-   dependencies {
-       implementation files('libs/push-api-client.java-<version>.jar')
-   }
-   ```
-
-### Running Tests
-
-To run the test suite:
-
-```bash
-mvn test
-```
-
-### Validating Code Format
-
-Before contributing, ensure your code follows the project's formatting rules:
-
-```bash
-mvn spotless:check    # Check formatting
-mvn spotless:apply    # Auto-fix formatting issues
-```
-
 ## Usage
 
 > See more examples in the `./samples` folder.
@@ -199,6 +94,32 @@ public class PushOneDocument {
     }
 }
 ```
+
+## Configuration
+
+### Batch Size Configuration
+
+The SDK uses a default batch size of **5 MB** before automatically creating a file container and pushing documents. The maximum allowed batch size is **256 MB** (matching the Coveo Stream API limit). You can configure this globally via system property or per-service via constructor.
+
+**Global Configuration (System Property):**
+```bash
+java -Dcoveo.push.batchSize=52428800 -jar your-app.jar  # 50 MB (in bytes)
+```
+
+**Per-Service Configuration:**
+```java
+// Configure PushService with 50 MB batch size
+PushService service = new PushService(
+    source, 
+    backoffOptions,
+    50 * 1024 * 1024  // 50 MB in bytes
+);
+    null,  // userAgents (optional)
+    128 * 1024 * 1024  // 128 MB in bytes
+);
+```
+
+See **[CONFIGURATION.md](CONFIGURATION.md)** for complete configuration options, Docker/Kubernetes examples, and best practices.
 
 ### Exponential Backoff Retry Configuration
 
