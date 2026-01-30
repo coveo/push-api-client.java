@@ -616,6 +616,9 @@ public class PlatformClient {
   }
 
   public void setUserAgents(String[] userAgents) {
+    if (userAgents == null) {
+      throw new IllegalArgumentException("User agents cannot be null");
+    }
     if (!validUserAgents(userAgents)) {
       throw new IllegalArgumentException("Invalid user agents");
     }
