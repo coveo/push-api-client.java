@@ -109,6 +109,10 @@ public class StreamService {
     }
     this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient, logger);
   }
+
+  /**
+   * Adds a {@link DocumentBuilder} to the upload queue and flushes the queue if it exceeds the
+   * maximum content length. See {@link DocumentUploadQueue#flush}.
    *
    * <p>If called several times, the service will automatically batch documents and create new
    * stream chunks whenever the data payload exceeds the <a

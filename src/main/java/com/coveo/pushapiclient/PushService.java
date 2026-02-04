@@ -10,7 +10,7 @@ public class PushService {
   private PushServiceInternal service;
 
   public PushService(PushEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build(), DocumentUploadQueue.getConfiguredBatchSize());
+    this(source, new BackoffOptionsBuilder().build());
   }
 
   public PushService(PushEnabledSource source, BackoffOptions options) {

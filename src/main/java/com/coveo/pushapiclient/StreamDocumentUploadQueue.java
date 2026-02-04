@@ -12,20 +12,9 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
   private StreamUploadHandler streamHandler;
   protected ArrayList<PartialUpdateDocument> documentToPartiallyUpdateList;
 
-  public StreamDocumentUploadQueue(UploadStrategy uploader) {
-    super(uploader);
-    this.streamHandler = null;
-    this.documentToPartiallyUpdateList = new ArrayList<>();
-  }
-
   public StreamDocumentUploadQueue(StreamUploadHandler handler, int maxQueueSize) {
     super(null, maxQueueSize);
     this.streamHandler = handler;
-    this.documentToPartiallyUpdateList = new ArrayList<>();
-  }
-
-  public StreamDocumentUploadQueue() {
-    super();
     this.documentToPartiallyUpdateList = new ArrayList<>();
   }
 
@@ -44,12 +33,8 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     // TODO: LENS-871: support concurrent requests
     StreamUpdate stream = this.getStream();
     logger.info("Uploading document Stream");
-    
-    if (this.streamHandler != null) {
-      this.streamHandler.uploadAndPush(stream);
-    } else {
-      this.uploader.apply(stream);
-    }
+
+    this.streamHandler.uploadAndPush(stream);
 
     clearQueue();
   }

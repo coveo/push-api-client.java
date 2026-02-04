@@ -14,15 +14,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class StreamDocumentUploadQueueTest {
 
-  @Mock private UploadStrategy uploadStrategy;
+  @Mock private StreamUploadHandler mockHandler;
 
-  @InjectMocks private StreamDocumentUploadQueue queue;
+  private StreamDocumentUploadQueue queue;
 
   private AutoCloseable closeable;
   private DocumentBuilder documentToAdd;
@@ -80,6 +79,7 @@ public class StreamDocumentUploadQueueTest {
             "value");
 
     closeable = MockitoAnnotations.openMocks(this);
+    queue = new StreamDocumentUploadQueue(mockHandler, DocumentUploadQueue.DEFAULT_QUEUE_SIZE);
   }
 
   @After
@@ -137,7 +137,7 @@ public class StreamDocumentUploadQueueTest {
     // The maximum queue size has not been reached yet (1MB left of free space).
     // Therefore, the accumulated documents will not be automatically flushed.
     // Unless the user runs `.flush()` the queue will keep the 4MB of documents
-    verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
+    verify(mockHandler, times(0)).uploadAndPush(any(StreamUpdate.class));
   }
 
   @Test
@@ -162,21 +162,21 @@ public class StreamDocumentUploadQueueTest {
               }
             });
 
-    // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
+     // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
     // the queue size will reach 6MB, which exceeds the maximum queue size
     // limit by 1MB. Therefore, the 2 first added documents will automatically be
     // uploaded to the source.
     queue.add(firstBulkyDocument);
     queue.add(secondBulkyDocument);
-    verify(uploadStrategy, times(0)).apply(any(BatchUpdate.class));
+    verify(mockHandler, times(0)).uploadAndPush(any(StreamUpdate.class));
 
     // The 3rd document added to the queue will be included in a separate batch,
     // which will not be uploaded unless the `flush()` method is called or until the
     // queue size limit has been reached
     queue.add(thirdBulkyDocument);
 
-    verify(uploadStrategy, times(1)).apply(any(BatchUpdate.class));
-    verify(uploadStrategy, times(1)).apply(firstBatch);
+    verify(mockHandler, times(1)).uploadAndPush(any(StreamUpdate.class));
+    verify(mockHandler, times(1)).uploadAndPush(firstBatch);
   }
 
   @Test
@@ -225,9 +225,9 @@ public class StreamDocumentUploadQueueTest {
     // Additional flush will have no effect if documents where already flushed
     queue.flush();
 
-    verify(uploadStrategy, times(2)).apply(any(StreamUpdate.class));
-    verify(uploadStrategy, times(1)).apply(firstBatch);
-    verify(uploadStrategy, times(1)).apply(secondBatch);
+    verify(mockHandler, times(2)).uploadAndPush(any(StreamUpdate.class));
+    verify(mockHandler, times(1)).uploadAndPush(firstBatch);
+    verify(mockHandler, times(1)).uploadAndPush(secondBatch);
   }
 
   @Test
@@ -237,7 +237,7 @@ public class StreamDocumentUploadQueueTest {
     queue.add(nullDocument);
     queue.flush();
     
-    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
+    verify(mockHandler, times(0)).uploadAndPush(any(StreamUpdate.class));
   }
 
   @Rule public ExpectedException expectedException = ExpectedException.none();
