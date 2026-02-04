@@ -1,5 +1,6 @@
 package com.coveo.pushapiclient;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -70,11 +71,12 @@ public class UpdateStreamServiceInternalTest {
   }
 
   @Test
-  public void addOrUpdateShouldCreateFileContainer() throws IOException, InterruptedException {
+  public void addOrUpdateShouldAddDocumentsToQueue() throws IOException, InterruptedException {
     service.addOrUpdate(documentA);
     service.addOrUpdate(documentB);
 
-    verify(this.platformClient, times(1)).createFileContainer();
+    verify(queue, times(1)).add(documentA);
+    verify(queue, times(1)).add(documentB);
   }
 
   @Test
@@ -94,62 +96,50 @@ public class UpdateStreamServiceInternalTest {
   }
 
   @Test
-  public void deleteShouldCreateFileContainer() throws IOException, InterruptedException {
+  public void deleteShouldAddDocumentsToQueue() throws IOException, InterruptedException {
     service.delete(deleteDocumentA);
     service.delete(deleteDocumentB);
 
-    verify(this.platformClient, times(1)).createFileContainer();
+    verify(queue, times(1)).add(deleteDocumentA);
+    verify(queue, times(1)).add(deleteDocumentB);
   }
 
   @Test
-  public void partialUpdateShouldCreateFileContainer() throws IOException, InterruptedException {
+  public void partialUpdateShouldAddDocumentsToQueue() throws IOException, InterruptedException {
     service.addPartialUpdate(partialUpdateDocumentA);
     service.addPartialUpdate(partialUpdateDocumentB);
 
-    verify(this.platformClient, times(1)).createFileContainer();
+    verify(queue, times(1)).add(partialUpdateDocumentA);
+    verify(queue, times(1)).add(partialUpdateDocumentB);
   }
 
   @Test
-  public void closeShouldPushFileContainerOnAddOrUpdate()
+  public void closeShouldCallFlushAndPush()
       throws IOException, InterruptedException, NoOpenFileContainerException {
     service.addOrUpdate(documentA);
     service.close();
 
-    verify(platformClient, times(1))
-        .pushFileContainerContentToStreamSource(eq(SOURCE_ID), any(FileContainer.class));
+    verify(queue, times(1)).flushAndPush();
   }
 
   @Test
-  public void closeShouldPushFileContainerOnDelete()
+  public void closeShouldReturnFlushAndPushResponse()
       throws IOException, InterruptedException, NoOpenFileContainerException {
-    service.delete(deleteDocumentA);
-    service.close();
-
-    verify(platformClient, times(1))
-        .pushFileContainerContentToStreamSource(eq(SOURCE_ID), any(FileContainer.class));
-  }
-
-  @Test
-  public void closeShouldFlushBufferedDocuments()
-      throws IOException, InterruptedException, NoOpenFileContainerException {
+    when(queue.flushAndPush()).thenReturn(httpResponse);
     service.addOrUpdate(documentA);
-    service.close();
+    
+    HttpResponse<String> result = service.close();
 
-    verify(queue, times(1)).flush();
+    assertEquals(httpResponse, result);
   }
 
   @Test
-  public void shouldLogInfoOnCreateFileContainer()
+  public void closeShouldReturnNullWhenQueueIsEmpty()
       throws IOException, InterruptedException, NoOpenFileContainerException {
-    service.addOrUpdate(documentA);
-    verify(logger, times(1)).info("Creating new file container");
-    service.close();
-    verify(logger, times(1)).info("Pushing to file container file-id");
-  }
+    when(queue.flushAndPush()).thenReturn(null);
 
-  @Test(expected = NoOpenFileContainerException.class)
-  public void shouldThrowExceptionOnCloseIfNoOpenFileContainer()
-      throws IOException, InterruptedException, NoOpenFileContainerException {
-    service.close();
+    HttpResponse<String> result = service.close();
+
+    assertEquals(null, result);
   }
 }
