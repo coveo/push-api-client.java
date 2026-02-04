@@ -113,10 +113,15 @@ public class UpdateStreamService {
     if (userAgents != null) {
       this.platformClient.setUserAgents(userAgents);
     }
+    StreamDocumentUploadQueue queue = StreamDocumentUploadQueue.forStreamSource(
+        source,
+        this.platformClient,
+        maxQueueSize);
+
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
             source,
-            new StreamDocumentUploadQueue(null, maxQueueSize), // UploadStrategy no longer needed
+            queue,
             this.platformClient,
             logger);
   }

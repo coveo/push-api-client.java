@@ -6,13 +6,29 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class StreamDocumentUploadQueue extends DocumentUploadQueue {
+public class StreamDocumentUploadQueue extends DocumentUploadQueue<StreamUpdate> {
 
   private static final Logger logger = LogManager.getLogger(StreamDocumentUploadQueue.class);
   protected ArrayList<PartialUpdateDocument> documentToPartiallyUpdateList;
-  private UpdateStreamServiceInternal updateStreamService;
 
-  public StreamDocumentUploadQueue(UploadStrategy uploader) {
+  /**
+   * Creates a StreamDocumentUploadQueue configured for UpdateStreamService operations.
+   * This factory method provides proper initialization without requiring post-construction setup.
+   *
+   * @param source The stream-enabled source for the upload operations
+   * @param platformClient The platform client for API calls
+   * @param maxQueueSize The maximum queue size in bytes
+   * @return A fully configured StreamDocumentUploadQueue
+   */
+  public static StreamDocumentUploadQueue forStreamSource(
+      StreamEnabledSource source,
+      PlatformClient platformClient,
+      int maxQueueSize) {
+    StreamUploadStrategy strategy = new StreamUploadStrategy(source, platformClient);
+    return new StreamDocumentUploadQueue(strategy, maxQueueSize);
+  }
+
+  public StreamDocumentUploadQueue(UploadStrategy<StreamUpdate> uploader) {
     super(uploader);
     this.documentToPartiallyUpdateList = new ArrayList<>();
   }
@@ -24,19 +40,26 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
    * @param maxQueueSize The maximum queue size in bytes. Must not exceed 256MB (Stream API limit).
    * @throws IllegalArgumentException if maxQueueSize exceeds the API limit of 256MB.
    */
-  public StreamDocumentUploadQueue(UploadStrategy uploader, int maxQueueSize) {
+  public StreamDocumentUploadQueue(UploadStrategy<StreamUpdate> uploader, int maxQueueSize) {
     super(uploader, maxQueueSize);
     this.documentToPartiallyUpdateList = new ArrayList<>();
   }
 
   /**
-   * Sets the UpdateStreamServiceInternal reference for handling complete upload workflow. This is
-   * needed to support the new pattern where each flush creates its own file container.
-   *
-   * @param updateStreamService The service that handles create/upload/push operations
+   * @deprecated Use the factory method {@link #forStreamSource} instead.
+   * This method will be removed in a future version.
    */
+  @Deprecated
   public void setUpdateStreamService(UpdateStreamServiceInternal updateStreamService) {
-    this.updateStreamService = updateStreamService;
+    // No-op for backward compatibility
+    // The strategy pattern now handles this
+  }
+
+  private void clearQueue() {
+    this.size = 0;
+    this.documentToAddList.clear();
+    this.documentToDeleteList.clear();
+    this.documentToPartiallyUpdateList.clear();
   }
 
   /**
@@ -57,28 +80,20 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
     if (this.uploader == null) {
       throw new IllegalStateException(
-          "No upload strategy configured. For UpdateStreamService, use flushAndPush() instead.");
+          "No upload strategy configured. Use StreamDocumentUploadQueue.forStreamSource() to create a properly configured queue.");
     }
 
-    // TODO: LENS-871: support concurrent requests
     StreamUpdate stream = this.getStream();
     logger.info("Uploading document Stream");
     this.uploader.apply(stream);
-
-    this.size = 0;
-    this.documentToAddList.clear();
-    this.documentToDeleteList.clear();
-    this.documentToPartiallyUpdateList.clear();
+    clearQueue();
   }
 
   /**
-   * Flushes the accumulated documents and pushes them to the stream source. This method implements
-   * the proper workflow for catalog stream API updates: 1. Create a new file container 2. Upload
-   * content to the container 3. Push the container to the stream source
+   * Flushes the accumulated documents and pushes them to the stream source.
+   * Each flush creates a new file container, uploads to it, and pushes it.
    *
-   * <p>Each flush operation gets its own file container, as required by the catalog stream API.
-   *
-   * @return The HTTP response from the push operation
+   * @return The HTTP response from the push operation, or null if queue was empty
    * @throws IOException If an I/O error occurs during the upload.
    * @throws InterruptedException If the upload process is interrupted.
    */
@@ -88,34 +103,16 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
       return null;
     }
 
+    if (this.uploader == null) {
+      throw new IllegalStateException(
+          "No upload strategy configured. Use StreamDocumentUploadQueue.forStreamSource() to create a properly configured queue.");
+    }
+
     StreamUpdate stream = this.getStream();
     logger.info("Flushing and pushing stream batch");
-
-    // Use updateStreamService if available, otherwise fall back to uploader
-    if (this.updateStreamService != null) {
-      HttpResponse<String> response = this.updateStreamService.createUploadAndPush(stream);
-      this.size = 0;
-      this.documentToAddList.clear();
-      this.documentToDeleteList.clear();
-      this.documentToPartiallyUpdateList.clear();
-      return response;
-    }
-
-    // Fallback: use uploader if available
-    if (this.uploader != null) {
-      logger.debug("Using uploader fallback (updateStreamService not set)");
-      this.uploader.apply(stream);
-      this.size = 0;
-      this.documentToAddList.clear();
-      this.documentToDeleteList.clear();
-      this.documentToPartiallyUpdateList.clear();
-      return null;
-    }
-
-    // Both are null - this is an error state
-    throw new IllegalStateException(
-        "Cannot flush and push: both updateStreamService and uploader are null. "
-            + "Please set updateStreamService or provide an uploader.");
+    HttpResponse<String> response = this.uploader.apply(stream);
+    clearQueue();
+    return response;
   }
 
   /**

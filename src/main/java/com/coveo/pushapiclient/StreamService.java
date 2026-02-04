@@ -110,16 +110,16 @@ public class StreamService {
    *     256MB).
    * @throws IllegalArgumentException if maxQueueSize exceeds 256MB or is not positive.
    */
-  public StreamService(
-      StreamEnabledSource source, BackoffOptions options, String[] userAgents, int maxQueueSize) {
-    String apiKey = source.getApiKey();
-    String organizationId = source.getOrganizationId();
-    PlatformUrl platformUrl = source.getPlatformUrl();
-    UploadStrategy uploader = this.getUploadStrategy();
-    Logger logger = LogManager.getLogger(StreamService.class);
+   public StreamService(
+       StreamEnabledSource source, BackoffOptions options, String[] userAgents, int maxQueueSize) {
+     String apiKey = source.getApiKey();
+     String organizationId = source.getOrganizationId();
+     PlatformUrl platformUrl = source.getPlatformUrl();
+     UploadStrategy<BatchUpdate> uploader = this.getUploadStrategy();
+     Logger logger = LogManager.getLogger(StreamService.class);
 
     this.source = source;
-    this.queue = new DocumentUploadQueue(uploader, maxQueueSize);
+    this.queue = new DocumentUploadQueue<>(uploader, maxQueueSize);
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
     if (userAgents != null) {
       platformClient.setUserAgents(userAgents);
@@ -183,7 +183,7 @@ public class StreamService {
     return this.service.close();
   }
 
-  private UploadStrategy getUploadStrategy() {
+  private UploadStrategy<BatchUpdate> getUploadStrategy() {
     return (batchUpdate) -> {
       String sourceId = this.getSourceId();
       HttpResponse<String> resFileContainer =

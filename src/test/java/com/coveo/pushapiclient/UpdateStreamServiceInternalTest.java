@@ -137,65 +137,6 @@ public class UpdateStreamServiceInternalTest {
   }
 
   @Test
-  public void createUploadAndPushShouldCreateContainerUploadAndPush()
-      throws IOException, InterruptedException {
-    StreamUpdate streamUpdate =
-        new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-
-    service.createUploadAndPush(streamUpdate);
-
-    verify(platformClient, times(1)).createFileContainer();
-    verify(platformClient, times(1))
-        .uploadContentToFileContainer(any(FileContainer.class), any(String.class));
-    verify(platformClient, times(1))
-        .pushFileContainerContentToStreamSource(eq(SOURCE_ID), any(FileContainer.class));
-  }
-
-  @Test
-  public void createUploadAndPushShouldUseNewContainerForEachCall()
-      throws IOException, InterruptedException {
-    HttpResponse<String> response1 = createMockHttpResponse("container-1");
-    HttpResponse<String> response2 = createMockHttpResponse("container-2");
-
-    when(platformClient.createFileContainer()).thenReturn(response1).thenReturn(response2);
-
-    StreamUpdate streamUpdate1 =
-        new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-    StreamUpdate streamUpdate2 =
-        new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-
-    service.createUploadAndPush(streamUpdate1);
-    service.createUploadAndPush(streamUpdate2);
-
-    verify(platformClient, times(2)).createFileContainer();
-
-    ArgumentCaptor<FileContainer> containerCaptor = ArgumentCaptor.forClass(FileContainer.class);
-    verify(platformClient, times(2))
-        .pushFileContainerContentToStreamSource(eq(SOURCE_ID), containerCaptor.capture());
-
-    assertEquals("container-1", containerCaptor.getAllValues().get(0).fileId);
-    assertEquals("container-2", containerCaptor.getAllValues().get(1).fileId);
-  }
-
-  @Test
-  public void createUploadAndPushShouldPerformOperationsInCorrectOrder()
-      throws IOException, InterruptedException {
-    StreamUpdate streamUpdate =
-        new StreamUpdate(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-
-    service.createUploadAndPush(streamUpdate);
-
-    org.mockito.InOrder inOrder = org.mockito.Mockito.inOrder(platformClient);
-    inOrder.verify(platformClient).createFileContainer();
-    inOrder
-        .verify(platformClient)
-        .uploadContentToFileContainer(any(FileContainer.class), any(String.class));
-    inOrder
-        .verify(platformClient)
-        .pushFileContainerContentToStreamSource(eq(SOURCE_ID), any(FileContainer.class));
-  }
-
-  @Test
   public void closeOnEmptyQueueShouldReturnNull()
       throws IOException, InterruptedException, NoOpenFileContainerException {
     when(queue.isEmpty()).thenReturn(true);
@@ -215,11 +156,6 @@ public class UpdateStreamServiceInternalTest {
     HttpResponse<String> result = service.close();
 
     assertEquals(httpResponse, result);
-  }
-
-  @Test
-  public void serviceShouldSetItselfOnQueueDuringConstruction() {
-    verify(queue, times(1)).setUpdateStreamService(service);
   }
 
   @SuppressWarnings("unchecked")

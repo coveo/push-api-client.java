@@ -194,7 +194,8 @@ public class FileContainerRotationIntegrationTest {
   }
 
   private UpdateStreamServiceInternal createServiceWithSmallBatchSize() {
-    StreamDocumentUploadQueue queue = new StreamDocumentUploadQueue(null, SMALL_BATCH_SIZE);
+    StreamDocumentUploadQueue queue =
+        StreamDocumentUploadQueue.forStreamSource(source, platformClient, SMALL_BATCH_SIZE);
     org.apache.logging.log4j.Logger logger =
         org.apache.logging.log4j.LogManager.getLogger(getClass());
     return new UpdateStreamServiceInternal(source, queue, platformClient, logger);

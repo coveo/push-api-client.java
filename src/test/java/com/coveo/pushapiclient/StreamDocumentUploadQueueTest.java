@@ -23,8 +23,7 @@ public class StreamDocumentUploadQueueTest {
 
   private static final int TEST_BATCH_SIZE = 5 * 1024 * 1024;
 
-  @Mock private UploadStrategy uploadStrategy;
-  @Mock private UpdateStreamServiceInternal updateStreamService;
+  @Mock private UploadStrategy<StreamUpdate> uploadStrategy;
   @Mock private HttpResponse<String> httpResponse;
 
   private StreamDocumentUploadQueue queue;
@@ -65,9 +64,8 @@ public class StreamDocumentUploadQueueTest {
     closeable = MockitoAnnotations.openMocks(this);
 
     queue = new StreamDocumentUploadQueue(uploadStrategy, TEST_BATCH_SIZE);
-    queue.setUpdateStreamService(updateStreamService);
 
-    when(updateStreamService.createUploadAndPush(any(StreamUpdate.class))).thenReturn(httpResponse);
+    when(uploadStrategy.apply(any(StreamUpdate.class))).thenReturn(httpResponse);
 
     String twoMegaByteData = generateStringFromBytes(2 * oneMegaByte);
 
@@ -133,7 +131,7 @@ public class StreamDocumentUploadQueueTest {
     queue.add(documentToAdd);
     queue.add(documentToDelete);
 
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
   }
 
   @Test
@@ -160,12 +158,12 @@ public class StreamDocumentUploadQueueTest {
 
     queue.add(firstBulkyDocument);
     queue.add(secondBulkyDocument);
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
 
     queue.add(thirdBulkyDocument);
 
-    verify(updateStreamService, times(1)).createUploadAndPush(any(StreamUpdate.class));
-    verify(updateStreamService, times(1)).createUploadAndPush(firstBatch);
+    verify(uploadStrategy, times(1)).apply(any(StreamUpdate.class));
+    verify(uploadStrategy, times(1)).apply(firstBatch);
   }
 
   @Test
@@ -209,7 +207,7 @@ public class StreamDocumentUploadQueueTest {
 
     queue.flush();
 
-    verify(updateStreamService, times(1)).createUploadAndPush(firstBatch);
+    verify(uploadStrategy, times(1)).apply(firstBatch);
     verify(uploadStrategy, times(1)).apply(secondBatch);
   }
 

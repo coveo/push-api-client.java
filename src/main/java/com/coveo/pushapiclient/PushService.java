@@ -10,7 +10,7 @@ public class PushService {
   private PushServiceInternal service;
 
   public PushService(PushEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build(), DocumentUploadQueue.getConfiguredBatchSize());
+    this(source, new BackoffOptionsBuilder().build());
   }
 
   public PushService(PushEnabledSource source, BackoffOptions options) {
@@ -34,12 +34,12 @@ public class PushService {
    *     256MB).
    * @throws IllegalArgumentException if maxQueueSize exceeds 256MB or is not positive.
    */
-  public PushService(PushEnabledSource source, BackoffOptions options, int maxQueueSize) {
-    String apiKey = source.getApiKey();
-    String organizationId = source.getOrganizationId();
-    PlatformUrl platformUrl = source.getPlatformUrl();
-    UploadStrategy uploader = this.getUploadStrategy();
-    DocumentUploadQueue queue = new DocumentUploadQueue(uploader, maxQueueSize);
+   public PushService(PushEnabledSource source, BackoffOptions options, int maxQueueSize) {
+     String apiKey = source.getApiKey();
+     String organizationId = source.getOrganizationId();
+     PlatformUrl platformUrl = source.getPlatformUrl();
+     UploadStrategy<BatchUpdate> uploader = this.getUploadStrategy();
+     DocumentUploadQueue<BatchUpdate> queue = new DocumentUploadQueue<>(uploader, maxQueueSize);
 
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
     this.service = new PushServiceInternal(queue);
@@ -59,7 +59,7 @@ public class PushService {
     this.service.close();
   }
 
-  private UploadStrategy getUploadStrategy() {
+  private UploadStrategy<BatchUpdate> getUploadStrategy() {
     return (batchUpdate) -> {
       String sourceId = this.getSourceId();
       HttpResponse<String> resFileContainer = this.platformClient.createFileContainer();

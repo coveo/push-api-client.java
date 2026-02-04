@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * @see <a href="https://docs.coveo.com/en/90">Manage Batches of Items in a Push Source</a>
  */
-public class BatchUpdate {
+public class BatchUpdate implements UploadContent {
 
   private final List<DocumentBuilder> addOrUpdate;
   private final List<DeleteDocument> delete;

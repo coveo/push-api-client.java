@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** Represents a queue for uploading documents using a specified upload strategy */
-class DocumentUploadQueue {
+class DocumentUploadQueue<T extends BatchUpdate> {
   private static final Logger logger = LogManager.getLogger(DocumentUploadQueue.class);
 
   /** Maximum allowed queue size based on Stream API limit (256 MB) */
@@ -18,7 +18,7 @@ class DocumentUploadQueue {
   /** System property name for configuring the default batch size */
   public static final String BATCH_SIZE_PROPERTY = "coveo.push.batchSize";
 
-  protected UploadStrategy uploader;
+  protected UploadStrategy<T> uploader;
   protected final int maxQueueSize;
   protected ArrayList<DocumentBuilder> documentToAddList;
   protected ArrayList<DeleteDocument> documentToDeleteList;
@@ -92,7 +92,7 @@ class DocumentUploadQueue {
    * @param uploader The upload strategy to be used for document uploads.
    * @throws IllegalArgumentException if the system property value exceeds 256MB or is invalid.
    */
-  public DocumentUploadQueue(UploadStrategy uploader) {
+  public DocumentUploadQueue(UploadStrategy<T> uploader) {
     this(uploader, getConfiguredBatchSize());
   }
 
@@ -104,7 +104,7 @@ class DocumentUploadQueue {
    *     256MB (Stream API limit).
    * @throws IllegalArgumentException if maxQueueSize exceeds the API limit of 256MB.
    */
-  public DocumentUploadQueue(UploadStrategy uploader, int maxQueueSize) {
+  public DocumentUploadQueue(UploadStrategy<T> uploader, int maxQueueSize) {
     validateBatchSize(maxQueueSize);
     this.documentToAddList = new ArrayList<>();
     this.documentToDeleteList = new ArrayList<>();
@@ -134,7 +134,8 @@ class DocumentUploadQueue {
       return;
     }
     // TODO: LENS-871: support concurrent requests
-    BatchUpdate batch = this.getBatch();
+    @SuppressWarnings("unchecked")
+    T batch = (T) this.getBatch();
     logger.info("Uploading document batch");
     this.uploader.apply(batch);
 

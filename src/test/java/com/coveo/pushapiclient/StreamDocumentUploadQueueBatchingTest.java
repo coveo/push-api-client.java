@@ -28,7 +28,7 @@ public class StreamDocumentUploadQueueBatchingTest {
 
   private static final int SMALL_BATCH_SIZE = 5000;
 
-  @Mock private UpdateStreamServiceInternal updateStreamService;
+  @Mock private UploadStrategy<StreamUpdate> uploadStrategy;
   @Mock private HttpResponse<String> httpResponse;
 
   private StreamDocumentUploadQueue queue;
@@ -37,10 +37,9 @@ public class StreamDocumentUploadQueueBatchingTest {
   @Before
   public void setUp() throws Exception {
     closeable = MockitoAnnotations.openMocks(this);
-    queue = new StreamDocumentUploadQueue(null, SMALL_BATCH_SIZE);
-    queue.setUpdateStreamService(updateStreamService);
+    queue = new StreamDocumentUploadQueue(uploadStrategy, SMALL_BATCH_SIZE);
 
-    when(updateStreamService.createUploadAndPush(any(StreamUpdate.class))).thenReturn(httpResponse);
+    when(uploadStrategy.apply(any(StreamUpdate.class))).thenReturn(httpResponse);
   }
 
   @After
@@ -57,10 +56,10 @@ public class StreamDocumentUploadQueueBatchingTest {
         new DocumentBuilder("https://doc.uri/2", "Doc 2").withData(generateData(3000));
 
     queue.add(doc1);
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
 
     queue.add(doc2);
-    verify(updateStreamService, times(1)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(1)).apply(any(StreamUpdate.class));
   }
 
   @Test
@@ -72,7 +71,7 @@ public class StreamDocumentUploadQueueBatchingTest {
     queue.add(smallDoc1);
     queue.add(smallDoc2);
 
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
     assertFalse(queue.isEmpty());
   }
 
@@ -88,13 +87,13 @@ public class StreamDocumentUploadQueueBatchingTest {
 
     queue.add(doc1);
     queue.add(doc2);
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
 
     queue.add(doc3);
-    verify(updateStreamService, times(1)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(1)).apply(any(StreamUpdate.class));
 
     ArgumentCaptor<StreamUpdate> captor = ArgumentCaptor.forClass(StreamUpdate.class);
-    verify(updateStreamService).createUploadAndPush(captor.capture());
+    verify(uploadStrategy).apply(captor.capture());
     assertEquals(2, captor.getValue().getAddOrUpdate().size());
   }
 
@@ -115,7 +114,7 @@ public class StreamDocumentUploadQueueBatchingTest {
     queue.add(doc3);
     queue.add(doc4);
 
-    verify(updateStreamService, times(3)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(3)).apply(any(StreamUpdate.class));
   }
 
   @Test
@@ -147,7 +146,7 @@ public class StreamDocumentUploadQueueBatchingTest {
     HttpResponse<String> response = queue.flushAndPush();
 
     assertNull(response);
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
   }
 
   @Test
@@ -166,7 +165,7 @@ public class StreamDocumentUploadQueueBatchingTest {
     queue.flushAndPush();
 
     ArgumentCaptor<StreamUpdate> captor = ArgumentCaptor.forClass(StreamUpdate.class);
-    verify(updateStreamService).createUploadAndPush(captor.capture());
+    verify(uploadStrategy).apply(captor.capture());
 
     StreamUpdate captured = captor.getValue();
     assertEquals(1, captured.getAddOrUpdate().size());
@@ -177,18 +176,17 @@ public class StreamDocumentUploadQueueBatchingTest {
   @Test
   public void deleteDocumentsTriggerFlushWhenExceedingLimit()
       throws IOException, InterruptedException {
-    queue = new StreamDocumentUploadQueue(null, 50);
-    queue.setUpdateStreamService(updateStreamService);
+    queue = new StreamDocumentUploadQueue(uploadStrategy, 50);
 
     DeleteDocument deleteDoc1 = new DeleteDocument("https://doc.uri/1");
     DeleteDocument deleteDoc2 =
         new DeleteDocument("https://doc.uri/with/very/long/path/that/exceeds");
 
     queue.add(deleteDoc1);
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
 
     queue.add(deleteDoc2);
-    verify(updateStreamService, times(1)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(1)).apply(any(StreamUpdate.class));
   }
 
   @Test
@@ -205,10 +203,10 @@ public class StreamDocumentUploadQueueBatchingTest {
             generateData(SMALL_BATCH_SIZE));
 
     queue.add(partialDoc1);
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
 
     queue.add(partialDoc2);
-    verify(updateStreamService, times(1)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(1)).apply(any(StreamUpdate.class));
   }
 
   @Test
@@ -226,32 +224,32 @@ public class StreamDocumentUploadQueueBatchingTest {
 
     queue.add(doc);
     queue.add(deleteDoc);
-    verify(updateStreamService, times(0)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
 
     queue.add(partialDoc);
-    verify(updateStreamService, times(1)).createUploadAndPush(any(StreamUpdate.class));
+    verify(uploadStrategy, times(1)).apply(any(StreamUpdate.class));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void constructorShouldRejectBatchSizeExceeding256MB() {
     int exceeding256MB = 256 * 1024 * 1024 + 1;
-    new StreamDocumentUploadQueue(null, exceeding256MB);
+    new StreamDocumentUploadQueue(uploadStrategy, exceeding256MB);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void constructorShouldRejectZeroBatchSize() {
-    new StreamDocumentUploadQueue(null, 0);
+    new StreamDocumentUploadQueue(uploadStrategy, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void constructorShouldRejectNegativeBatchSize() {
-    new StreamDocumentUploadQueue(null, -1);
+    new StreamDocumentUploadQueue(uploadStrategy, -1);
   }
 
   @Test
   public void constructorShouldAcceptMaxAllowedBatchSize() {
     int max256MB = 256 * 1024 * 1024;
-    StreamDocumentUploadQueue q = new StreamDocumentUploadQueue(null, max256MB);
+    StreamDocumentUploadQueue q = new StreamDocumentUploadQueue(uploadStrategy, max256MB);
     assertNotNull(q);
   }
 
