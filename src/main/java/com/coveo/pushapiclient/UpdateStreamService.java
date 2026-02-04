@@ -1,7 +1,6 @@
 package com.coveo.pushapiclient;
 
 import com.coveo.pushapiclient.exceptions.NoOpenFileContainerException;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
