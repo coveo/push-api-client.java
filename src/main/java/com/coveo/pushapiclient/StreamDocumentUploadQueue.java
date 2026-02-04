@@ -29,6 +29,7 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
   public void flush() throws IOException, InterruptedException {
     if (this.isEmpty()) {
       logger.debug("Empty batch. Skipping upload");
+      this.lastResponse = null;
       return;
     }
     // TODO: LENS-871: support concurrent requests
