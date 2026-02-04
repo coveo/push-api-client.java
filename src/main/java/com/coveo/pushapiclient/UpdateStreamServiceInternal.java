@@ -12,7 +12,7 @@ class UpdateStreamServiceInternal {
   private final StreamEnabledSource source;
   private final PlatformClient platformClient;
   private final StreamDocumentUploadQueue queue;
-  private FileContainer fileContainer;
+
 
   public UpdateStreamServiceInternal(
       final StreamEnabledSource source,
@@ -25,52 +25,23 @@ class UpdateStreamServiceInternal {
     this.logger = logger;
   }
 
-  public FileContainer addOrUpdate(DocumentBuilder document)
+  public void addOrUpdate(DocumentBuilder document)
       throws IOException, InterruptedException {
-    if (this.fileContainer == null) {
-      this.fileContainer = this.createFileContainer();
-    }
     queue.add(document);
-    return this.fileContainer;
   }
 
-  public FileContainer addPartialUpdate(PartialUpdateDocument document)
+  public void addPartialUpdate(PartialUpdateDocument document)
       throws IOException, InterruptedException {
-    if (this.fileContainer == null) {
-      this.fileContainer = this.createFileContainer();
-    }
     queue.add(document);
-    return this.fileContainer;
   }
 
-  public FileContainer delete(DeleteDocument document) throws IOException, InterruptedException {
-    if (this.fileContainer == null) {
-      this.fileContainer = this.createFileContainer();
-    }
+  public void delete(DeleteDocument document) throws IOException, InterruptedException {
     queue.add(document);
-    return this.fileContainer;
   }
 
   public HttpResponse<String> close()
       throws IOException, InterruptedException, NoOpenFileContainerException {
-    return this.pushFileContainer(this.getSourceId());
-  }
-
-  private FileContainer createFileContainer() throws IOException, InterruptedException {
-    this.logger.info("Creating new file container");
-    HttpResponse<String> response = this.platformClient.createFileContainer();
-    return new Gson().fromJson(response.body(), FileContainer.class);
-  }
-
-  private HttpResponse<String> pushFileContainer(String sourceId)
-      throws NoOpenFileContainerException, IOException, InterruptedException {
-    if (this.fileContainer == null) {
-      throw new NoOpenFileContainerException(
-          "No open file container detected. A new container will automatically be created once you start adding, updating or deleting documents.");
-    }
-    queue.flush();
-    this.logger.info("Pushing to file container " + this.fileContainer.fileId);
-    return this.platformClient.pushFileContainerContentToStreamSource(sourceId, this.fileContainer);
+    return queue.flushAndPush();
   }
 
   private String getSourceId() {

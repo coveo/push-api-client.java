@@ -12,7 +12,6 @@ public class UpdateStreamService {
   private final PlatformClient platformClient;
   private final UpdateStreamServiceInternal updateStreamServiceInternal;
 
-  private FileContainer fileContainer;
 
   /**
    * Creates a service to stream your documents to the provided source by interacting with the
@@ -77,10 +76,15 @@ public class UpdateStreamService {
         new PlatformClient(
             source.getApiKey(), source.getOrganizationId(), source.getPlatformUrl(), options);
     this.platformClient.setUserAgents(userAgents);
+    
+    CatalogStreamUploadHandler handler = new CatalogStreamUploadHandler(source, this.platformClient);
+    int maxQueueSize = DocumentUploadQueue.getConfiguredBatchSize();
+    StreamDocumentUploadQueue queue = new StreamDocumentUploadQueue(handler, maxQueueSize);
+    
     this.updateStreamServiceInternal =
         new UpdateStreamServiceInternal(
             source,
-            new StreamDocumentUploadQueue(this.getUploadStrategy()),
+            queue,
             this.platformClient,
             logger);
   }
@@ -118,7 +122,7 @@ public class UpdateStreamService {
    * @throws IOException If the creation of the file container or adding the document fails.
    */
   public void addOrUpdate(DocumentBuilder document) throws IOException, InterruptedException {
-    fileContainer = updateStreamServiceInternal.addOrUpdate(document);
+    updateStreamServiceInternal.addOrUpdate(document);
   }
 
   /**
@@ -158,7 +162,7 @@ public class UpdateStreamService {
    */
   public void addPartialUpdate(PartialUpdateDocument document)
       throws IOException, InterruptedException {
-    fileContainer = updateStreamServiceInternal.addPartialUpdate(document);
+    updateStreamServiceInternal.addPartialUpdate(document);
   }
 
   /**
@@ -194,7 +198,7 @@ public class UpdateStreamService {
    * @throws IOException If the creation of the file container or adding the document fails.
    */
   public void delete(DeleteDocument document) throws IOException, InterruptedException {
-    fileContainer = updateStreamServiceInternal.delete(document);
+    updateStreamServiceInternal.delete(document);
   }
 
   /**
@@ -213,12 +217,5 @@ public class UpdateStreamService {
   public HttpResponse<String> close()
       throws IOException, InterruptedException, NoOpenFileContainerException {
     return updateStreamServiceInternal.close();
-  }
-
-  private UploadStrategy getUploadStrategy() {
-    return (streamUpdate) -> {
-      String batchUpdateJson = new Gson().toJson(streamUpdate.marshal());
-      return this.platformClient.uploadContentToFileContainer(fileContainer, batchUpdateJson);
-    };
   }
 }
