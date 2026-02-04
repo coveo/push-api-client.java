@@ -21,13 +21,19 @@ import org.mockito.MockitoAnnotations;
 public class UpdateStreamServiceInternalTest {
 
   private static final String SOURCE_ID = "my-source-id";
-  @Mock private StreamEnabledSource source;
-  @Mock private PlatformClient platformClient;
-  @Mock private StreamDocumentUploadQueue queue;
-  @Mock private HttpResponse<String> httpResponse;
-  @Mock private Logger logger;
+  @Mock
+  private StreamEnabledSource source;
+  @Mock
+  private PlatformClient platformClient;
+  @Mock
+  private StreamDocumentUploadQueue queue;
+  @Mock
+  private HttpResponse<String> httpResponse;
+  @Mock
+  private Logger logger;
 
-  @InjectMocks private UpdateStreamServiceInternal service;
+  @InjectMocks
+  private UpdateStreamServiceInternal service;
 
   private DocumentBuilder documentA;
   private DocumentBuilder documentB;
@@ -44,18 +50,16 @@ public class UpdateStreamServiceInternalTest {
     documentB = new DocumentBuilder("https://my.document.uri?ref=2", "My second document title");
     deleteDocumentA = new DeleteDocument("https://my.document.uri?ref=3");
     deleteDocumentB = new DeleteDocument("https://my.document.uri?ref=4");
-    partialUpdateDocumentA =
-        new PartialUpdateDocument(
-            "https://my.document.uri?ref=5",
-            PartialUpdateOperator.FIELDVALUEREPLACE,
-            "fieldA",
-            "valueA");
-    partialUpdateDocumentB =
-        new PartialUpdateDocument(
-            "https://my.document.uri?ref=6",
-            PartialUpdateOperator.FIELDVALUEREPLACE,
-            "fieldB",
-            "valueB");
+    partialUpdateDocumentA = new PartialUpdateDocument(
+        "https://my.document.uri?ref=5",
+        PartialUpdateOperator.FIELDVALUEREPLACE,
+        "fieldA",
+        "valueA");
+    partialUpdateDocumentB = new PartialUpdateDocument(
+        "https://my.document.uri?ref=6",
+        PartialUpdateOperator.FIELDVALUEREPLACE,
+        "fieldB",
+        "valueB");
 
     closeable = MockitoAnnotations.openMocks(this);
 
@@ -127,7 +131,7 @@ public class UpdateStreamServiceInternalTest {
       throws IOException, InterruptedException, NoOpenFileContainerException {
     when(queue.getLastResponse()).thenReturn(httpResponse);
     service.addOrUpdate(documentA);
-    
+
     HttpResponse<String> result = service.close();
 
     assertEquals(httpResponse, result);
