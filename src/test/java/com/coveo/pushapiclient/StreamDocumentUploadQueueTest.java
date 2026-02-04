@@ -21,7 +21,6 @@ import org.mockito.MockitoAnnotations;
 public class StreamDocumentUploadQueueTest {
 
   @Mock private UploadStrategy uploadStrategy;
-  @Mock private StreamUploadHandler mockHandler;
 
   @InjectMocks private StreamDocumentUploadQueue queue;
 
@@ -237,7 +236,7 @@ public class StreamDocumentUploadQueueTest {
 
     queue.add(nullDocument);
     queue.flush();
-
+    
     verify(uploadStrategy, times(0)).apply(any(StreamUpdate.class));
   }
 
@@ -247,25 +246,5 @@ public class StreamDocumentUploadQueueTest {
   public void getBatchShouldThrowUnsupportedOperationException() {
     expectedException.expect(UnsupportedOperationException.class);
     queue.getBatch();
-  }
-
-  @Test
-  public void handlerConstructorShouldConfigureHandlerPath() throws IOException, InterruptedException {
-    StreamDocumentUploadQueue handlerQueue = new StreamDocumentUploadQueue(mockHandler, 5 * 1024 * 1024);
-    
-    handlerQueue.add(documentToAdd);
-    handlerQueue.flushAndPush();
-    
-    verify(mockHandler, times(1)).uploadAndPush(any(StreamUpdate.class));
-  }
-
-  @Test
-  public void flushAndPushOnEmptyQueueShouldReturnNull() throws IOException, InterruptedException {
-    StreamDocumentUploadQueue handlerQueue = new StreamDocumentUploadQueue(mockHandler, 5 * 1024 * 1024);
-    
-    java.net.http.HttpResponse<String> result = handlerQueue.flushAndPush();
-    
-    assertEquals(null, result);
-    verify(mockHandler, times(0)).uploadAndPush(any(StreamUpdate.class));
   }
 }

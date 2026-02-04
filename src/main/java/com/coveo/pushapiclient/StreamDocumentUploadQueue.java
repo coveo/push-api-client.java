@@ -44,7 +44,12 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     // TODO: LENS-871: support concurrent requests
     StreamUpdate stream = this.getStream();
     logger.info("Uploading document Stream");
-    this.uploader.apply(stream);
+    
+    if (this.streamHandler != null) {
+      this.streamHandler.uploadAndPush(stream);
+    } else {
+      this.uploader.apply(stream);
+    }
 
     clearQueue();
   }
