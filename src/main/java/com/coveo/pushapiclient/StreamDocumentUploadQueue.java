@@ -1,6 +1,7 @@
 package com.coveo.pushapiclient;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,10 +9,23 @@ import org.apache.logging.log4j.Logger;
 public class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
   private static final Logger logger = LogManager.getLogger(StreamDocumentUploadQueue.class);
+  private StreamUploadHandler streamHandler;
   protected ArrayList<PartialUpdateDocument> documentToPartiallyUpdateList;
 
   public StreamDocumentUploadQueue(UploadStrategy uploader) {
     super(uploader);
+    this.streamHandler = null;
+    this.documentToPartiallyUpdateList = new ArrayList<>();
+  }
+
+  public StreamDocumentUploadQueue(StreamUploadHandler handler, int maxQueueSize) {
+    super(null, maxQueueSize);
+    this.streamHandler = handler;
+    this.documentToPartiallyUpdateList = new ArrayList<>();
+  }
+
+  public StreamDocumentUploadQueue() {
+    super();
     this.documentToPartiallyUpdateList = new ArrayList<>();
   }
 
@@ -32,10 +46,38 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     logger.info("Uploading document Stream");
     this.uploader.apply(stream);
 
+    clearQueue();
+  }
+
+  private void clearQueue() {
     this.size = 0;
     this.documentToAddList.clear();
     this.documentToDeleteList.clear();
     this.documentToPartiallyUpdateList.clear();
+  }
+
+  /**
+   * Flushes the accumulated documents and pushes them to the stream endpoint.
+   *
+   * @return The HTTP response from the stream endpoint.
+   * @throws IOException If an I/O error occurs during the upload.
+   * @throws InterruptedException If the upload process is interrupted.
+   */
+  public HttpResponse<String> flushAndPush() throws IOException, InterruptedException {
+    if (isEmpty()) {
+      return null;
+    }
+
+    if (this.streamHandler == null) {
+      throw new IllegalStateException(
+          "No upload handler configured. Use StreamDocumentUploadQueue constructor with StreamUploadHandler parameter.");
+    }
+
+    StreamUpdate stream = this.getStream();
+    logger.info("Flushing and pushing stream batch");
+    HttpResponse<String> response = this.streamHandler.uploadAndPush(stream);
+    clearQueue();
+    return response;
   }
 
   /**
