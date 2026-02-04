@@ -1,6 +1,7 @@
 package com.coveo.pushapiclient;
 
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,10 +9,13 @@ import org.apache.logging.log4j.Logger;
 public class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
   private static final Logger logger = LogManager.getLogger(StreamDocumentUploadQueue.class);
+  private StreamUploadHandler streamHandler;
   protected ArrayList<PartialUpdateDocument> documentToPartiallyUpdateList;
+  private HttpResponse<String> lastResponse;
 
-  public StreamDocumentUploadQueue(UploadStrategy uploader) {
-    super(uploader);
+  public StreamDocumentUploadQueue(StreamUploadHandler handler, int maxQueueSize) {
+    super(null, maxQueueSize);
+    this.streamHandler = handler;
     this.documentToPartiallyUpdateList = new ArrayList<>();
   }
 
@@ -25,13 +29,19 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
   public void flush() throws IOException, InterruptedException {
     if (this.isEmpty()) {
       logger.debug("Empty batch. Skipping upload");
+      this.lastResponse = null;
       return;
     }
     // TODO: LENS-871: support concurrent requests
     StreamUpdate stream = this.getStream();
     logger.info("Uploading document Stream");
-    this.uploader.apply(stream);
 
+    this.lastResponse = this.streamHandler.uploadAndPush(stream);
+
+    clearQueue();
+  }
+
+  private void clearQueue() {
     this.size = 0;
     this.documentToAddList.clear();
     this.documentToDeleteList.clear();
@@ -77,5 +87,14 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
   @Override
   public boolean isEmpty() {
     return super.isEmpty() && documentToPartiallyUpdateList.isEmpty();
+  }
+
+  /**
+   * Returns the HTTP response from the last flush operation.
+   *
+   * @return The last response, or null if no flush has occurred or queue was empty.
+   */
+  HttpResponse<String> getLastResponse() {
+    return this.lastResponse;
   }
 }

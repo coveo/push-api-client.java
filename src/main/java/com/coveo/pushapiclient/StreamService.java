@@ -27,7 +27,11 @@ public class StreamService {
    * @param userAgents The user agent to use for the requests.
    */
   public StreamService(StreamEnabledSource source, String[] userAgents) {
-    this(source, new BackoffOptionsBuilder().build(), userAgents);
+    this(
+        source,
+        new BackoffOptionsBuilder().build(),
+        userAgents,
+        DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -42,7 +46,11 @@ public class StreamService {
    * @param source The source to which you want to send your documents.
    */
   public StreamService(StreamEnabledSource source) {
-    this(source, new BackoffOptionsBuilder().build());
+    this(
+        source,
+        new BackoffOptionsBuilder().build(),
+        null,
+        DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -58,7 +66,7 @@ public class StreamService {
    * @param options The configuration options for exponential backoff.
    */
   public StreamService(StreamEnabledSource source, BackoffOptions options) {
-    this(source, options, null);
+    this(source, options, null, DocumentUploadQueue.getConfiguredBatchSize());
   }
 
   /**
@@ -70,11 +78,23 @@ public class StreamService {
    * {@StreamService} is equivalent to triggering a full source rebuild. The {@StreamService} can
    * also be used for an initial catalog upload.
    *
+   * <p>Example batch sizes in bytes:
+   *
+   * <ul>
+   *   <li>5 MB (default): {@code 5 * 1024 * 1024} = {@code 5242880}
+   *   <li>50 MB: {@code 50 * 1024 * 1024} = {@code 52428800}
+   *   <li>256 MB (max): {@code 256 * 1024 * 1024} = {@code 268435456}
+   * </ul>
+   *
    * @param source The source to which you want to send your documents.
    * @param options The configuration options for exponential backoff.
    * @param userAgents The user agent to use for the requests.
+   * @param maxQueueSize The maximum batch size in bytes before auto-flushing (default: 5MB, max:
+   *     256MB).
+   * @throws IllegalArgumentException if maxQueueSize exceeds 256MB or is not positive.
    */
-  public StreamService(StreamEnabledSource source, BackoffOptions options, String[] userAgents) {
+  public StreamService(
+      StreamEnabledSource source, BackoffOptions options, String[] userAgents, int maxQueueSize) {
     String apiKey = source.getApiKey();
     String organizationId = source.getOrganizationId();
     PlatformUrl platformUrl = source.getPlatformUrl();
@@ -82,15 +102,17 @@ public class StreamService {
     Logger logger = LogManager.getLogger(StreamService.class);
 
     this.source = source;
-    this.queue = new DocumentUploadQueue(uploader);
+    this.queue = new DocumentUploadQueue(uploader, maxQueueSize);
     this.platformClient = new PlatformClient(apiKey, organizationId, platformUrl, options);
-    platformClient.setUserAgents(userAgents);
+    if (userAgents != null) {
+      platformClient.setUserAgents(userAgents);
+    }
     this.service = new StreamServiceInternal(this.source, this.queue, this.platformClient, logger);
   }
 
   /**
-   * Adds documents to the previously specified source. This function will open a stream before
-   * uploading documents into it.
+   * Adds a {@link DocumentBuilder} to the upload queue and flushes the queue if it exceeds the
+   * maximum content length. See {@link DocumentUploadQueue#flush}.
    *
    * <p>If called several times, the service will automatically batch documents and create new
    * stream chunks whenever the data payload exceeds the <a
