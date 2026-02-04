@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.7.0](https://github.com/coveo/push-api-client.java/compare/v2.6.3...v2.7.0) (2026-02-04)
+
+
+### Features
+
+* add configurable batch size infrastructure ([#188](https://github.com/coveo/push-api-client.java/issues/188)) ([8a6116d](https://github.com/coveo/push-api-client.java/commit/8a6116d89aa47d6a8a1eb96a5bd4354c041b078f))
+* **services:** upload strategy internal internal handler ([#190](https://github.com/coveo/push-api-client.java/issues/190)) ([d0388c6](https://github.com/coveo/push-api-client.java/commit/d0388c6617672a04318cdf755d5554eb7df5b759))
+
+
+### Bug Fixes
+
+* **platform-client:** validate userAgents is not null ([#187](https://github.com/coveo/push-api-client.java/issues/187)) ([45a3917](https://github.com/coveo/push-api-client.java/commit/45a391746c14e7b0506e06980660fe4121077404))
+
+
+### Documentation
+
+* **readme:** add package instructions to readme ([#184](https://github.com/coveo/push-api-client.java/issues/184)) ([c3d5fec](https://github.com/coveo/push-api-client.java/commit/c3d5feca66b1142555fe5399190d5d618133ce3a))
+
 ## [2.6.3](https://github.com/coveo/push-api-client.java/compare/v2.6.2...v2.6.3) (2025-11-04)
 
 
