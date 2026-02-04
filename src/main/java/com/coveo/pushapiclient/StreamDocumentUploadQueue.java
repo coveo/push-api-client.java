@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class StreamDocumentUploadQueue extends DocumentUploadQueue {
+class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
   private static final Logger logger = LogManager.getLogger(StreamDocumentUploadQueue.class);
   private StreamUploadHandler streamHandler;
   protected ArrayList<PartialUpdateDocument> documentToPartiallyUpdateList;
+  private HttpResponse<String> lastResponse;
 
   public StreamDocumentUploadQueue(StreamUploadHandler handler, int maxQueueSize) {
     super(null, maxQueueSize);
@@ -34,7 +35,7 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     StreamUpdate stream = this.getStream();
     logger.info("Uploading document Stream");
 
-    this.streamHandler.uploadAndPush(stream);
+    this.lastResponse = this.streamHandler.uploadAndPush(stream);
 
     clearQueue();
   }
@@ -46,29 +47,6 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     this.documentToPartiallyUpdateList.clear();
   }
 
-  /**
-   * Flushes the accumulated documents and pushes them to the stream endpoint.
-   *
-   * @return The HTTP response from the stream endpoint.
-   * @throws IOException If an I/O error occurs during the upload.
-   * @throws InterruptedException If the upload process is interrupted.
-   */
-  public HttpResponse<String> flushAndPush() throws IOException, InterruptedException {
-    if (isEmpty()) {
-      return null;
-    }
-
-    if (this.streamHandler == null) {
-      throw new IllegalStateException(
-          "No upload handler configured. Use StreamDocumentUploadQueue constructor with StreamUploadHandler parameter.");
-    }
-
-    StreamUpdate stream = this.getStream();
-    logger.info("Flushing and pushing stream batch");
-    HttpResponse<String> response = this.streamHandler.uploadAndPush(stream);
-    clearQueue();
-    return response;
-  }
 
   /**
    * Adds the {@link PartialUpdateDocument} to the upload queue and flushes the queue if it exceeds
@@ -109,5 +87,13 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
   @Override
   public boolean isEmpty() {
     return super.isEmpty() && documentToPartiallyUpdateList.isEmpty();
+  }
+
+  /**
+   * Returns the HTTP response from the last flush operation.
+   * @return The last response, or null if no flush has occurred or queue was empty.
+   */
+  HttpResponse<String> getLastResponse() {
+    return this.lastResponse;
   }
 }

@@ -119,13 +119,13 @@ public class UpdateStreamServiceInternalTest {
     service.addOrUpdate(documentA);
     service.close();
 
-    verify(queue, times(1)).flushAndPush();
+    verify(queue, times(1)).flush();
   }
 
   @Test
   public void closeShouldReturnFlushAndPushResponse()
       throws IOException, InterruptedException, NoOpenFileContainerException {
-    when(queue.flushAndPush()).thenReturn(httpResponse);
+    when(queue.getLastResponse()).thenReturn(httpResponse);
     service.addOrUpdate(documentA);
     
     HttpResponse<String> result = service.close();
@@ -136,7 +136,7 @@ public class UpdateStreamServiceInternalTest {
   @Test
   public void closeShouldReturnNullWhenQueueIsEmpty()
       throws IOException, InterruptedException, NoOpenFileContainerException {
-    when(queue.flushAndPush()).thenReturn(null);
+    when(queue.getLastResponse()).thenReturn(null);
 
     HttpResponse<String> result = service.close();
 

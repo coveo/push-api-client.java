@@ -122,7 +122,7 @@ public class StreamDocumentUploadQueueBatchingTest {
     queue.add(doc);
     assertFalse(queue.isEmpty());
 
-    queue.flushAndPush();
+    queue.flush();
 
     assertTrue(queue.isEmpty());
   }
@@ -134,14 +134,16 @@ public class StreamDocumentUploadQueueBatchingTest {
         new DocumentBuilder("https://doc.uri/1", "Doc").withData(generateData(10));
     queue.add(doc);
 
-    HttpResponse<String> response = queue.flushAndPush();
+    queue.flush();
+    HttpResponse<String> response = queue.getLastResponse();
 
     assertEquals(httpResponse, response);
   }
 
   @Test
   public void flushAndPushOnEmptyQueueShouldReturnNull() throws IOException, InterruptedException {
-    HttpResponse<String> response = queue.flushAndPush();
+    queue.flush();
+    HttpResponse<String> response = queue.getLastResponse();
 
     assertNull(response);
     verify(mockHandler, times(0)).uploadAndPush(any(StreamUpdate.class));
@@ -160,7 +162,7 @@ public class StreamDocumentUploadQueueBatchingTest {
     queue.add(deleteDoc);
     queue.add(partialDoc);
 
-    queue.flushAndPush();
+    queue.flush();
 
     ArgumentCaptor<StreamUpdate> captor = ArgumentCaptor.forClass(StreamUpdate.class);
     verify(mockHandler).uploadAndPush(captor.capture());
