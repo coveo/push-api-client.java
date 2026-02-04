@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class StreamDocumentUploadQueue extends DocumentUploadQueue {
+public class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
   private static final Logger logger = LogManager.getLogger(StreamDocumentUploadQueue.class);
   private StreamUploadHandler streamHandler;
