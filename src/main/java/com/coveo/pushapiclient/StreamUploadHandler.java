@@ -7,6 +7,7 @@ import java.net.http.HttpResponse;
  * Functional interface for stream upload operations with a three-step workflow contract.
  *
  * <p>Implementations of this interface handle the complete stream upload workflow:
+ *
  * <ol>
  *   <li>Create a file container via {@code platformClient.createFileContainer()}
  *   <li>Upload content to the container via {@code platformClient.uploadContentToFileContainer()}

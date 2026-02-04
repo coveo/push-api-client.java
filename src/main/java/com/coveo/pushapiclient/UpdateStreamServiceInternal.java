@@ -17,8 +17,7 @@ class UpdateStreamServiceInternal {
     this.queue = queue;
   }
 
-  public void addOrUpdate(DocumentBuilder document)
-      throws IOException, InterruptedException {
+  public void addOrUpdate(DocumentBuilder document) throws IOException, InterruptedException {
     queue.add(document);
   }
 

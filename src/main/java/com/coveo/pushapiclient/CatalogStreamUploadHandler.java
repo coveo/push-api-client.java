@@ -26,8 +26,7 @@ class CatalogStreamUploadHandler implements StreamUploadHandler {
 
     // Step 2: Upload content to container
     String batchUpdateJson = new Gson().toJson(stream.marshal());
-    logger.debug(
-        "Uploading stream content to file container: {}", container.fileId);
+    logger.debug("Uploading stream content to file container: {}", container.fileId);
     platformClient.uploadContentToFileContainer(container, batchUpdateJson);
 
     // Step 3: Push container to stream source

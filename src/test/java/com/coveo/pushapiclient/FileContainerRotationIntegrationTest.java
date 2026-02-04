@@ -198,8 +198,7 @@ public class FileContainerRotationIntegrationTest {
   }
 
   private UpdateStreamServiceInternal createServiceWithSmallBatchSize() {
-    CatalogStreamUploadHandler handler =
-        new CatalogStreamUploadHandler(source, platformClient);
+    CatalogStreamUploadHandler handler = new CatalogStreamUploadHandler(source, platformClient);
     StreamDocumentUploadQueue queue = new StreamDocumentUploadQueue(handler, SMALL_BATCH_SIZE);
     org.apache.logging.log4j.Logger logger =
         org.apache.logging.log4j.LogManager.getLogger(getClass());
@@ -231,12 +230,12 @@ public class FileContainerRotationIntegrationTest {
   private HttpResponse<String> createContainerResponse() {
     HttpResponse<String> response = mock(HttpResponse.class);
     int id = containerCounter.incrementAndGet();
-    doReturn(
-            String.format(
-                "{\"uploadUri\": \"https://upload.uri/container-%d\", \"fileId\": \"container-%d\"}",
-                id, id))
-        .when(response)
-        .body();
+    String responseBody =
+        String.format(
+            "{\"uploadUri\": \"https://upload.uri/container-%d\", "
+                + "\"fileId\": \"container-%d\"}",
+            id, id);
+    doReturn(responseBody).when(response).body();
     return response;
   }
 

@@ -11,7 +11,6 @@ public class UpdateStreamService {
   private final PlatformClient platformClient;
   private final UpdateStreamServiceInternal updateStreamServiceInternal;
 
-
   /**
    * Creates a service to stream your documents to the provided source by interacting with the
    * Stream API. This provides the ability to incrementally add, update, or delete documents via a

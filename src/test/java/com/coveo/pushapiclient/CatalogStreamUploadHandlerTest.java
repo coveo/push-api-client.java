@@ -1,8 +1,12 @@
 package com.coveo.pushapiclient;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.when;
 
 import com.google.gson.JsonObject;
 import java.io.IOException;
@@ -42,8 +46,7 @@ public class CatalogStreamUploadHandlerTest {
     when(mockContainerResponse.body()).thenReturn("{\"fileId\":\"test-container-id\"}");
     when(mockPlatformClient.createFileContainer()).thenReturn(mockContainerResponse);
     StreamUpdateRecord mockRecord =
-        new StreamUpdateRecord(
-            new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
+        new StreamUpdateRecord(new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
     when(mockStreamUpdate.marshal()).thenReturn(mockRecord);
     when(mockPlatformClient.pushFileContainerContentToStreamSource(
             anyString(), any(FileContainer.class)))
@@ -53,21 +56,21 @@ public class CatalogStreamUploadHandlerTest {
 
     InOrder inOrder = inOrder(mockPlatformClient);
     inOrder.verify(mockPlatformClient).createFileContainer();
-    inOrder.verify(mockPlatformClient)
+    inOrder
+        .verify(mockPlatformClient)
         .uploadContentToFileContainer(any(FileContainer.class), anyString());
-    inOrder.verify(mockPlatformClient)
+    inOrder
+        .verify(mockPlatformClient)
         .pushFileContainerContentToStreamSource(eq("test-source-id"), any(FileContainer.class));
     assertEquals(mockPushResponse, result);
   }
 
   @Test
-  public void uploadAndPushShouldReturnPushResponse()
-      throws IOException, InterruptedException {
+  public void uploadAndPushShouldReturnPushResponse() throws IOException, InterruptedException {
     when(mockContainerResponse.body()).thenReturn("{\"fileId\":\"test-id\"}");
     when(mockPlatformClient.createFileContainer()).thenReturn(mockContainerResponse);
     StreamUpdateRecord mockRecord =
-        new StreamUpdateRecord(
-            new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
+        new StreamUpdateRecord(new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
     when(mockStreamUpdate.marshal()).thenReturn(mockRecord);
     when(mockPlatformClient.pushFileContainerContentToStreamSource(
             anyString(), any(FileContainer.class)))
@@ -81,7 +84,8 @@ public class CatalogStreamUploadHandlerTest {
   @Test(expected = IOException.class)
   public void uploadAndPushShouldPropagateIOExceptionFromCreateFileContainer()
       throws IOException, InterruptedException {
-    when(mockPlatformClient.createFileContainer()).thenThrow(new IOException("Container creation failed"));
+    when(mockPlatformClient.createFileContainer())
+        .thenThrow(new IOException("Container creation failed"));
 
     handler.uploadAndPush(mockStreamUpdate);
   }
@@ -92,11 +96,9 @@ public class CatalogStreamUploadHandlerTest {
     when(mockContainerResponse.body()).thenReturn("{\"fileId\":\"test-id\"}");
     when(mockPlatformClient.createFileContainer()).thenReturn(mockContainerResponse);
     StreamUpdateRecord mockRecord =
-        new StreamUpdateRecord(
-            new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
+        new StreamUpdateRecord(new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
     when(mockStreamUpdate.marshal()).thenReturn(mockRecord);
-    when(mockPlatformClient.uploadContentToFileContainer(
-            any(FileContainer.class), anyString()))
+    when(mockPlatformClient.uploadContentToFileContainer(any(FileContainer.class), anyString()))
         .thenThrow(new IOException("Upload failed"));
 
     handler.uploadAndPush(mockStreamUpdate);
@@ -108,8 +110,7 @@ public class CatalogStreamUploadHandlerTest {
     when(mockContainerResponse.body()).thenReturn("{\"fileId\":\"test-id\"}");
     when(mockPlatformClient.createFileContainer()).thenReturn(mockContainerResponse);
     StreamUpdateRecord mockRecord =
-        new StreamUpdateRecord(
-            new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
+        new StreamUpdateRecord(new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
     when(mockStreamUpdate.marshal()).thenReturn(mockRecord);
     when(mockPlatformClient.pushFileContainerContentToStreamSource(
             anyString(), any(FileContainer.class)))

@@ -90,6 +90,7 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
 
   /**
    * Returns the HTTP response from the last flush operation.
+   *
    * @return The last response, or null if no flush has occurred or queue was empty.
    */
   HttpResponse<String> getLastResponse() {

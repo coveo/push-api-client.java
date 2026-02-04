@@ -162,7 +162,7 @@ public class StreamDocumentUploadQueueTest {
               }
             });
 
-     // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
+    // Adding 3 documents of 2MB to the queue. After adding the first 2 documents,
     // the queue size will reach 6MB, which exceeds the maximum queue size
     // limit by 1MB. Therefore, the 2 first added documents will automatically be
     // uploaded to the source.
@@ -236,7 +236,7 @@ public class StreamDocumentUploadQueueTest {
 
     queue.add(nullDocument);
     queue.flush();
-    
+
     verify(mockHandler, times(0)).uploadAndPush(any(StreamUpdate.class));
   }
 
