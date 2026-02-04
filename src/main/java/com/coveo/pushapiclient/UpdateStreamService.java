@@ -114,16 +114,13 @@ public class UpdateStreamService {
     if (userAgents != null) {
       this.platformClient.setUserAgents(userAgents);
     }
-    
-    CatalogStreamUploadHandler handler = new CatalogStreamUploadHandler(source, this.platformClient);
+
+    CatalogStreamUploadHandler handler =
+        new CatalogStreamUploadHandler(source, this.platformClient);
     StreamDocumentUploadQueue queue = new StreamDocumentUploadQueue(handler, maxQueueSize);
-    
+
     this.updateStreamServiceInternal =
-        new UpdateStreamServiceInternal(
-            source,
-            queue,
-            this.platformClient,
-            logger);
+        new UpdateStreamServiceInternal(source, queue, this.platformClient, logger);
   }
 
   /**

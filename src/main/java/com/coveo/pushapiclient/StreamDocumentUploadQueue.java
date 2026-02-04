@@ -47,7 +47,6 @@ public class StreamDocumentUploadQueue extends DocumentUploadQueue {
     this.documentToPartiallyUpdateList.clear();
   }
 
-
   /**
    * Adds the {@link PartialUpdateDocument} to the upload queue and flushes the queue if it exceeds
    * the maximum content length. See {@link PartialUpdateDocument#flush}.

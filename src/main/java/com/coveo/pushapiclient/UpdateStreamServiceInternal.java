@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 class UpdateStreamServiceInternal {
   private final StreamDocumentUploadQueue queue;
 
-
   public UpdateStreamServiceInternal(
       final StreamEnabledSource source,
       final StreamDocumentUploadQueue queue,

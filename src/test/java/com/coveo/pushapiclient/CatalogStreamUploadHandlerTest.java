@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import org.junit.After;
@@ -36,30 +37,40 @@ public class CatalogStreamUploadHandlerTest {
   }
 
   @Test
-  public void uploadAndPushShouldExecute3StepWorkflowInOrder() throws IOException, InterruptedException {
+  public void uploadAndPushShouldExecute3StepWorkflowInOrder()
+      throws IOException, InterruptedException {
     when(mockContainerResponse.body()).thenReturn("{\"fileId\":\"test-container-id\"}");
     when(mockPlatformClient.createFileContainer()).thenReturn(mockContainerResponse);
-    StreamUpdateRecord mockRecord = new StreamUpdateRecord(new com.google.gson.JsonObject[]{}, new com.google.gson.JsonObject[]{}, new com.google.gson.JsonObject[]{});
+    StreamUpdateRecord mockRecord =
+        new StreamUpdateRecord(
+            new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
     when(mockStreamUpdate.marshal()).thenReturn(mockRecord);
-    when(mockPlatformClient.pushFileContainerContentToStreamSource(anyString(), any(FileContainer.class)))
+    when(mockPlatformClient.pushFileContainerContentToStreamSource(
+            anyString(), any(FileContainer.class)))
         .thenReturn(mockPushResponse);
 
     HttpResponse<String> result = handler.uploadAndPush(mockStreamUpdate);
 
     InOrder inOrder = inOrder(mockPlatformClient);
     inOrder.verify(mockPlatformClient).createFileContainer();
-    inOrder.verify(mockPlatformClient).uploadContentToFileContainer(any(FileContainer.class), anyString());
-    inOrder.verify(mockPlatformClient).pushFileContainerContentToStreamSource(eq("test-source-id"), any(FileContainer.class));
+    inOrder.verify(mockPlatformClient)
+        .uploadContentToFileContainer(any(FileContainer.class), anyString());
+    inOrder.verify(mockPlatformClient)
+        .pushFileContainerContentToStreamSource(eq("test-source-id"), any(FileContainer.class));
     assertEquals(mockPushResponse, result);
   }
 
   @Test
-  public void uploadAndPushShouldReturnPushResponse() throws IOException, InterruptedException {
+  public void uploadAndPushShouldReturnPushResponse()
+      throws IOException, InterruptedException {
     when(mockContainerResponse.body()).thenReturn("{\"fileId\":\"test-id\"}");
     when(mockPlatformClient.createFileContainer()).thenReturn(mockContainerResponse);
-    StreamUpdateRecord mockRecord = new StreamUpdateRecord(new com.google.gson.JsonObject[]{}, new com.google.gson.JsonObject[]{}, new com.google.gson.JsonObject[]{});
+    StreamUpdateRecord mockRecord =
+        new StreamUpdateRecord(
+            new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
     when(mockStreamUpdate.marshal()).thenReturn(mockRecord);
-    when(mockPlatformClient.pushFileContainerContentToStreamSource(anyString(), any(FileContainer.class)))
+    when(mockPlatformClient.pushFileContainerContentToStreamSource(
+            anyString(), any(FileContainer.class)))
         .thenReturn(mockPushResponse);
 
     HttpResponse<String> result = handler.uploadAndPush(mockStreamUpdate);
@@ -80,9 +91,12 @@ public class CatalogStreamUploadHandlerTest {
       throws IOException, InterruptedException {
     when(mockContainerResponse.body()).thenReturn("{\"fileId\":\"test-id\"}");
     when(mockPlatformClient.createFileContainer()).thenReturn(mockContainerResponse);
-    StreamUpdateRecord mockRecord = new StreamUpdateRecord(new com.google.gson.JsonObject[]{}, new com.google.gson.JsonObject[]{}, new com.google.gson.JsonObject[]{});
+    StreamUpdateRecord mockRecord =
+        new StreamUpdateRecord(
+            new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
     when(mockStreamUpdate.marshal()).thenReturn(mockRecord);
-    when(mockPlatformClient.uploadContentToFileContainer(any(FileContainer.class), anyString()))
+    when(mockPlatformClient.uploadContentToFileContainer(
+            any(FileContainer.class), anyString()))
         .thenThrow(new IOException("Upload failed"));
 
     handler.uploadAndPush(mockStreamUpdate);
@@ -93,9 +107,12 @@ public class CatalogStreamUploadHandlerTest {
       throws IOException, InterruptedException {
     when(mockContainerResponse.body()).thenReturn("{\"fileId\":\"test-id\"}");
     when(mockPlatformClient.createFileContainer()).thenReturn(mockContainerResponse);
-    StreamUpdateRecord mockRecord = new StreamUpdateRecord(new com.google.gson.JsonObject[]{}, new com.google.gson.JsonObject[]{}, new com.google.gson.JsonObject[]{});
+    StreamUpdateRecord mockRecord =
+        new StreamUpdateRecord(
+            new JsonObject[] {}, new JsonObject[] {}, new JsonObject[] {});
     when(mockStreamUpdate.marshal()).thenReturn(mockRecord);
-    when(mockPlatformClient.pushFileContainerContentToStreamSource(anyString(), any(FileContainer.class)))
+    when(mockPlatformClient.pushFileContainerContentToStreamSource(
+            anyString(), any(FileContainer.class)))
         .thenThrow(new IOException("Push failed"));
 
     handler.uploadAndPush(mockStreamUpdate);
