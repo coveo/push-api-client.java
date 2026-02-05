@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0](https://github.com/coveo/push-api-client.java/compare/v2.7.0...v2.8.0) (2026-02-04)
+
+
+### Features
+
+* add missing constructor ([#193](https://github.com/coveo/push-api-client.java/issues/193)) ([eb8196c](https://github.com/coveo/push-api-client.java/commit/eb8196cd2e71252b7741f95e909cdf1d7aac6971))
+
 ## [2.7.0](https://github.com/coveo/push-api-client.java/compare/v2.6.3...v2.7.0) (2026-02-04)
 
 
