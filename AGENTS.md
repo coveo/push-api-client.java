@@ -10,10 +10,7 @@ Install the following before running any project task:
 
 ## Build
 
-Required installs:
-
-- Java 11 or higher
-- Apache Maven 3.6+
+Required installs: see [Prerequisites](#prerequisites).
 
 Build command:
 
@@ -23,10 +20,7 @@ mvn -B package --file pom.xml
 
 ## Test
 
-Required installs:
-
-- Java 11 or higher
-- Apache Maven 3.6+
+Required installs: see [Prerequisites](#prerequisites).
 
 Test command:
 
@@ -36,10 +30,7 @@ mvn test
 
 ## Lint
 
-Required installs:
-
-- Java 11 or higher
-- Apache Maven 3.6+
+Required installs: see [Prerequisites](#prerequisites).
 
 Lint/format check command:
 
